@@ -1,6 +1,6 @@
 import random
 
-from resources import goods
+# from resources import goods
 
 
 class Events:
@@ -18,16 +18,16 @@ class Events:
             "Набег варваров",
         ]
 
-    def global_event(self):
-        num_event = random.randint(0, 1)
-        event = self.events_global_name_list[num_event]
-        event_text = ""
-        if event == "Падение спроса" or "Рост спроса":
-            num_arg = random.randint(0, len(goods.resources_name_list) - 1)
-            print(f"num_arg {num_arg}")
-            print(f"num_arg {goods.resources_name_list[num_arg]}")
-            event_text = f"{event} на {goods.resources_name_list[num_arg]}"
-        return event_text
+    # def global_event(self):
+    #     num_event = random.randint(0, 1)
+    #     event = self.events_global_name_list[num_event]
+    #     event_text = ""
+    #     if event == "Падение спроса" or "Рост спроса":
+    #         num_arg = random.randint(0, len(goods.resources_name_list) - 1)
+    #         print(f"num_arg {num_arg}")
+    #         print(f"num_arg {goods.resources_name_list[num_arg]}")
+    #         event_text = f"{event} на {goods.resources_name_list[num_arg]}"
+    #     return event_text
 
 
 events = Events()

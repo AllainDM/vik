@@ -20,7 +20,7 @@ class FirstWorld:
     def __init__(self, row_id, date_create="0:0:0", max_players=8, is_active=1, the_end=0):
         self.row_id = row_id  # Номер игры
         self.is_active = 1  # Не активная игра считается как завершенная
-        self.year = -300
+        self.year = 800
         self.turn = 1
 
         self.need_win_points_for_win = 8
@@ -33,35 +33,9 @@ class FirstWorld:
         self.player_list = []
         self.max_players = max_players
 
-        # Товары и производство
-        self.buildings = buildings
-        # Попробуем сохранить тут количество построек и их цену
-        self.buildings_list = buildings.buildings_list
-        # self.buildings_price = buildings.buildings_cost
-        self.buildings_price = self.calc_buildings_cost()
-        self.buildings_name = buildings.buildings_name_list  # Список названий построек
-
-        # Решения
-        self.donate_leader = "Не определен"  # Лидер по пожертвованиям, получает 1 победное очко
-        # Сразу используем русское имя династии, с ним и сравниваем для определения победителя
-        # self.donate_leader_name = "Не определен"  # Имя на русском для отправки на фронт
-        # !!!!!! Пока не понятно нужно ли оно здесь, или будет храниться в классе(экземпляре)
-        self.title_total_taken = 0  # Общее количество купленных титулов, влияет на стоимость
-
-        # !!!!!!!!!! ЭТО НАДО????
-        self.cities = cities
-        self.cities_name = cities.cities_name_list  # Список названий городов
-
         # Создаем новый обьект с классом поселения
         self.settlements = {}
         self.settlements_list = []
-
-        # Товары
-        self.goods = goods  # Ссылка на класс
-        # Список имен ресурсов для отображения на фронте сразу возьмем из класса
-        self.goods_name = goods.resources_name_list
-        # Словарь с городами и текущими ценами на товары. Рассчитываем отдельно в конце хода, для отправки на фронт
-        self.all_goods_prices = self.calc_all_goods_price()
 
         # Общий лог событий. Сюда будут записываться все выполненные действия всех "игроков"
         self.all_logs = []
@@ -78,15 +52,8 @@ class FirstWorld:
             "dynasty": self.dynasty,
             "dynasty_list": self.dynasty_list,
             "player_list": self.player_list,
-            # "cur_num_players": len(self.player_list),
             "max_players": self.max_players,
-            "donate_leader": self.donate_leader,
-            "title_total_taken": self.title_total_taken,
-            "buildings_price": self.calc_buildings_cost(),
-            "buildings_list": self.buildings_list,
-            "settlements": self.settlements,
-            "settlements_list": self.settlements_list,
-            "all_goods_prices": self.all_goods_prices,
+
             "all_logs": self.all_logs,
             "all_logs_party": self.all_logs_party,
             "date_create": self.date_create,
@@ -120,26 +87,19 @@ class FirstWorld:
         self.dynasty_list = data["dynasty_list"]  # И тут переменная в виде названия Династии на английском.....
         self.player_list = data["player_list"]
         self.max_players = data["max_players"]
-        self.donate_leader = data["donate_leader"]
-        self.title_total_taken = data["title_total_taken"]
-        self.buildings_price = data["buildings_price"]
-        self.buildings_list = data["buildings_list"]
-        self.settlements = data["settlements"]
-        self.settlements_list = data["settlements_list"]
-        self.all_goods_prices = data["all_goods_prices"]
+
         self.all_logs = data["all_logs"]
         self.all_logs_party = data["all_logs_party"]
         self.date_create = data["date_create"]
 
         # Список победителей и статус игры, при окончании победитель повторно не определяется
-        self.need_win_points_for_win = data["need_win_points_for_win"]
         self.winners = data["winners"]
+        self.need_win_points_for_win = data["need_win_points_for_win"]
         self.game_the_end = data["game_the_end"]
-        # Проверим на ошибку чтение только что записанных данных?????????
+        # TODO Проверим на ошибку чтение только что записанных данных?????????
 
     def create_dynasty(self, row_id, player_id, name, name_rus, gold):
         # При создании династии передаем название, но можно передавать ид
-        # Нужно ли передавать ссылку self при создании Dynasty ?
         self.dynasty[name] = Dynasty(self, row_id=row_id, player_id=player_id, name=name, name_rus=name_rus, gold=gold)
         self.dynasty_list.append(name)
         print(f"Создание династии {self.dynasty_list[-1]}")
@@ -161,11 +121,10 @@ class FirstWorld:
         #     print(f"Файл 'games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.trader' не найден")
         #     return ""
 
-    # Создать поселение, тут на данный момент будет храниться проданный товар, излишек которого будет влиять на цену
-    def create_settlement(self, name, name_rus):
-        self.settlements[name] = Settlement(self, name=name, name_rus=name_rus)
-        self.settlements_list.append(name)
-        # print(self.settlements[name])
+    #  TODO Создать поселение. Возможно придется добавлять ИИ поселения
+    # def create_settlement(self, name, name_rus):
+    #     self.settlements[name] = Settlement(self, name=name, name_rus=name_rus)
+    #     self.settlements_list.append(name)
 
     # Восстановить династии из файла. Нужно для обсчета хода. Восстанавливаем все классы и считаем ход
     def restore_dynasty(self, game_id, player_id, dynasty_name):
@@ -173,54 +132,6 @@ class FirstWorld:
         self.dynasty[dynasty_name] = Dynasty(self)
         # print(self.dynasty[player_id])
         self.dynasty[dynasty_name].load_from_file(game_id, player_id)
-
-    # Рассчитаем стоимость построек, будет считаться в конце хода, в зависимости от количества и сохраняться в игру
-    def calc_buildings_cost(self):
-        sum_cost = {}
-        b_list = self.buildings_list  # Возьмем словарь с количеством построек
-        b_base_cost = self.buildings.buildings_cost  # Возьмем базовую цену построек из класса
-        # Переберем словарь. Добавляем по 100 умноженное на количество
-        for b in b_list:
-            price = b_list[b] * 100 + b_base_cost[b]
-            sum_cost[b] = price
-        # print(f"Стоимость построек: {sum_cost}")
-        # print(f"Количество построек: {b_list}")
-        # print(f"Количество построек: {self.buildings_list}")
-        return sum_cost
-
-    # Рассчитаем стоимость всех товаров и обновим для мира. Нужно для отправки на фронт
-    def calc_all_goods_price(self):
-        goods_prices = {}
-        for city in self.settlements:
-            # Создадим переменную с названием страны
-            print(f"city_4642 {city}")
-            # print(f"city_5352 {self.settlements[city]}")
-            nam = self.settlements[city].name
-            # Запустим расчет цен по городам
-            self.settlements[city].goods_in_city.price_all()
-            # Присвоим городу словарь с текущими ценами
-            goods_prices[nam] = self.settlements[city].goods_in_city.resources_curr_price
-            # print(f"city_9836 {city}")
-        # Вернем ответ, запрос идет для сохранения данных в мире
-        print(f"Стоимость всех товаров расcчитана {goods_prices}")
-        # Присвоим цены обьекту мира с ценами
-        self.all_goods_prices = goods_prices
-        return goods_prices
-
-    # Рассчитаем стоимость товара для выбранного города, считаем отдельно на каждый товар
-    def calc_goods_cost(self, city_gs, goods_to_sell):
-        goods_sell_price = int(self.settlements[city_gs].goods_in_city.price(goods_to_sell))
-        # print(f"Тут должна быть цена на {goods_to_sell}: {goods_sell_price}, в {city_gs}")
-        return goods_sell_price
-
-    def calc_donate_leader(self):
-        donate_leader = ""
-        donate_leader_sum = 0
-        for i in self.dynasty:
-            if self.dynasty[i].donate_sum > donate_leader_sum:
-                donate_leader_sum = self.dynasty[i].donate_sum
-                donate_leader = self.dynasty[i].name_rus
-                self.donate_leader = self.dynasty[i].name_rus
 
 
 def check_readiness(game_id):  # Проверить все ли страны отправили ход
@@ -292,17 +203,11 @@ def calculate_turn(game_id):
     for dynasty_name in game.dynasty:
         print(f"Почему запускается два раза? dynasty_name {dynasty_name}")
         game.dynasty[dynasty_name].calc_end_turn()
-    # Рассчитаем лидера пожертвований
-    game.calc_donate_leader()
+
     # Запустим определение победителя
     if not game.game_the_end:
         check_winners(game)
-    # Обновим количество товаров в городе. Спишем за внутреннее потребление
-    print("Обновим количество товаров в городе. Спишем за внутреннее потребление")
-    for settlement in game.settlements_list:
-        game.settlements[settlement].goods_in_city.consumption_of_goods()
-    # После списания товаров обновим текущие цены, для возможности отдачи на фронт
-    game.calc_all_goods_price()
+
     # Сохраним данные для стран
     # Данные сохраняем после всех изменений касающихся игрока, фронт потом запрашивает данные уже из файла
     for dynasty_name in game.dynasty:
@@ -311,7 +216,7 @@ def calculate_turn(game_id):
     # Добавим 1 к номеру хода и года
     game.year += 1
     game.turn += 1
-    game.calc_buildings_cost()  # Обновим стоимость построек
+
     game.save_to_file()
 
 

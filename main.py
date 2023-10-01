@@ -17,8 +17,8 @@ from FDataBase import FDataBase
 from world import FirstWorld
 from UserLogin import UserLogin
 from cities import Cities
-from resources import Goods
-from colony_buildings import ColonyBuildings
+from goods import Goods
+from buildings import Buildings
 from dynasty import Dynasty
 # import postgreTables
 
@@ -207,13 +207,6 @@ def load_all_games():  # Делаю подпись html, чтоб раздели
     # players_list = []  # Это список игр для отправки админу
     for game in game_arr:
         games_list.append(game[0])
-        # for us_name in game[5]:
-        #     one_user = dbase.get_user(us_name)
-        #     players_list.append(one_user[3])
-        #     players_list.append(one_user[3])
-    # for game in game_arr:
-    #     one_user = dbase.get_user(game[5][0])
-    # print(f"players_list {players_list}")
     return jsonify(games_list)
 
 
@@ -335,20 +328,6 @@ def req_cities_for_trade():
     pass
 
 
-# @app.route("/create_test_new_game")  # Создать "быструю" новую игру по прописаным в коде стартовым параметрам
-# @login_required
-# def create_test_new_game():
-#     user_admin = current_user.get_admin()
-#     if user_admin == 1:
-#         print("this is admin3")
-#         players_dynasty = [[2, "Barkid", "Баркиды"], [3, "Magonid", "Магониды"]]
-#         # Передаем дату, чтоб она не обновлялась при "восстановлении" класса игры
-#         create_game(players_dynasty)
-#         return jsonify("Ответ от Python: Игра создалась")
-#     else:
-#         return ""
-
-
 # Создать каждому по одиночной игре
 @app.route("/create_new_single_game")
 @login_required
@@ -446,67 +425,24 @@ def create_game(setting):  # Получаем только список игро
     for player in setting[1]:
         print(f"setting[1]: {setting[1]}")
         print(f"player: {player}")
-        # this_game.create_dynasty(1, player[0], player[1], player[2], 10000)  # Золото пока не передается
         # TODO почему первый аргумент всегда 1, надо может делать +1 === num_id Добавить это?
         print(f"Проверка на добавление династии при создании игры")
         this_game.create_dynasty(1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
         id_players_for_add_db.append(player["playerId"])
         num_id += 1
     # Создадим города
-    this_game.create_settlement("Карфаген", "Карфаген")
-    this_game.settlements["Карфаген"].goods_in_city.resources_mod_price["Оливки"] = 1
-    this_game.settlements["Карфаген"].goods_in_city.resources_mod_price["Медь"] = 2
-    this_game.settlements["Карфаген"].goods_in_city.resources_mod_price["Рабы"] = 2
-    this_game.settlements["Карфаген"].goods_in_city.resources_mod_price["Шкуры"] = 3
-    this_game.settlements["Карфаген"].goods_in_city.resources_mod_price["Зерно"] = 3
-
-    this_game.create_settlement("Сиракузы", "Сиракузы")
-    this_game.settlements["Сиракузы"].goods_in_city.resources_mod_price["Оливки"] = 2
-    this_game.settlements["Сиракузы"].goods_in_city.resources_mod_price["Медь"] = 3
-    this_game.settlements["Сиракузы"].goods_in_city.resources_mod_price["Рабы"] = 1
-    this_game.settlements["Сиракузы"].goods_in_city.resources_mod_price["Шкуры"] = 3
-    this_game.settlements["Сиракузы"].goods_in_city.resources_mod_price["Зерно"] = 2
-
-    this_game.create_settlement("Афины", "Афины")
-    this_game.settlements["Афины"].goods_in_city.resources_mod_price["Оливки"] = 2
-    this_game.settlements["Афины"].goods_in_city.resources_mod_price["Медь"] = 3
-    this_game.settlements["Афины"].goods_in_city.resources_mod_price["Рабы"] = 2
-    this_game.settlements["Афины"].goods_in_city.resources_mod_price["Шкуры"] = 1
-    this_game.settlements["Афины"].goods_in_city.resources_mod_price["Зерно"] = 3
-
-    this_game.create_settlement("Родос", "Родос")
-    this_game.settlements["Родос"].goods_in_city.resources_mod_price["Оливки"] = 3
-    this_game.settlements["Родос"].goods_in_city.resources_mod_price["Медь"] = 1
-    this_game.settlements["Родос"].goods_in_city.resources_mod_price["Рабы"] = 3
-    this_game.settlements["Родос"].goods_in_city.resources_mod_price["Шкуры"] = 2
-    this_game.settlements["Родос"].goods_in_city.resources_mod_price["Зерно"] = 2
-
-    this_game.create_settlement("Александрия", "Александрия")
-    this_game.settlements["Александрия"].goods_in_city.resources_mod_price["Оливки"] = 3
-    this_game.settlements["Александрия"].goods_in_city.resources_mod_price["Медь"] = 2
-    this_game.settlements["Александрия"].goods_in_city.resources_mod_price["Рабы"] = 3
-    this_game.settlements["Александрия"].goods_in_city.resources_mod_price["Шкуры"] = 2
-    this_game.settlements["Александрия"].goods_in_city.resources_mod_price["Зерно"] = 1
-
-    this_game.create_settlement("Тир", "Тир")
-    this_game.settlements["Тир"].goods_in_city.resources_mod_price["Оливки"] = 2
-    this_game.settlements["Тир"].goods_in_city.resources_mod_price["Медь"] = 2
-    this_game.settlements["Тир"].goods_in_city.resources_mod_price["Рабы"] = 2
-    this_game.settlements["Тир"].goods_in_city.resources_mod_price["Шкуры"] = 2
-    this_game.settlements["Тир"].goods_in_city.resources_mod_price["Зерно"] = 2
-    # print(this_game.settlements["Карфаген"].goods_in_city)
-    # print(this_game.settlements["Сиракузы"].goods_in_city)
-    # print(this_game.settlements["Афины"].goods_in_city)
-    # print(this_game.settlements["Родос"].goods_in_city)
-    # this_game.create_settlement("Athens", "Афины")
-    # this_game.create_settlement("Alexandria", "Александрия")
-    # this_game.create_settlement("Tyr", "Тир")
-    # this_game.create_settlement("Syracuse", "Сиракузы")
+    # TODO создане поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
+    # this_game.create_settlement("Карфаген", "Карфаген")
+    # this_game.create_settlement("Сиракузы", "Сиракузы")
+    # this_game.create_settlement("Афины", "Афины")
+    # this_game.create_settlement("Родос", "Родос")
+    # this_game.create_settlement("Александрия", "Александрия")
+    # this_game.create_settlement("Тир", "Тир")
 
     this_game.save_to_file()
     # setting[1] это список династий, агрументом отдаем его длину как текущее количество игроков
     print("Добавляем игру в БД")
-    dbase.add_game(1, -300, id_players_for_add_db, len(setting[1]), max_pl)
+    dbase.add_game(1, 800, id_players_for_add_db, len(setting[1]), max_pl)
 
     print("Игра создана")
     print(this_game.dynasty_list)
