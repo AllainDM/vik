@@ -19,35 +19,41 @@ rediska = redis.StrictRedis(
 
 
 class Dynasty:
-    def __init__(self, game, row_id=0, player_id=0, name="default_name", name_rus="Страна", gold=0):
+    def __init__(self, game, row_id=0, player_id=0, name="default_name", name_rus="Страна", gold=0, settlements=[]):
         self.row_id = row_id
-        self.player_id = player_id
-        self.name = name
-        self.name_rus = name_rus
-        self.gold = gold
-        self.title = 0  # Стартовый ранг игрока.
-        self.body_points = 3  # Очки действий для игрока
-        # Остаток очков действий, для цикла подсчета хода. Восстанавливается перед подсчетом хода взяв значение выше
+        self.player_id = player_id  # id игрока
+        self.name = name            # Имя Династии игрока на английском
+        self.name_rus = name_rus    # Имя Династии игрока на русском
+        self.gold = gold            # Казна непосредственно игрока
+        self.settlements = settlements  # Список ид поселений под управлением игрока
+        # Уловно характеристики правителя. Пока играем без династии
+        self.title = 0              # Стартовый ранг игрока
+        self.body_points = 3        # Очки действий игрока
+        self.authority = 0          # Авторитет
+        # Остаток очков действий, для цикла подсчета хода.
+        # Восстанавливается перед подсчетом хода взяв значение выше
         self.body_points_left = self.body_points
 
-        # Общие стартовые условия
-        self.win_points = 0
+        self.win_points = 0  # Победные очки
 
+        # Логи
         self.acts = []  # Список действий
-        # self.logs = []
+        # self.logs = []  # TODO ???
         # self.acts_text = [] # Список с текстом не выполненных действий
-        self.result_logs_text = []  # Список с текстом выполненных действий
-        self.result_logs_text_all_turns = []  # Список с текстом выполненных действий по всем ходам
+        self.result_logs_text = []  # Список с текстом выполненных действий за прошедший ход
+        self.result_logs_text_all_turns = []  # Список с текстом выполненных действий за всю игру
 
         self.end_turn = False  # Отправила ли страна заявку
         self.end_turn_know = True  # Прочитал ли оповещение о новом ходе
 
-        # Это должно быть не у страны, а отдельный столбец у игрока в БД
-        # self.active_game = 0 # Id Активной игры. Надо что-то решить и убрать 0
-
+        # Ссылка на мир для взаимодействия.
+        # TODO Нет необходимости сохранять в файл?
         self.game = game
-        self.game_id = game.row_id  # Сохраним ИД игры, для создания правильной ссылки при необходимости
+
+        # TODO не понятен функционал ниже описанного
+        # Сохраним ИД игры, для создания правильной ссылки при необходимости
         # Но конечно же, можно было бы передать ее аргументом при создании династии
+        self.game_id = game.row_id
 
     def save_to_file(self):
         data = {
@@ -57,13 +63,19 @@ class Dynasty:
             "name": self.name,
             "name_rus": self.name_rus,
             "gold": self.gold,
+
             "title": self.title,
             "body_points": self.body_points,
+            "authority": self.authority,
+
+            "settlements": self.settlements,
+
             "win_points": self.win_points,
 
             "acts": self.acts,
             "result_logs_text": self.result_logs_text,
             "result_logs_text_all_turns": self.result_logs_text_all_turns,
+
             "end_turn": self.end_turn,
             "end_turn_know": self.end_turn_know,
         }
@@ -90,12 +102,16 @@ class Dynasty:
         self.player_id = data["player_id"]
         self.name = data["name"]
         self.name_rus = data["name_rus"]
+
         self.gold = data["gold"]
         self.title = data["title"]
-        self.win_points = data["win_points"]
         self.body_points = data["body_points"]
+        self.authority = data["authority"]
 
-        # TODO убрать
+        self.win_points = data["win_points"]
+        self.settlements = data["settlements"]
+
+        # TODO убрать. Сейчас как напоминание о том, что где-то будет определяться доступные постройки
         # Список доступных для строительства построек
         # !!!!!!! Это нужно не сохранять, а каждый раз обновлять из класса, мало ли что изменилось
         # self.buildings_available_list = data["buildings_available_list"]
@@ -103,11 +119,13 @@ class Dynasty:
         self.acts = data["acts"]
         self.result_logs_text = data["result_logs_text"]
         self.result_logs_text_all_turns = data["result_logs_text_all_turns"]
+
         self.end_turn = data["end_turn"]
         self.end_turn_know = data["end_turn_know"]
 
     def calc_act(self):  # Подсчет одного действия для династии
         # print(f"Считаем ход для династии: {self.name}")
+        # TODO сейчас никаких действий нет, оставляю старый код
         if self.acts:
             # 1 индекс это первое по списку действие, первый элемент в списке, оно выполняется и удаляется
             # 2 индекс это индекс с ИД действия, он под индексом 1, под 0 текстовое описание. Начиная с 2 аргументы
@@ -135,12 +153,11 @@ class Dynasty:
             else:
                 print('Записей в акте нет')
 
-
     # Подсчет каких либо параметров после обсчета действия игроков. Обязательно выполняется после действий
-    # Типо какие-нибудь налоги или наоборот доп доход
+    # Какие-нибудь налоги или наоборот доп доход
     # Производство товаров будет обрабатываться здесь
     def calc_end_turn(self):
-        # self.()  # Рассчитаем баланс товаров(производство-потребление)
+        # self.() # Рассчитаем баланс товаров(производство-потребление)
 
         # Выставим False для параметра подтверждающего отправку хода и получение оповещения о новом ходе
         self.end_turn = False
@@ -148,7 +165,7 @@ class Dynasty:
         self.save_to_file()
         print(f"Функция обработки конца хода")
 
-    # Неактуальный метод. Теперь запускается как функция получая аргументами ИД партии и страны.
+    # TODO не рабочая функция. Оставляем для примера составления логов
     def act_build(self, buildings_name):     # 101 id
         # !!!!!!! На будущее нужно сделать сверку, доступна ли это постройка для игрока
         # Два раза buildings это: 1 = экземпляр класса с постройками, 2 = список построек уже в классе
@@ -175,7 +192,7 @@ class Dynasty:
         # Добавим за титул
         win_points += self.title
         self.win_points = win_points
-        # print(f"Победные очки {self.name_rus}: {self.win_points}")
+
         return win_points
 
     # Отмена действий. TODO Вторым аргументом количество, все, последний или номер индекса(еще не реализованно)

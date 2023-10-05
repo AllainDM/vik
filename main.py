@@ -66,6 +66,12 @@ menu_admin = [
               # {"name": "Feedback", "url": "contact"}
 ]
 
+# Временный глобальный список поселений, будет использоваться для быстрого создания партии
+settlements_names = ["Поселение 1", "Поселение 2", "Поселение 3", "Поселение 4", "Поселение 5",
+                     "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
+settlements_names_eng = ["Settlement 1", "Settlement 2", "Settlement 3", "Settlement 4", "Settlement 5",
+                         "Settlement 6", "Settlement 7", "Settlement 8", "Settlement 9", "Settlement 10"]
+
 
 def get_db():
     if not hasattr(g, 'link_db'):
@@ -421,15 +427,14 @@ def create_game(setting):  # Получаем только список игро
     # Создадим династии
     id_players_for_add_db = []  # Массив и ИД игроков, передается в БД, для записи партии
     # print(f"players_dynasty {players_dynasty}")
-    num_id = 1
-    for player in setting[1]:
+    for num, player in enumerate(setting[1]):
         print(f"setting[1]: {setting[1]}")
         print(f"player: {player}")
-        # TODO почему первый аргумент всегда 1, надо может делать +1 === num_id Добавить это?
+        # TODO Первый аргумент ид поселения, начнем с 1(num+1)
         print(f"Проверка на добавление династии при создании игры")
-        this_game.create_dynasty(1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
+        this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
+        this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
         id_players_for_add_db.append(player["playerId"])
-        num_id += 1
     # Создадим города
     # TODO создане поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
     # this_game.create_settlement("Карфаген", "Карфаген")
@@ -536,7 +541,7 @@ def req_status_game():
     user_name = current_user.get_name()
     game_id = rediska.get(f'playerID_{player}_active_gameID')
     # print(f"ИД игры при запросе статуса династии: {game_id}")
-    # !!!!!!!!! Тут еще нужна проверка на существование самой партии
+    # TODO !!!!!!!!! Тут еще нужна проверка на существование самой партии
     try:
         with open(f"games/{game_id}/gameID_{game_id}.trader", 'rb') as f:
             my_world = pickle.load(f)
@@ -545,13 +550,7 @@ def req_status_game():
         return ""
     print(f"my_world: {my_world}")
     # Так же загрузим список городов для торговли
-    cities = Cities()
-    list_cities = cities.cities_available()
-    goods = Goods()
-    buildings = ColonyBuildings()
-    goods_name_list = goods.resources_available()
-    buildings_name_list = buildings.buildings_name_list
-    # print(f"goods_name: {goods_name}")
+
     data = {
             # Об игроках
             "max_players": my_world["max_players"],
@@ -564,20 +563,14 @@ def req_status_game():
             "all_logs_party": my_world["all_logs_party"],
             "game_id": my_world["row_id"],
             "date_create": my_world["date_create"],
-            "buildings_price": my_world["buildings_price"],
-            "all_goods_prices": my_world["all_goods_prices"],
             "user_name": user_name,
-            "cities": list_cities,
-            "goods_name_list": goods_name_list,
-            "buildings_name_list": buildings_name_list,
-            "donate_leader": my_world["donate_leader"],
         }
     print(f"data {data}")
     return jsonify(data)
 
 
 # Чат
-@app.route("/post_chat", methods=["POST"])  # Подтверждение готовности хода
+@app.route("/post_chat", methods=["POST"])  # Внутриигровой чат. TODO !!! не доделан
 @login_required
 def post_chat():
     if request.method == "POST":

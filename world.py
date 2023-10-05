@@ -18,49 +18,58 @@ import maindb
 
 class FirstWorld:
     def __init__(self, row_id, date_create="0:0:0", max_players=8, is_active=1, the_end=0):
+        # Основные параметры
         self.row_id = row_id  # Номер игры
-        self.is_active = 1  # Не активная игра считается как завершенная
-        self.year = 800
-        self.turn = 1
+        self.is_active = 1  # Флаг идущей игры. Не активная игра считается как завершенная.
+        self.year = 800     # Стартовый год
+        self.turn = 1       # Стартовый ход
 
-        self.need_win_points_for_win = 8
-        self.winners = []
-        self.winners_ID = []
-        self.game_the_end = False
+        # Определение победителя
+        self.need_win_points_for_win = 8  # Количество баллов для победы
+        self.winners = []       # Список победителей, может быть не один
+        self.winners_ID = []    # Список ID победителей, может быть не один
+        self.game_the_end = False  # Игра завершена, можно делать ходы, но победитель уже определен
 
+        # Игроки
         self.dynasty = {}  # Основной объект с династиями
-        self.dynasty_list = []  # Массив стран, для перебора при обсчете хода
-        self.player_list = []
-        self.max_players = max_players
+        self.dynasty_list = []  # Список стран, для перебора при обсчете хода
+        self.player_list = []   # Список ид игроков
+        self.max_players = max_players  # Максимальное количество игроков
 
-        # Создаем новый обьект с классом поселения
-        self.settlements = {}
-        self.settlements_list = []
+        # Сюда сохраняется поселение при создании
+        self.settlements = {}  # Тут экземпляр класса
+        self.settlements_list = []  # Тут просто список названий
 
+        # Логи
         # Общий лог событий. Сюда будут записываться все выполненные действия всех "игроков"
         self.all_logs = []
         self.all_logs_party = []  # Лог всей партии
-
-        self.date_create = date_create
+        self.date_create = date_create  # Дата создания партии
 
     def save_to_file(self):
         data = {
+            # Основные параметры
             "row_id": self.row_id,
             "is_active": self.is_active,
             "year": self.year,
             "turn": self.turn,
+
+            # Определение победителя
+            "need_win_points_for_win": self.need_win_points_for_win,
+            "winners": self.winners,
+            "winners_ID": self.winners_ID,
+            "game_the_end": self.game_the_end,
+
+            # Игроки
             "dynasty": self.dynasty,
             "dynasty_list": self.dynasty_list,
             "player_list": self.player_list,
             "max_players": self.max_players,
 
+            # Логи
             "all_logs": self.all_logs,
             "all_logs_party": self.all_logs_party,
             "date_create": self.date_create,
-
-            "winners": self.winners,
-            "need_win_points_for_win": self.need_win_points_for_win,
-            "game_the_end": self.game_the_end,
         }
         print(f"save_to_file{data}")
         # Пишем в pickle.
@@ -80,22 +89,29 @@ class FirstWorld:
             print(f"Файл 'games/{game_id}/gameID_{game_id}.trader' не найден")
             return ""
         # Присвоим параметры
+        # Основные параметры
         self.row_id = data["row_id"]
         self.year = data["year"]
         self.turn = data["turn"]
+
+        # Определение победителя
+        # Список победителей и статус игры, при окончании победитель повторно не определяется
+        self.need_win_points_for_win = data["need_win_points_for_win"]
+        self.winners = data["winners"]
+        self.winners_ID = data["winners_ID"]
+        self.game_the_end = data["game_the_end"]
+
+        # Игроки
         self.dynasty = data["dynasty"]  # Тут переменная в виде названия Династии на английском
         self.dynasty_list = data["dynasty_list"]  # И тут переменная в виде названия Династии на английском.....
         self.player_list = data["player_list"]
         self.max_players = data["max_players"]
 
+        # Логи
         self.all_logs = data["all_logs"]
         self.all_logs_party = data["all_logs_party"]
         self.date_create = data["date_create"]
 
-        # Список победителей и статус игры, при окончании победитель повторно не определяется
-        self.winners = data["winners"]
-        self.need_win_points_for_win = data["need_win_points_for_win"]
-        self.game_the_end = data["game_the_end"]
         # TODO Проверим на ошибку чтение только что записанных данных?????????
 
     def create_dynasty(self, row_id, player_id, name, name_rus, gold):
@@ -121,16 +137,19 @@ class FirstWorld:
         #     print(f"Файл 'games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.trader' не найден")
         #     return ""
 
-    #  TODO Создать поселение. Возможно придется добавлять ИИ поселения
-    # def create_settlement(self, name, name_rus):
-    #     self.settlements[name] = Settlement(self, name=name, name_rus=name_rus)
-    #     self.settlements_list.append(name)
+    # TODO Создать поселение игрока
+    # TODO доделать
+    def create_settlement(self, row_id, player_id, name_rus, name):
+        # Обьект с экземпляром класса английское название. Список поселений с русским название
+        # TODO Можно ли сделать тоже на русском?
+        self.settlements[name] = Settlement(self, row_id=row_id, ruler=player_id, name_rus=name_rus, name=name)
+        self.settlements_list.append(name_rus)
 
-    # Восстановить династии из файла. Нужно для обсчета хода. Восстанавливаем все классы и считаем ход
+    # Восстановить династии из файла. Запускается при обсчете хода.
+    # Восстанавливаем все классы и считаем ход
     def restore_dynasty(self, game_id, player_id, dynasty_name):
         # print(f"Восстанавливаем династию: {player_id}")
         self.dynasty[dynasty_name] = Dynasty(self)
-        # print(self.dynasty[player_id])
         self.dynasty[dynasty_name].load_from_file(game_id, player_id)
 
 
@@ -157,16 +176,16 @@ def calculate_turn(game_id):
     # Функция восстанавливая династию по списку игроков, присваивает экземпляр класса не к имени страны,
     # а к ИД игрока, от этого получается баг с клоном династии
     # for player_id in game.player_list:
-    # !!!!!! Временно введем счетчик для соотношение ИД игрока от индекса страны с списке стран
-    # !!!!!! По хорошему сделать что-то типо словаря, название строна: Ид игрока
-    dynasty_playerID = 0
+    # !!!!!! Временно введем счетчик для соотношения ИД игрока от индекса страны в списке стран
+    # !!!!!! По-хорошему сделать словарь, название страна: Ид игрока
+    dynasty_player_id = 0
     for dynasty_name in game.dynasty_list:
         # !!!!!!!!!!! Мы тут получаем ИД игрока, а надо бы ИД династии.
         # !!!!!!!!!!! Можно было бы это совместить, но что будет, если меняется игрок на династии(стране)....
         # !!!!!!!!!!! Хотя вроде все верно, мы же забираем из подписанного файла ИДшником игрока
         # print(f"Пред восстанавливаем династию: {player_id}")
-        game.restore_dynasty(game_id, game.player_list[dynasty_playerID], dynasty_name)
-        dynasty_playerID += 1
+        game.restore_dynasty(game_id, game.player_list[dynasty_player_id], dynasty_name)
+        dynasty_player_id += 1
     # Теперь нужно запустить собственно саму обработку действий
     # В случае начала обсчета хода, необходимо почистить лог прошлого хода у стран.
     # Или еще лучше, сделать массив вообще со всеми логами.

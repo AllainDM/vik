@@ -2,7 +2,7 @@
 class Buildings:
     def __init__(self):
         # Словарь с ценами построек
-        self.resources_price = {
+        self.buildings_price = {
             'Гавань': 200,
             'Лесорубка': 200,
         }
@@ -12,10 +12,16 @@ class Buildings:
             'Лесорубка': 0,
         }
         # Просто список с названиями построек
-        self.resources_name_list = [
+        self.buildings_name_list = [
             'Гавань',
             'Лесорубка',
         ]
+        # Размер построек(требования населения)
+        self.buildings_size = {
+            'Гавань': 0.2,
+            'Лесорубка': 0.5,
+
+        }
 
     # Производство товаров
     def prod(self, settlement):
