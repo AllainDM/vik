@@ -109,6 +109,20 @@ class FDataBase:
 
         return True
 
+    def get_all_active_games(self):
+        try:
+            self.__cur.execute(f"SELECT * FROM games WHERE is_active = 1")
+            res = self.__cur.fetchall()
+            if not res:
+                print("games not found")
+                return []  # Вернем пустой список, для возможности добавления в него первого элемента
+
+            return res
+        except Exception as _ex:
+            print("Ошибка поиска игр в БД", _ex)
+
+        return False
+
     def get_all_games(self):
         try:
             self.__cur.execute(f"SELECT * FROM games WHERE is_active = 1")
@@ -123,6 +137,7 @@ class FDataBase:
 
         return False
 
+    # Список игр, где еще есть места
     def get_all_not_full_games(self):
         try:
             self.__cur.execute(f"SELECT * FROM games WHERE max_players > cur_num_players")

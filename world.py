@@ -33,8 +33,10 @@ class FirstWorld:
 
         # Игроки
         self.dynasty = {}  # Основной объект с династиями
+        self.dynasty_dict = {}   # Словарь, где ключ это ид игрока, а значение это имя династии
+        # TODO возможно стоит убрать dynasty_list и player_list, ибо их должен заменить словарь dynasty_dict
         self.dynasty_list = []  # Список стран, для перебора при обсчете хода
-        self.player_list = []   # Список ид игроков
+        self.player_list = []   # Список ид игроков, он же ид династии
         self.max_players = max_players  # Максимальное количество игроков
 
         # Сюда сохраняется поселение при создании
@@ -63,6 +65,7 @@ class FirstWorld:
 
             # Игроки
             # "dynasty": self.dynasty,  # TODO объект с экземплярами класса, в сохранении не нуждается
+            "dynasty_dict": self.dynasty_dict,
             "dynasty_list": self.dynasty_list,
             "player_list": self.player_list,
             "max_players": self.max_players,
@@ -122,6 +125,7 @@ class FirstWorld:
 
         # Игроки
         # self.dynasty = data["dynasty"]  # TODO !!! Класс !!! Тут переменная в виде названия Династии на английском
+        self.dynasty_dict = data["dynasty_dict"]
         self.dynasty_list = data["dynasty_list"]  # И тут переменная в виде названия Династии на английском.....
         self.player_list = data["player_list"]
         self.max_players = data["max_players"]
@@ -137,10 +141,14 @@ class FirstWorld:
 
         # TODO Проверим на ошибку чтение только что записанных данных?????????
 
-    def create_dynasty(self, row_id, player_id, name, name_rus, gold):
+    def create_dynasty(self, row_id, player_id, name, name_rus, gold=1000):
         # При создании династии передаем название, но можно передавать ид
         self.dynasty[name] = Dynasty(self, row_id=row_id, player_id=player_id, name=name, name_rus=name_rus, gold=gold)
+        # Список династий, для перебора при обсчете хода
+        # TODO неплохо бы заменить на перебор словаря dynasty_dict
         self.dynasty_list.append(name)
+        # Сохраним в новый словарь, где ключ ид игрока(== ид династии), а значение имя династии
+        self.dynasty_dict[player_id] = name
         print(f"Создание династии {self.dynasty_list[-1]}")
         print(f"Создание династии {self.dynasty[name]}")
         print(self.dynasty[name])
@@ -148,17 +156,6 @@ class FirstWorld:
         # print(f"Общее количество династий: {len(self.dynasty)}")
         self.player_list.append(player_id)
         self.dynasty[name].save_to_file()
-        # !!!!!!!!!! Еще нужно запустить у Династии функцию сохранения ее данных в файл
-        # Создадим файл с записью хода игрока. Он должен быть пустым при каждом создании игры
-        acts = []
-        # !!!!!!!! Возможно тут повторная запись в файл, то же самое выполняем выше "self.dynasty[name].save_to_file()"
-        # try:
-        #     with open(f"games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.viking", 'wb') as f:
-        #         pickle.dump(acts, f, pickle.HIGHEST_PROTOCOL)
-        #     return self.dynasty[name]
-        # except FileNotFoundError:
-        #     print(f"Файл 'games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.viking' не найден")
-        #     return ""
 
     # TODO Создать поселение игрока
     # TODO доделать
@@ -188,8 +185,8 @@ def check_readiness(game_id):  # Проверить все ли страны о�
     # with open(f"games/{game_id}/gameID_{game_id}.viking", 'rb') as f:
     #     data_main = pickle.load(f)
     for i in data_main["player_list"]:
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{i}.viking", 'rb') as f:
-            end_turn_reading = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{i}.viking", 'r') as f:
+            end_turn_reading = json.load(f)
             if not end_turn_reading["end_turn"]:
                 print("Как минимум один из игроков еще не готов")
                 print(f"Игрок: {i}")
@@ -208,6 +205,7 @@ def calculate_turn(game_id):
     # for player_id in game.player_list:
     # !!!!!! Временно введем счетчик для соотношения ИД игрока от индекса страны в списке стран
     # !!!!!! По-хорошему сделать словарь, название страна: Ид игрока
+
     dynasty_player_id = 0
     for dynasty_name in game.dynasty_list:
         # !!!!!!!!!!! Мы тут получаем ИД игрока, а надо бы ИД династии.
@@ -238,7 +236,7 @@ def calculate_turn(game_id):
         # Отрандомим через random.sample список имен с династиями
         dyn_arr = sample(game.dynasty_list, len(game.dynasty_list))
         for rand_dynasty in dyn_arr:
-            # Проверим остались ли очки действия у страны
+            # Проверим, остались ли очки действия у страны
             if game.dynasty[rand_dynasty].body_points_left > 0:
                 acts_left = True  # Выставим верное значение, для продолжения обсчета цикла
                 game.dynasty[rand_dynasty].calc_act()

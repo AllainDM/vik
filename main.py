@@ -98,7 +98,8 @@ dbase = None
 """
 
 # Массив с АЙДишниками игр
-game_arr = []
+# TODO удалить, если будет работать без него
+# game_arr = []
 
 
 @app.before_request
@@ -159,7 +160,7 @@ def play():
     else:
         # Извлекаем активную игру из Редиски
         # active_game = rediska.get(f'playerID_{player}_active_gameID')
-        my_game_arr = dbase.get_all_games()
+        my_game_arr = dbase.get_all_active_games()
         if len(my_game_arr) == 0:
             return render_template("choose-game.html", title=user_name, menu=menu_auth)
         # if active_game == 0:
@@ -204,9 +205,9 @@ def log():
 @app.route("/load_all_games")  # Посмотреть список все игр с возможностью их удаления. ТОЛЬКО ДЛЯ АДМИНА
 @login_required
 def load_all_games():  # Делаю подпись html, чтоб разделить названия функций с просто запросом страницы
-    global game_arr
+    # global game_arr
     # Прочитаем файл со списком игр
-    game_arr = dbase.get_all_games()
+    game_arr = dbase.get_all_active_games()
     # Выше мы получили кортеж с данными страны, под 5 индексом список ИД игроков
     # Нужно перебрать список ИД игроков и вынести имена игроков
     print(f"game_arr: {game_arr}")
@@ -220,9 +221,9 @@ def load_all_games():  # Делаю подпись html, чтоб раздели
 @app.route("/load_all_new_games")  # Посмотреть список все игр к которым можно присоединиться
 @login_required
 def load_all_new_games():  # Делаю подпись html, чтоб разделить названия функций с просто запросом страницы
-    global game_arr
+    # global game_arr
     # Прочитаем файл со списком игр
-    game_arr = dbase.get_all_not_full_games()
+    game_arr = dbase.get_all_not_full_games()  # Список игр, где еще есть места
     # Выше мы получили кортеж с данными страны, под 5 индексом список ИД игроков
     # Нужно перебрать список ИД игроков и вынести имена игроков
     print(f"game_arr для списка новых игр: {game_arr}")
@@ -242,7 +243,7 @@ def load_all_new_games():  # Делаю подпись html, чтоб разде
 def add_player_to_game():
     game_id = int(request.args.get('id'))
     player_id = int(current_user.get_id())
-    player_info = dbase.get_user(player_id)
+    player_info = dbase.get_user(player_id)  # TODO тут возврат всей записи о пользователе?
     print(f"player_info: {player_info}")
     dbase.add_player(game_id, player_id)
     add_dynasty(game_id, player_info)
@@ -266,9 +267,9 @@ def delete_game():
 @app.route("/load_all_my_game")  # Посмотреть список всех игр для игрока
 @login_required
 def load_all_my_game():  # Делаю подпись html, чтоб разделить названия функций с просто запросом страницы
-    global game_arr
+    # global game_arr
     # Прочитаем список игр из БД
-    game_arr = dbase.get_all_games()
+    game_arr = dbase.get_all_active_games()
     player = int(current_user.get_id())
     games_list = []  # Это список игр для отправки игроку для выбора
     print(f"game_arr1: {game_arr}")
@@ -320,7 +321,7 @@ def req_list_players():
     list_users_to_front = []
     users = dbase.get_all_user()
     # print(f"users: {users}")
-    games = dbase.get_all_games()
+    # games = dbase.get_all_active_games()
     # print(f"games: {games}")
     for user in users:
         # Возвращаем имя пользователя(не логин) и ИД пользователя(для админа)
@@ -400,11 +401,14 @@ def create_new_game():
 
 def create_game(setting):  # Получаем только список игроков
     # TODO Нужно с фронта получать два аргумента, а не только список
+    # TODO какой второй?
     # all_games = dbase.get_all_games()
     # print(f"all_games: {all_games}")
-    global game_arr  # Зачем?
+    # Получим все записи игр из БД
+    # Возьмем ее длинну для создания новой партии
+    # global game_arr  # Зачем?
     # Прочитаем файл со списком игр
-    game_arr = dbase.get_all_games()
+    game_arr = dbase.get_all_active_games()
     if len(game_arr) == 0:
         game_arr.append(1)
     else:
@@ -416,7 +420,7 @@ def create_game(setting):  # Получаем только список игро
     print(f"max_pl: {max_pl}")
     this_game = FirstWorld(game_arr[-1], date_now, max_pl)
 
-    # Создадим папку игры и папку ходов если их не существует
+    # Создадим папку игры и папку ходов, если их не существует.
     # Может делать проверку при создании игры, и удалять/создавать заново если она есть
     if not os.path.exists(f"games"):
         os.makedirs(f"games")
@@ -428,6 +432,7 @@ def create_game(setting):  # Получаем только список игро
     # Создадим династии
     id_players_for_add_db = []  # Массив и ИД игроков, передается в БД, для записи партии
     # print(f"players_dynasty {players_dynasty}")
+    # TODO вариант создания игры под несколько игроков сразу. Оставим на будущее.
     for num, player in enumerate(setting[1]):
         print(f"setting[1]: {setting[1]}")
         print(f"player: {player}")
@@ -435,9 +440,12 @@ def create_game(setting):  # Получаем только список игро
         print(f"Проверка на добавление династии при создании игры")
         this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
         this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
-        id_players_for_add_db.append(player["playerId"])  # Массив и ИД игроков, передается в БД, для записи партии
+        id_players_for_add_db.append(player["playerId"])  # Массив с ИД игроков, передается в БД, для записи партии
+    # Создание игры, где сначала только один игрок
+    print(f"setting[1]: {setting[1]}")
+
     # Создадим города
-    # TODO создане поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
+    # TODO создании поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
     # this_game.create_settlement("Карфаген", "Карфаген")
     # this_game.create_settlement("Сиракузы", "Сиракузы")
     # this_game.create_settlement("Афины", "Афины")
@@ -455,6 +463,7 @@ def create_game(setting):  # Получаем только список игро
     return f"Game create {setting[1]}"
 
 
+# Присоединение к игре
 def add_dynasty(game_id, player):
     game = FirstWorld(game_id)  # Восстановим саму игру.
     game.load_from_file(game_id)  # Запустим метод считающий данные из файла.
@@ -494,8 +503,8 @@ def req_status_all_player():
     game_id = request.args.get('gameId')
     return_data = []
     try:
-        with open(f"games/{game_id}/gameID_{game_id}.viking", 'rb') as f:
-            data_players = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}.viking", 'r') as f:
+            data_players = json.load(f)
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
         return ""
