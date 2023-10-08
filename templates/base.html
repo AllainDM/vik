@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
+    <link rel="shortcut icon" href="static/image/icon/vik2.png" type="image/x-icon">
+    <title>{{title}}</title>
+</head>
+<body>
+    
+    {% block content -%}
+        {%- block mainmenu -%}
+            <ul class="mainmenu">
+                {% for m in menu %}
+                <li><a href="{{m.url}}">{{m.name}}</a></li>
+                {% endfor -%}
+            </ul>
+        {% endblock mainmenu -%}
+<!--        <aside class="aside_left">-->
+<!--            <div>-->
+<!--                -->
+<!--            </div>-->
+<!--        </aside>-->
+        
+	{% endblock -%}
+    
+
+    <footer>
+        <section class="chat" style="margin-top: 50px;">
+            <section id="chat-text" style="font-size: 18px">Тут будет внутриигровой чат
+        
+            </section>
+            <input id="chat-input-text" type="text">
+            <button id="chat-send-text">Отправить</button>
+        </section>
+    </footer>
+
+
+</body>
+
+
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</html>

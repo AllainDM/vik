@@ -1,0 +1,71 @@
+	{% extends 'base.html' %}
+
+	{% block content %}
+	{{ super() }}
+
+
+	<!-- <div class="container">
+
+		<div class="menu-btn" id="create-new-game">Создать быструю тестовую новую игру</div>
+
+	</div>
+
+	<hr> -->
+
+	<div class="container">
+
+		<div class="menu-btn" id="create-new-single-game">Создать каждому по одиночной игре</div>
+
+	</div>
+
+	<hr>
+
+	<div class="container">
+		<p id="status-new-game">Расширенная настройка новой игры</p>
+	
+		<button id="add-new-dynasty">Добавить игрока</button>
+
+		<button id="create-new-set-game">
+			Создать новую игру
+		</button>
+	</div>
+
+	<div id="tables">
+		<table class="table-main" id="set-dynastyes">
+			<tr class="table-color">
+				<th class="table-th" id='th-player'>Игрок</th>
+				<th class="table-th" id='th-name'>Название рус.</th>
+				<th class="table-th" id='th-name-rus'>Название eng.</th>
+				<th class="table-th" id='th-gold'>Золото</th>
+			</tr>
+
+		</table>
+		<!-- <table class="table-main" id="set-new-dynasty">
+			<select class="add-players">
+				<option value='000'>Тест</option>
+			</select>
+			<select class="add-players">
+				<option value='000'>Тест2</option>
+			</select>
+		</table> -->
+	
+
+	</div>
+	
+	<!-- <select class="add-players" id="choose-players">
+	</select> -->
+	
+
+	<!-- <div class="container">
+		<div class="list"> 
+			<div class="show-list" id="menu-buttons-choose"> -->
+			   <!-- Для отображения списка игроков -->
+			<!-- </div>
+		</div>
+	</div> -->
+
+	
+
+		<script src="{{ url_for('static', filename='js/create-game.js') }}"></script>
+
+	{% endblock %}

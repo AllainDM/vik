@@ -1,0 +1,489 @@
+body {
+    font-size: 24px;
+    /* background: #E4E8EF; */
+    background: #364d72;
+    /* font-family: Verdana, Arial; */
+    font-family: 'Times New Roman', Times, serif;
+    padding: 0px;
+    width: 75%;
+    margin: 0 auto;
+}
+
+header {
+    height: 150px;
+}
+
+.form-contact label {
+    display: inline-block; 
+    min-width: 80px;
+}
+
+.form-contact p {margin: 10px 0 10px 0;}
+.form-contact input[type=submit], textarea {
+    font-size: 16px;
+}
+
+ul.mainmenu {
+	list-style: none;
+	/* background: #4b4b4b; */
+	background: #222121;
+	height: 60px;
+	margin: 0;
+	padding: 0;
+	color: white;
+	font-size: 20px;
+	overflow: hidden;
+}
+ul.mainmenu li {
+	float: left;
+	margin: 18px 30px 0 30px;
+}
+ul.mainmenu li.last {float: right;}
+
+ul.mainmenu li a {
+	color: white;
+	text-decoration: none;
+}
+ul.mainmenu li a:hover {
+	color: white;
+}
+
+.clear {clear: both;}
+
+div.content {
+	margin: 10px;
+}
+
+.flash {
+
+    padding: 10px 100px;
+}
+.flash.success {
+	border: 1px solid #21DB56;
+	background: #AEFFC5;
+}
+.flash.error {
+	border: 1px solid #FF4343;
+	background: #FF9C9C;
+}
+
+.container {
+	width: 1024px;
+}
+.container-act-logs{
+    width: 30%;
+    float: left;
+
+}
+
+.container-local-logs{
+    width: 33%;
+    float: left;
+}
+
+.container-all-logs{
+    width: 37%;
+    float: left;
+}
+
+.logs {
+    width: 95%;
+    margin-top: 160px;
+    float: left;
+    font-size: 16px;
+    vertical-align:top;  
+    background: rgb(187, 183, 172);
+    outline: 2px solid #000; 
+    border: 3px solid #fff; 
+    border-radius: 5px;
+    
+}
+
+.center {
+    width: 80%;
+    float: left;
+}
+
+.aside_left {
+	float: left;
+	width: 100px;
+	height: 1000px;
+	padding-bottom: 10px;
+	margin-right: 40px;
+	margin: 20px 20px 20px;
+}
+.end-turn {
+    display: table-cell;
+    width: 20%;
+}
+.dashboard{
+    margin-top: 0px;
+    height: 280px;
+}
+.standart-window {
+    margin-top: 10px;
+
+    background: rgb(206, 204, 198); /* Цвет фона */
+    outline: 1px solid #000; 
+    border: 1px solid #fff; 
+    border-radius: 1px; 
+}
+.window-set-new-game {
+    width: 150px;
+    margin-top: 10px; 
+    font-size: 18px; 
+    background-color: rgb(159, 170, 180); 
+    border-radius: 1px; 
+    border: 1px solid #fff; 
+}
+.dashboard-stat{
+    /* flex-wrap: nowrap; */
+    font-size: 16px;
+    width: 170px;
+    height: 170px;
+    display: inline-block;
+    margin-top: 10px;
+    vertical-align:top;  
+    
+    background: rgb(187, 183, 172); /* Цвет фона */
+    outline: 2px solid #000; /* Чёрная рамка */
+    border: 3px solid #fff; /* Белая рамка */
+    border-radius: 5px; /* Радиус скругления */
+}
+.dashboard-resources{
+    /* flex-wrap: nowrap; */
+    font-size: 16px;
+    /* width: 240px; */
+    min-width: 200px;
+    /* min-height: 50px; */
+    display: inline-block;
+    margin-top: 10px;
+    vertical-align:top;  
+    
+    background: rgb(187, 183, 172); /* Цвет фона */
+    outline: 2px solid #000; /* Чёрная рамка */
+    border: 1px solid #fff; /* Белая рамка */
+    border-radius: 5px; /* Радиус скругления */
+}
+.dashboard-turn{
+    /* flex-wrap: nowrap; */
+    font-size: 16px;
+    width: 210px;
+    height: 170px;
+    display: inline-block;
+    margin-top: 10px;
+    vertical-align:top;
+    
+    background: rgb(187, 183, 172); /* Цвет фона */
+    outline: 2px solid #000; /* Чёрная рамка */
+    border: 3px solid #fff; /* Белая рамка */
+    border-radius: 5px; /* Радиус скругления */
+}
+.dashboard-dev{
+    margin-top: 10px;
+    border-radius: 5px;
+    outline: 2px solid #000; /* Чёрная рамка */
+    border: 3px solid #fff; /* Белая рамка */
+    color: white;
+    font-size: 14px;
+    width: 170px;
+    height: 170px;
+    background-color: #8f8888;
+    float: right;
+
+}
+.log-done {
+    background-color: green;
+}
+.log-bug {
+    background-color: rgb(212, 95, 95);
+}
+.map-block {
+    width: 63%;
+    height: 280px;
+    float: left;
+
+    outline: 1px solid #000; /* Чёрная рамка */
+    border-radius: 3px; /* Радиус скругления */
+
+}
+.map-block img {
+    width: 100%;
+    height: 100%;
+}
+.icon{
+    vertical-align: top;
+    width: 10%;
+    height: 10%;
+
+}
+/* img{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  } */
+.menu-block {
+    /* width: 35%; */
+    height: 280px;
+    /* float: left; */
+    max-width: 14em; /* блок занимает ширину родителя, max-width её ограничивает */
+    min-height: 2em;
+    margin-left: auto;
+    margin-right: 0.1em;
+    /* outline: 1px solid #000; Чёрная рамка */
+    /* border-radius: 3px; Радиус скругления */
+
+}
+.menu-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 12pt;
+}
+.menu-buttons-choose {
+    font-size: 12pt;
+}
+.menu-choose-exit {
+    font-size: 12pt;
+}
+.menu-buttons-main {
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.menu-btn {
+    user-select: none;
+    /* cursor: pointer; */
+    flex-basis: calc(50% - 4px);
+    flex-shrink: 0;
+    text-align: center;
+    line-height: 2;
+    margin-top: 2px;
+    margin-left: 2px;
+    background-color: rgb(187, 183, 176);
+    /* background-color: rgb(218, 211, 197); */
+    border: solid black 1px;
+    border-radius: 8px;
+    font-size: 12pt;
+}
+.show-list {
+    user-select: none;
+    line-height: 2;
+    margin-top: 3px;
+    margin-left: 2px;
+    background-color: rgb(243, 240, 235);
+    border: solid rgb(179, 164, 164) 1px;
+    border-radius: 3px;
+    font-size: 10pt;
+}
+.menu-buttons-build {
+    visibility: hidden;
+    flex-direction: column;
+}
+.menu-buttons-trade {
+    visibility: hidden;
+    flex-direction: column;
+}
+.menu-buttons-decision {
+    visibility: hidden;
+    flex-direction: column;
+}
+.menu-buttons-diplomaty {
+    visibility: hidden;
+    flex-direction: column;
+}
+.province-name {
+    margin-left: 250px;
+}
+.stats {
+    height: 0px;
+    font-size: 15pt;
+    margin-top: 0px;
+
+}
+.stats1 {
+    margin-top: 0px;
+    margin-left: 0px;
+}
+.stats2 {
+    margin-left: 80px;
+}
+.stats3 {
+    margin-left: 220px;
+}
+.stats4 {
+    margin-left: 385px;
+}
+.set-dynasty {
+
+    font-size: 12px;
+    line-height: 3;
+}
+
+/* Покрасим текст через класс */
+.set-red-font {
+    background-color: red;
+}
+
+
+/* Модальное окно */
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Оставаться на месте */
+    z-index: 1; /* Сидеть на вершине */
+    left: 0;
+    top: 0;
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    overflow: auto; /* Включите прокрутку, если это необходимо */
+    background-color: rgb(0,0,0); /* Цвет запасной вариант */
+    background-color: rgba(0,0,0,0.4); /* Черный с непрозрачностью */
+  }
+  
+  /* Модальное содержание/коробка */
+  .modal-content {
+    background-color: #fefefe;
+    font-size: 14px;
+    margin: 15% auto; /* 15% сверху и по центру */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Может быть больше или меньше, в зависимости от размера экрана */
+  }
+  
+  /* Кнопка закрытия */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  } 
+
+  /* Таблицы добавления новых игроков(стран) */
+
+.table-main {
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+.table-th {
+    /* background: #9bbe3a; */
+    background: #ddd8d2;
+    /* color: rgb(24, 21, 21); */
+    /* padding: 0px 0px 0px 0px; */
+    border-width: 1px;
+    border-color: white;
+    text-align: center;
+    font-size: 14px;
+}
+
+#th-player {
+    width: 180px;
+    text-align: center;
+}
+
+#th-name {
+    width: 180px;
+    text-align: center;
+}
+
+#th-name-rus {
+    width: 180px;
+    text-align: center;
+}
+
+#th-gold {
+    width: 100px;
+    text-align: center;
+}
+
+legend {
+    /* background-color: #000; */
+    /* color: #fff; */
+    padding: 3px 6px;
+    font-size: 16px;
+}
+
+input {
+    margin: 0.4rem;
+}
+
+.btn {
+    margin-top: 10px;
+    background-color: rgb(212, 210, 221);
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;font-size: 20px;
+}
+
+.end-turn-btn {
+    width: 100px;
+}
+
+/* Стыренное  */
+/* Красивые кнопки */
+.custom-btn {
+  /* width: 130px; */
+  width: 100%;
+  height: 40px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 500;
+  background: rgb(54, 56, 54);
+  /* background: rgb(53, 163, 53); */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+   box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+   7px 7px 20px 0px rgba(0,0,0,.1),
+   4px 4px 5px 0px rgba(0,0,0,.1);
+  outline: none;
+}
+.btn-16 {
+  border: none;
+  color: #000;
+  z-index: 1;
+}
+.btn-16:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 100%;
+  top: 0;
+  left: 0;
+  direction: rtl;
+  z-index: -1;
+  box-shadow:
+   -7px -7px 20px 0px #fff9,
+   -4px -4px 5px 0px #fff9,
+   7px 7px 20px 0px #0002,
+   4px 4px 5px 0px #0001;
+  transition: all 0.3s ease;
+}
+.btn-16:hover {
+  color: #000;
+}
+.btn-16:hover:after {
+  left: auto;
+  right: 0;
+  width: 100%;
+}
+.btn-16:active {
+  top: 2px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }

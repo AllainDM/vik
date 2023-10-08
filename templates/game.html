@@ -1,0 +1,179 @@
+	{% extends 'base.html' %}
+
+	{% block content %}
+	{{ super() }}
+
+<header>
+    <div class="container">
+        <div class="dashboard-dev">
+            <div style="text-align: center;">Разработка</div>
+            <div id="player">Имя игрока</div>
+            <div id="game-id">Номер игры</div>
+            <div id="game-date">Время создания</div>
+        </div>
+        <div class="dashboard-stat">
+            <div id="province-name" style="text-align: center;">Игра не загрузилась</div>
+            <div id="gold"> </div>            
+            <div id="body-points">Очки действий:</div>
+            <div id="rank">Титул: 0</div>
+            <div id="win-points">Победные очки:</div>
+        </div>
+        <div class="dashboard-stat">
+            <div id="cur-num-players">Игроков:</div>
+            <div id="max-players">Макс. игроков:</div>
+            <div id="victory-conditions">Условия победы: Набрать 666 очков</div>
+            <div id="winners">Победитель(и): не определен</div>
+        </div>
+        <div class="dashboard-stat players-stat">
+
+        </div>
+        <div class="dashboard-turn">
+            <div id="year-turn">Год: 800 Ход: 1</div>
+            <div id="end-turn-bool">Завершен ли ход</div>
+            <!-- <div class="stats header-buttons"> -->
+            <button id="end-turn-btn" class="custom-btn end-turn-btn" style="margin-top: 5px;">Подтвердить ход</button>
+            <div id="timer">таймер автообновления 10 секунд. ОТКЛЮЧЕН</div>
+            <!-- </div> -->
+        </div>
+    </div>
+</header>
+<div class="container" style="margin-top: 50px;">
+    <div class="dashboard">
+        <div class="map-block">
+            <!-- Карту отключим, слишком мелкая, и на ней ничего не видно -->
+            <!-- <img src="static/image/map/map.png" alt="map"> -->
+        </div>
+        <div class="menu-block" >
+            <!-- Главное меню -->
+            <div class="menu-buttons menu-buttons-main"  id="main-menu-buttons">
+                <!-- <div class="menu-btn" id="menu-colony">Строительство колоний</div>
+                <div class="menu-btn" id="menu-trade">Торговля</div>
+                <div class="menu-btn" id="menu-diplomaty">Дипломатия</div> -->
+                <button class="custom-btn btn-15" id="menu-build">Строительство</button>
+                <button class="custom-btn btn-15" id="menu-trade">Торговля</button>
+                <button class="custom-btn btn-15" id="menu-decision">Решения</button>
+                <button class="custom-btn btn-15" id="menu-diplomaty">Дипломатия</button>
+
+            </div>
+
+            <!-- Строительство -->
+            <div class="menu-buttons menu-buttons-build" id="menu-buttons-build">
+                <button class="custom-btn btn-15" id="menu-new-building">Постройки</button>
+                <button class="custom-btn btn-15 menu-exit">Выход</button>
+            </div>
+
+            <!-- Торговля -->
+            <div class="menu-buttons menu-buttons-trade" id="menu-buttons-trade">
+                <div class="menu-buttons-choose" id="menu-buttons-show-trade">
+                    <!-- <div class="menu-btn menu-exit">Выход</div> -->
+                    <!-- Для отображения кнопок выбора новых пунктов в меню, строительство и торговля -->
+                </div>
+            </div>
+            <div>
+                <div class="choose-list"> <!-- Возможно лучше скрыть -->
+                    <div class="menu-buttons-choose" id="menu-buttons-choose">
+                        <!-- Для отображения кнопок выбора новых пунктов в меню, строительство и торговля -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Решения -->
+            <div class="menu-buttons menu-buttons-decision" id="menu-buttons-decision">
+                <button class="custom-btn btn-15" id="buy-title">Купить титул</button>
+                <button class="custom-btn btn-15" id="make-donation">Сделать пожертвование</dbuttoniv>
+                <button class="custom-btn btn-15 menu-exit">Выход</button>
+            </div>
+
+
+            <!-- Дипломатия. Тут статистика игроков -->
+            <div class="menu-buttons menu-buttons-diplomaty" id="menu-buttons-diplomaty">
+                <!-- <div class="menu-btn menu-exit">Выход</div> -->
+                <div class="menu-buttons-choose" id="menu-buttons-show-diplomaty">
+                    <!-- Для отображения кнопок выбора новых пунктов в меню, строительство и торговля -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="stats">
+        <!-- <div class="province-name">
+            <div id="province-name">Игра не загрузилась</div>
+        </div> -->
+        <div class="dashboard-resources stats-buildings">
+            <div style="margin-top: 2px; text-align: center;">Постройки</div>
+            <div>Ничего нет</div>
+            <!-- <div class="stats stats1"> -->
+
+            <!-- </div> -->
+            <!-- <p class="stats stats1"></p>
+            <p class="stats stats2"></p> -->
+        </div>
+        <div class="dashboard-resources stats-resources">
+            <div style="margin-top: 2px; text-align: center;">Баланс ресурсов</div>
+            <div>Ничего нет</div>
+            <!-- <p class="stats stats3"></p>
+            <p class="stats stats4"></p> -->
+
+        </div>
+        <!-- <div class="all-stats">
+            <div class="two-stats">
+                <div class="stats stats1">
+                </div>
+                <div class="stats stats2">
+                </div>
+            </div>
+            <div class="two-stats">
+                <div class="stats stats3">
+                </div>
+                <div class="stats stats4">
+                </div>
+            </div>
+
+        </div> -->
+    </div>
+</div>
+<!-- class="dashboard-stat" -->
+<div class="container">
+    <div class="container-act-logs">
+        <div class="logs"> 
+            <div id="logs"></div>
+            <p></p>
+
+            <!-- <input type="button" value="Отменить последний приказ" id="cancel-act" style="float: right; margin-top: 15px;"> -->
+            <!-- <input type="button" value="Отменить все приказы" id="cancel-all-acts" style="float: right;"> -->
+            <button style="font-size: 12px; margin-top: 5px;" id="cancel-act">Отменить последний приказ</button>
+            <button style="font-size: 12px; margin-top: 5px;" id="cancel-all-acts">Отменить все приказы</button>
+        </div>
+    </div>
+    <div class="container-local-logs">
+        <div class="logs"> 
+            <button style="font-size: 14px;" id="show_all_logs_party_players">Посмотреть логи всех ваших ходов</button>
+            <div id="logs-result"></div>
+        </div>
+    </div>
+    <div class="container-all-logs">
+        <div class="logs"> 
+            <button style="font-size: 14px;" id="show_all_logs_party">Посмотреть логи всех ходов</button>
+            <div id="all-logs-result"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка -->
+<div id="my-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="show-content">
+
+        </div>
+        
+    </div>
+</div> 
+
+        <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
+
+	{% endblock %}
