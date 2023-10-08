@@ -1,4 +1,5 @@
 import pickle  # Модуль для сохранения параметров(классов) в файлы
+import json     # Вместо pickle продуем сохранять в json
 
 # Что-то связанное с рандомом.
 # Используется для перетасовки игроков каждую итерацию обработки хода.
@@ -61,10 +62,14 @@ class FirstWorld:
             "game_the_end": self.game_the_end,
 
             # Игроки
-            "dynasty": self.dynasty,
+            # "dynasty": self.dynasty,  # TODO объект с экземплярами класса, в сохранении не нуждается
             "dynasty_list": self.dynasty_list,
             "player_list": self.player_list,
             "max_players": self.max_players,
+
+            # Управляемые поселения
+            # "settlements": self.settlements,  # TODO объект с экземплярами класса, в сохранении не нуждается
+            "settlements_list": self.settlements_list,
 
             # Логи
             "all_logs": self.all_logs,
@@ -72,22 +77,36 @@ class FirstWorld:
             "date_create": self.date_create,
         }
         print(f"save_to_file{data}")
-        # Пишем в pickle.
+        # Пишем в json
         try:
-            with open(f"games/{self.row_id}/gameID_{self.row_id}.trader", 'wb') as f:
-                pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+            with open(f"games/{self.row_id}/gameID_{self.row_id}.viking", 'w') as f:
+                json.dump(data, f)
         except FileNotFoundError:
-            print(f"Файл 'games/{self.row_id}/gameID_{self.row_id}.trader' не найден")
+            print(f"Файл 'games/{self.row_id}/gameID_{self.row_id}.viking' не найден")
             return ""
+        # Пишем в pickle
+        # try:
+        #     with open(f"games/{self.row_id}/gameID_{self.row_id}.viking", 'wb') as f:
+        #         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+        # except FileNotFoundError:
+        #     print(f"Файл 'games/{self.row_id}/gameID_{self.row_id}.viking' не найден")
+        #     return ""
 
     def load_from_file(self, game_id):
-        # Прочитаем из pickle весь файл
+        # Прочитаем из json весь файл
         try:
-            with open(f"games/{game_id}/gameID_{game_id}.trader", 'rb') as f:
-                data = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}.viking", 'r') as f:
+                data = json.load(f)
         except FileNotFoundError:
-            print(f"Файл 'games/{game_id}/gameID_{game_id}.trader' не найден")
+            print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
             return ""
+        # Прочитаем из pickle весь файл
+        # try:
+        #     with open(f"games/{game_id}/gameID_{game_id}.viking", 'rb') as f:
+        #         data = pickle.load(f)
+        # except FileNotFoundError:
+        #     print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
+        #     return ""
         # Присвоим параметры
         # Основные параметры
         self.row_id = data["row_id"]
@@ -102,10 +121,14 @@ class FirstWorld:
         self.game_the_end = data["game_the_end"]
 
         # Игроки
-        self.dynasty = data["dynasty"]  # Тут переменная в виде названия Династии на английском
+        # self.dynasty = data["dynasty"]  # TODO !!! Класс !!! Тут переменная в виде названия Династии на английском
         self.dynasty_list = data["dynasty_list"]  # И тут переменная в виде названия Династии на английском.....
         self.player_list = data["player_list"]
         self.max_players = data["max_players"]
+
+        # Управляемые поселения
+        # self.settlements = data["settlements"]
+        self.settlements_list = data["settlements_list"]
 
         # Логи
         self.all_logs = data["all_logs"]
@@ -130,11 +153,11 @@ class FirstWorld:
         acts = []
         # !!!!!!!! Возможно тут повторная запись в файл, то же самое выполняем выше "self.dynasty[name].save_to_file()"
         # try:
-        #     with open(f"games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.trader", 'wb') as f:
+        #     with open(f"games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.viking", 'wb') as f:
         #         pickle.dump(acts, f, pickle.HIGHEST_PROTOCOL)
         #     return self.dynasty[name]
         # except FileNotFoundError:
-        #     print(f"Файл 'games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.trader' не найден")
+        #     print(f"Файл 'games/{self.row_id}/acts/gameID_{self.row_id}_playerID_{player_id}.viking' не найден")
         #     return ""
 
     # TODO Создать поселение игрока
@@ -145,20 +168,27 @@ class FirstWorld:
         self.settlements[name] = Settlement(self, row_id=row_id, ruler=player_id, name_rus=name_rus, name=name)
         self.settlements_list.append(name_rus)
 
-    # Восстановить династии из файла. Запускается при обсчете хода.
+    # Восстановить династии и поселения из файла. Запускается при обсчете хода.
     # Восстанавливаем все классы и считаем ход
     def restore_dynasty(self, game_id, player_id, dynasty_name):
-        # print(f"Восстанавливаем династию: {player_id}")
         self.dynasty[dynasty_name] = Dynasty(self)
+        self.dynasty[dynasty_name].load_from_file(game_id, player_id)
+
+    def restore_settlement(self, game_id, player_id, dynasty_name):
+        self.dynasty[dynasty_name] = Settlement(self)
         self.dynasty[dynasty_name].load_from_file(game_id, player_id)
 
 
 def check_readiness(game_id):  # Проверить все ли страны отправили ход
     # Прочитаем общий файл с партией, нам понадобится список стран
-    with open(f"games/{game_id}/gameID_{game_id}.trader", 'rb') as f:
-        data_main = pickle.load(f)
+    # json
+    with open(f"games/{game_id}/gameID_{game_id}.viking", 'r') as f:
+        data_main = json.load(f)
+    # pickle
+    # with open(f"games/{game_id}/gameID_{game_id}.viking", 'rb') as f:
+    #     data_main = pickle.load(f)
     for i in data_main["player_list"]:
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{i}.trader", 'rb') as f:
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{i}.viking", 'rb') as f:
             end_turn_reading = pickle.load(f)
             if not end_turn_reading["end_turn"]:
                 print("Как минимум один из игроков еще не готов")
@@ -186,10 +216,10 @@ def calculate_turn(game_id):
         # print(f"Пред восстанавливаем династию: {player_id}")
         game.restore_dynasty(game_id, game.player_list[dynasty_player_id], dynasty_name)
         dynasty_player_id += 1
-    # Теперь нужно запустить собственно саму обработку действий
-    # В случае начала обсчета хода, необходимо почистить лог прошлого хода у стран.
-    # Или еще лучше, сделать массив вообще со всеми логами.
-    # Может сделать отдельный массив в котором просто будут храниться все логи.
+    # TODO ?????????? Теперь нужно запустить собственно саму обработку действий
+    # TODO  В случае начала обсчета хода, необходимо почистить лог прошлого хода у стран.
+    # TODO  Или еще лучше, сделать массив вообще со всеми логами.
+    # TODO  Может сделать отдельный массив в котором просто будут храниться все логи.
     for dyns in game.dynasty:
         game.dynasty[dyns].result_logs_text = []
     # Так же почистим общий лог

@@ -2,6 +2,7 @@
 import os
 import pickle
 import redis
+import json
 
 from goods import Goods
 from buildings import Buildings
@@ -19,8 +20,11 @@ rediska = redis.StrictRedis(
 
 
 class Dynasty:
-    def __init__(self, game, row_id=0, player_id=0, name="default_name", name_rus="Страна", gold=0, settlements=[]):
-        self.row_id = row_id
+    def __init__(self, game, row_id=0, player_id=0, name="default_name", name_rus="Страна", gold=0, settlements=None):
+        if settlements is None:
+            settlements = []
+        # self.row_id = row_id
+        self.row_id = player_id  # Для id династии присвоим id игрока
         self.player_id = player_id  # id игрока
         self.name = name            # Имя Династии игрока на английском
         self.name_rus = name_rus    # Имя Династии игрока на русском
@@ -79,24 +83,41 @@ class Dynasty:
             "end_turn": self.end_turn,
             "end_turn_know": self.end_turn_know,
         }
-        # Пишем в pickle.
+        # Пишем в json
         # Тут нужно отловить ошибку отсутствия файла
         try:
-            with open(f"games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.trader", 'wb') as f:
-                pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+            with open(f"games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking", 'w') as f:
+                json.dump(data, f)
         except FileNotFoundError:
-            print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.trader' не найден")
+            print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking' не найден")
             return ""
+        # Пишем в pickle
+        # Тут нужно отловить ошибку отсутствия файла
+        # try:
+        #     with open(f"games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking", 'wb') as f:
+        #         pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+        # except FileNotFoundError:
+        #     print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking' не найден")
+        #     return ""
 
     def load_from_file(self, game_id, player_id):
         # Тут нужно отловить ошибку отсутствия файла
+        # json
         try:
-            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player_id}.trader", 'rb') as f:
-                data = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking", 'r') as f:
+                data = json.load(f)
                 # print(f"Восстанавливаем династию: {data}")
         except FileNotFoundError:
-            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player_id}.trader' не найден")
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking' не найден")
             return ""
+        # pickle
+        # try:
+        #     with open(f"games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking", 'rb') as f:
+        #         data = pickle.load(f)
+        #         # print(f"Восстанавливаем династию: {data}")
+        # except FileNotFoundError:
+        #     print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking' не найден")
+        #     return ""
         self.row_id = data["row_id"]
         self.game_id = data["game_id"]
         self.player_id = data["player_id"]

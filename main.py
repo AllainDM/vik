@@ -67,9 +67,10 @@ menu_admin = [
 ]
 
 # Временный глобальный список поселений, будет использоваться для быстрого создания партии
-settlements_names = ["Поселение 1", "Поселение 2", "Поселение 3", "Поселение 4", "Поселение 5",
+# Дания = "Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг"
+settlements_names = ["Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг",
                      "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
-settlements_names_eng = ["Settlement 1", "Settlement 2", "Settlement 3", "Settlement 4", "Settlement 5",
+settlements_names_eng = ["Aalborg", "Aarhus", "Hedeby", "Ribe", "Esbjerg",
                          "Settlement 6", "Settlement 7", "Settlement 8", "Settlement 9", "Settlement 10"]
 
 
@@ -434,7 +435,7 @@ def create_game(setting):  # Получаем только список игро
         print(f"Проверка на добавление династии при создании игры")
         this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
         this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
-        id_players_for_add_db.append(player["playerId"])
+        id_players_for_add_db.append(player["playerId"])  # Массив и ИД игроков, передается в БД, для записи партии
     # Создадим города
     # TODO создане поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
     # this_game.create_settlement("Карфаген", "Карфаген")
@@ -445,7 +446,7 @@ def create_game(setting):  # Получаем только список игро
     # this_game.create_settlement("Тир", "Тир")
 
     this_game.save_to_file()
-    # setting[1] это список династий, агрументом отдаем его длину как текущее количество игроков
+    # setting[1] это список династий, аргументом отдаем его длину как текущее количество игроков
     print("Добавляем игру в БД")
     dbase.add_game(1, 800, id_players_for_add_db, len(setting[1]), max_pl)
 
@@ -472,17 +473,17 @@ def cancel_act():
     # Получим ИД партии !!!!!!!!!!!! Обязательно проверку
     game_id = request.args.get('gameId')
     try:  # Блок на случай отсутствия файла
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'rb') as f:
-            data = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
+            data = json.load(f)
             if what == "all":
                 data["acts"] = []
             elif what == "last":
                 data["acts"].pop(-1)
-            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'wb') as new_f:
-                pickle.dump(data, new_f, pickle.HIGHEST_PROTOCOL)
+            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as new_f:
+                json.dump(data, new_f)
         return "ok"
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.trader' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
         return ""
 
 
@@ -493,15 +494,15 @@ def req_status_all_player():
     game_id = request.args.get('gameId')
     return_data = []
     try:
-        with open(f"games/{game_id}/gameID_{game_id}.trader", 'rb') as f:
+        with open(f"games/{game_id}/gameID_{game_id}.viking", 'rb') as f:
             data_players = pickle.load(f)
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}.trader' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
         return ""
     for player_id in data_players["player_list"]:
         try:
-            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player_id}.trader", 'rb') as f:
-                data_one_player = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking", 'r') as f:
+                data_one_player = json.load(f)
                 one_player = {
                     "name_rus": data_one_player["name_rus"],
                     "gold": data_one_player["gold"],
@@ -513,7 +514,7 @@ def req_status_all_player():
                 }
                 return_data.append(one_player)
         except FileNotFoundError:
-            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player_id}.trader' не найден")
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player_id}.viking' не найден")
             return ""
     return jsonify(return_data)
 
@@ -525,11 +526,11 @@ def req_status_game_player():
     game_id = rediska.get(f'playerID_{player}_active_gameID')
     # Выходит что нам не нужно обращаться к классу Династии запуская ее метод
     try:
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'rb') as f:
-            data = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
+            data = json.load(f)
             print(data)
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.trader' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
         return ""
     return jsonify(data)
 
@@ -543,10 +544,10 @@ def req_status_game():
     # print(f"ИД игры при запросе статуса династии: {game_id}")
     # TODO !!!!!!!!! Тут еще нужна проверка на существование самой партии
     try:
-        with open(f"games/{game_id}/gameID_{game_id}.trader", 'rb') as f:
-            my_world = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}.viking", 'r') as f:
+            my_world = json.load(f)
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}.trader' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
         return ""
     print(f"my_world: {my_world}")
     # Так же загрузим список городов для торговли
@@ -605,16 +606,16 @@ def post_turn():
         # print(f"ИД партии которой передается ход: {game_id}")
         # Получаем список с действиями игрока
         try:
-            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'rb') as f:
-                data = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
+                data = json.load(f)
         except FileNotFoundError:
-            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.trader' не найден")
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
             return ""
         # Присвоим ход игроку
         data["end_turn"] = True
         # Снова запишем ход
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'wb') as f:
-            pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
+            json.dump(data, f)
         world.check_readiness(game_id)
     # Временно возвращаем пустую строку
     return ""
@@ -640,16 +641,16 @@ def post_act():
         post = request.get_json()
         # Прочитаем файл игрока
         try:
-            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'rb') as f:
-                data = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
+                data = json.load(f)
         except FileNotFoundError:
-            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.trader' не найден")
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
             return ""
         # Присвоим ход игроку
         data["acts"] = post
         # Снова запишем ход
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'wb') as f:
-            pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
+            json.dump(data, f)
     # Временно возвращаем пустую строку
     return ""
 
@@ -666,16 +667,16 @@ def confirm_rec_turn():
     # print(f"ИД партии которой передается ход: {game_id}")
     # Получаем список с действиями игрока
     try:
-        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'rb') as f:
-            data = pickle.load(f)
+        with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
+            data = json.load(f)
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.trader' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
         return ""
     # Присвоим изменения игроку
     data["end_turn_know"] = True
     # Снова запишем в файл
-    with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.trader", 'wb') as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+    with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
+        json.dump(data, f)
     world.check_readiness(game_id)
 
 
