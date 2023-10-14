@@ -167,12 +167,14 @@ class FirstWorld:
 
     # Восстановить династии и поселения из файла. Запускается при обсчете хода.
     # Восстанавливаем все классы и считаем ход
-    def restore_dynasty(self, game_id, player_id, dynasty_name):
-        self.dynasty[dynasty_name] = Dynasty(self)
+    # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
+    def restore_dynasty(self, game_id, player_id, dynasty_name):  # оставим пока последний аргумент
+        self.dynasty[dynasty_name] = Dynasty(self, game_id)
         self.dynasty[dynasty_name].load_from_file(game_id, player_id)
 
-    def restore_settlement(self, game_id, player_id, dynasty_name):
-        self.dynasty[dynasty_name] = Settlement(self)
+    # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
+    def restore_settlement(self, game_id, player_id, dynasty_name):  # оставим пока последний аргумент
+        self.dynasty[dynasty_name] = Settlement(self, game_id)
         self.dynasty[dynasty_name].load_from_file(game_id, player_id)
 
 

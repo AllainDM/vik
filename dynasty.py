@@ -101,6 +101,7 @@ class Dynasty:
         #     return ""
 
     def load_from_file(self, game_id, player_id):
+        # game_id и player_id необходим для поиска файла
         # Тут нужно отловить ошибку отсутствия файла
         # json
         try:

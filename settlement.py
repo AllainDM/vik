@@ -4,7 +4,7 @@ import pickle
 
 
 class Settlement:
-    def __init__(self, game, row_id, ruler, name_rus, name, population=1000, gold=0):
+    def __init__(self, game, row_id, ruler=0, name_rus="defaut_name", name="defaut_name", population=1000, gold=0):
         self.game_id = game.row_id
         self.row_id = row_id
         self.ruler = ruler  # Игрок управляющий поселением, id игрока

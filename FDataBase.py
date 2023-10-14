@@ -59,16 +59,20 @@ class FDataBase:
             self.__cur.execute("INSERT INTO games (is_active, the_end, turn, year, "
                                "players, cur_num_players, max_players, "
                                "date_create) "
-                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
+                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s) "
+                               "RETURNING row_id",
                                (is_active, the_end, turn, year, players, cur_num_players, max_players, date_create))
+            # Вернем ид записи
+            row_id = self.__cur.fetchone()[0]
             self.__db.commit()
             print(f"Добавилось? turn:{turn} year: {year} players: {players} "
                   f"date_create: {date_create}")
+            return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД", _ex)
             return False
-
-        return True
+        # Если все норм, то запрос возвращает ид записи, выше
+        # return True
 
     def add_player(self, game_id, player_id):  # "Удаление" игры на самом деле просто делает ее не активной
         # Возможно будет смысл сделать и кнопку полного удаления

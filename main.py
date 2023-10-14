@@ -387,9 +387,10 @@ def create_new_game():
         post = request.get_json()
         print(f"post: {post}")
         print(f"player_info: {player_info}")
+        # Передаем макс количество игроков и параметры первого игрока, остальные добавляются потом
         setting_for_create_game = [
             {"maxPlayers": post["maxPlayers"]},    # post[0]
-            [{"playerId": player_info[0], "nameEng": player_info[6], "nameRus": player_info[6]}]
+            {"playerId": player_info[0], "nameEng": player_info[6], "nameRus": player_info[6]}
         ]
         print(f"setting_for_create_game {setting_for_create_game}")
         info_to_front = create_game(setting_for_create_game)
@@ -400,6 +401,41 @@ def create_new_game():
 
 
 def create_game(setting):  # Получаем только список игроков
+    # !!!!!!!!!!!!! Новый функционал создания партии
+    # TODO удалить старый код после проверки
+    date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
+
+    print("Добавляем игру в БД")
+    # Делаем стартовую запись в БД. В списке игроков только создавший партию
+    # Номер хода, Стартовый год, ид первого игрока, тек. количество игроков, макс. количество игроков
+    # setting можно посмотреть в функции выше
+    last_row_id = dbase.add_game(1, 800, [setting[1]["player_id"]], 1, setting[0]["maxPlayers"])
+
+    # Создадим папки игры для сохранений
+    if not os.path.exists(f"games"):
+        os.makedirs(f"games")
+    if not os.path.exists(f"games/{last_row_id}"):
+        os.makedirs(f"games/{last_row_id}")
+    if not os.path.exists(f"games/{last_row_id}/acts"):
+        os.makedirs(f"games/{last_row_id}/acts")
+
+    # Создадим экземпляр игры, династии и поселения для первого игрока.
+    this_game = FirstWorld(last_row_id, date_now, setting[0]["maxPlayers"])
+    this_game.create_dynasty(last_row_id, setting[1]["playerId"], setting[1]["nameEng"], setting[1]["nameRus"], 10000)  # Золото пока не передается
+    this_game.create_settlement(last_row_id, setting[1]["playerId"], settlements_names[0], settlements_names_eng[0])
+
+    this_game.save_to_file()
+
+    print("Игра создана")
+    print(this_game.dynasty_list)
+    return f"Game create {setting[1]}"
+
+
+    # print(f'setting[0][maxPlayers] {setting[0]["maxPlayers"]}')
+    # print(f'setting[1][playerId] {setting[1]["playerId"]}')
+    # print(f'setting[1][nameEng] {setting[1]["nameEng"]}')
+    # print(f'setting[1][nameRus] {setting[1]["nameRus"]}')
+    # Старый код
     # TODO Нужно с фронта получать два аргумента, а не только список
     # TODO какой второй?
     # all_games = dbase.get_all_games()
@@ -408,59 +444,53 @@ def create_game(setting):  # Получаем только список игро
     # Возьмем ее длинну для создания новой партии
     # global game_arr  # Зачем?
     # Прочитаем файл со списком игр
-    game_arr = dbase.get_all_active_games()
-    if len(game_arr) == 0:
-        game_arr.append(1)
-    else:
-        game_arr.append(game_arr[-1][0]+1)  # +1 тут по умолчанию, 0 индекс уже есть, длинна массива 1
-    date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
+    # game_arr = dbase.get_all_active_games()
+    # if len(game_arr) == 0:
+    #     game_arr.append(1)
+    # else:
+    #     game_arr.append(game_arr[-1][0]+1)  # +1 тут по умолчанию, 0 индекс уже есть, длинна массива 1
+    # date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
 
-    # Создадим мир
-    max_pl = setting[0]["maxPlayers"]
-    print(f"max_pl: {max_pl}")
-    this_game = FirstWorld(game_arr[-1], date_now, max_pl)
+    # this_game = FirstWorld(game_arr[-1], date_now, max_pl)
 
     # Создадим папку игры и папку ходов, если их не существует.
     # Может делать проверку при создании игры, и удалять/создавать заново если она есть
-    if not os.path.exists(f"games"):
-        os.makedirs(f"games")
-    if not os.path.exists(f"games/{game_arr[-1]}"):
-        os.makedirs(f"games/{game_arr[-1]}")
-    if not os.path.exists(f"games/{game_arr[-1]}/acts"):
-        os.makedirs(f"games/{game_arr[-1]}/acts")
+    # if not os.path.exists(f"games"):
+    #     os.makedirs(f"games")
+    # if not os.path.exists(f"games/{game_arr[-1]}"):
+    #     os.makedirs(f"games/{game_arr[-1]}")
+    # if not os.path.exists(f"games/{game_arr[-1]}/acts"):
+    #     os.makedirs(f"games/{game_arr[-1]}/acts")
 
-    # Создадим династии
-    id_players_for_add_db = []  # Массив и ИД игроков, передается в БД, для записи партии
     # print(f"players_dynasty {players_dynasty}")
     # TODO вариант создания игры под несколько игроков сразу. Оставим на будущее.
-    for num, player in enumerate(setting[1]):
-        print(f"setting[1]: {setting[1]}")
-        print(f"player: {player}")
-        # TODO Первый аргумент ид поселения, начнем с 1(num+1)
-        print(f"Проверка на добавление династии при создании игры")
-        this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
-        this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
-        id_players_for_add_db.append(player["playerId"])  # Массив с ИД игроков, передается в БД, для записи партии
+    # for num, player in enumerate(setting[1]):
+        # print(f"setting[1]: {setting[1]}")
+        # print(f"player: {player}")
+        # # TODO Первый аргумент ид поселения, начнем с 1(num+1)
+        # print(f"Проверка на добавление династии при создании игры")
+        # this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
+        # this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
+        # id_players_for_add_db.append(player["playerId"])  # Массив с ИД игроков, передается в БД, для записи партии
     # Создание игры, где сначала только один игрок
-    print(f"setting[1]: {setting[1]}")
-
-    # Создадим города
-    # TODO создании поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
-    # this_game.create_settlement("Карфаген", "Карфаген")
-    # this_game.create_settlement("Сиракузы", "Сиракузы")
-    # this_game.create_settlement("Афины", "Афины")
-    # this_game.create_settlement("Родос", "Родос")
-    # this_game.create_settlement("Александрия", "Александрия")
-    # this_game.create_settlement("Тир", "Тир")
-
-    this_game.save_to_file()
-    # setting[1] это список династий, аргументом отдаем его длину как текущее количество игроков
-    print("Добавляем игру в БД")
-    dbase.add_game(1, 800, id_players_for_add_db, len(setting[1]), max_pl)
-
-    print("Игра создана")
-    print(this_game.dynasty_list)
-    return f"Game create {setting[1]}"
+    # print(f"setting[1]: {setting[1]}")
+    #
+    # # Создадим города
+    # # TODO создании поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
+    # # this_game.create_settlement("Карфаген", "Карфаген")
+    # # this_game.create_settlement("Сиракузы", "Сиракузы")
+    # # this_game.create_settlement("Афины", "Афины")
+    # # this_game.create_settlement("Родос", "Родос")
+    # # this_game.create_settlement("Александрия", "Александрия")
+    # # this_game.create_settlement("Тир", "Тир")
+    #
+    # this_game.save_to_file()
+    # # setting[1] это список династий, аргументом отдаем его длину как текущее количество игроков
+    # print(f"тест получения row_id {last_row_id}")
+    #
+    # print("Игра создана")
+    # print(this_game.dynasty_list)
+    # return f"Game create {setting[1]}"
 
 
 # Присоединение к игре
