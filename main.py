@@ -68,9 +68,9 @@ menu_admin = [
 
 # Временный глобальный список поселений, будет использоваться для быстрого создания партии
 # Дания = "Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг"
-settlements_names = ["Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг",
+settlements_names = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",
                      "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
-settlements_names_eng = ["Aalborg", "Aarhus", "Hedeby", "Ribe", "Esbjerg",
+settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg",
                          "Settlement 6", "Settlement 7", "Settlement 8", "Settlement 9", "Settlement 10"]
 
 
@@ -409,7 +409,7 @@ def create_game(setting):  # Получаем только список игро
     # Делаем стартовую запись в БД. В списке игроков только создавший партию
     # Номер хода, Стартовый год, ид первого игрока, тек. количество игроков, макс. количество игроков
     # setting можно посмотреть в функции выше
-    last_row_id = dbase.add_game(1, 800, [setting[1]["player_id"]], 1, setting[0]["maxPlayers"])
+    last_row_id = dbase.add_game(1, 800, [setting[1]["playerId"]], 1, setting[0]["maxPlayers"])
 
     # Создадим папки игры для сохранений
     if not os.path.exists(f"games"):
@@ -430,51 +430,6 @@ def create_game(setting):  # Получаем только список игро
     print(this_game.dynasty_list)
     return f"Game create {setting[1]}"
 
-
-    # print(f'setting[0][maxPlayers] {setting[0]["maxPlayers"]}')
-    # print(f'setting[1][playerId] {setting[1]["playerId"]}')
-    # print(f'setting[1][nameEng] {setting[1]["nameEng"]}')
-    # print(f'setting[1][nameRus] {setting[1]["nameRus"]}')
-    # Старый код
-    # TODO Нужно с фронта получать два аргумента, а не только список
-    # TODO какой второй?
-    # all_games = dbase.get_all_games()
-    # print(f"all_games: {all_games}")
-    # Получим все записи игр из БД
-    # Возьмем ее длинну для создания новой партии
-    # global game_arr  # Зачем?
-    # Прочитаем файл со списком игр
-    # game_arr = dbase.get_all_active_games()
-    # if len(game_arr) == 0:
-    #     game_arr.append(1)
-    # else:
-    #     game_arr.append(game_arr[-1][0]+1)  # +1 тут по умолчанию, 0 индекс уже есть, длинна массива 1
-    # date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
-
-    # this_game = FirstWorld(game_arr[-1], date_now, max_pl)
-
-    # Создадим папку игры и папку ходов, если их не существует.
-    # Может делать проверку при создании игры, и удалять/создавать заново если она есть
-    # if not os.path.exists(f"games"):
-    #     os.makedirs(f"games")
-    # if not os.path.exists(f"games/{game_arr[-1]}"):
-    #     os.makedirs(f"games/{game_arr[-1]}")
-    # if not os.path.exists(f"games/{game_arr[-1]}/acts"):
-    #     os.makedirs(f"games/{game_arr[-1]}/acts")
-
-    # print(f"players_dynasty {players_dynasty}")
-    # TODO вариант создания игры под несколько игроков сразу. Оставим на будущее.
-    # for num, player in enumerate(setting[1]):
-        # print(f"setting[1]: {setting[1]}")
-        # print(f"player: {player}")
-        # # TODO Первый аргумент ид поселения, начнем с 1(num+1)
-        # print(f"Проверка на добавление династии при создании игры")
-        # this_game.create_dynasty(num + 1, player["playerId"], player["nameEng"], player["nameRus"], 10000)  # Золото пока не передается
-        # this_game.create_settlement(num + 1, player["playerId"], settlements_names[num], settlements_names_eng[num])
-        # id_players_for_add_db.append(player["playerId"])  # Массив с ИД игроков, передается в БД, для записи партии
-    # Создание игры, где сначала только один игрок
-    # print(f"setting[1]: {setting[1]}")
-    #
     # # Создадим города
     # # TODO создании поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
     # # this_game.create_settlement("Карфаген", "Карфаген")
@@ -483,14 +438,6 @@ def create_game(setting):  # Получаем только список игро
     # # this_game.create_settlement("Родос", "Родос")
     # # this_game.create_settlement("Александрия", "Александрия")
     # # this_game.create_settlement("Тир", "Тир")
-    #
-    # this_game.save_to_file()
-    # # setting[1] это список династий, аргументом отдаем его длину как текущее количество игроков
-    # print(f"тест получения row_id {last_row_id}")
-    #
-    # print("Игра создана")
-    # print(this_game.dynasty_list)
-    # return f"Game create {setting[1]}"
 
 
 # Присоединение к игре
@@ -701,7 +648,7 @@ def confirm_rec_turn():
     # Определим игрока, чтоб понять от кого получен запрос и куда его записать
     player = int(current_user.get_id())
     # Получим ИД партии, ей будем присваивать запрос !!!!!!!!!!!! после проверки
-    # !!!!!!!!! Нужна проверка участвует ли игрок в этой игре!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # !!!!!!!!! TODO Нужна проверка участвует ли игрок в этой игре!!!!!!!!!!!!!!!!!!!!!!!!!!
     game_id = request.args.get('gameID')
     # print(f"ИД партии которой передается ход: {game_id}")
     # Получаем список с действиями игрока
@@ -710,13 +657,14 @@ def confirm_rec_turn():
             data = json.load(f)
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
-        return ""
+        return "Игра не найдена"  # Фронту пофиг на это сообщение. TODO сделать лог на фронте для всякого
     # Присвоим изменения игроку
     data["end_turn_know"] = True
     # Снова запишем в файл
     with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
         json.dump(data, f)
     world.check_readiness(game_id)
+    return "ok"
 
 
 @app.route("/contact", methods=["POST", "GET"])  # Обратная связь

@@ -1,4 +1,6 @@
-from buildings import Buildings
+# Тут можно взять класс Buildings для взаимодействия
+# и заранее созданные экземпляр для сохранения каких либо параметров
+import buildings
 from goods import Goods
 import pickle
 
@@ -14,7 +16,8 @@ class Settlement:
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?
         self.goods = Goods()
-        self.buildings = Buildings()
+        self.buildings = buildings.Buildings()  # Класс для взаимодействия
+        self.buildings_list = buildings.buildings.buildings_list  # Список для сохранения
 
         # Примерные параметры
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
@@ -46,7 +49,7 @@ class Settlement:
 
             # Экземпляры класса не сохраняем
             # "goods": self.goods,
-            # "buildings": self.buildings,
+            "buildings_list": self.buildings_list,
 
             "population": self.population,
             "gold": self.gold,
@@ -77,6 +80,8 @@ class Settlement:
         self.ruler = data["ruler"]
         self.name_rus = data["name_rus"]
         self.name = data["name"]
+
+        self.buildings_list = data["buildings_list"]
 
         self.population = data["population"]
         self.gold = data["gold"]

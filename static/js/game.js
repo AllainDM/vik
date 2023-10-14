@@ -25,6 +25,9 @@ let statusGame = {
     title: 0,           // Титул игрока, пока числом, будет строкой, типо "Ярл"
     bodyPoints: 0,      // Очки действия для игрока
 
+    // Поселение
+    buildingsList: [],
+
     // Игроки
     dynastyList: [],
     curNumPlayers: 0,
@@ -154,6 +157,8 @@ function requestStatusPlayer() {
                 
             } else {
                 const response = JSON.parse(request.response);
+                console.log("statusGame response")
+                console.log(response)
                 actualVarPlayer(response);
                 console.log("Ответ от сервера. Статус хода: " + response.end_turn)
             };
@@ -248,6 +253,8 @@ const buildingsNameHtml = document.querySelector(".stats-buildings");
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
+    console.log("statusGame")
+    console.log(statusGame)
     statusGame.winPoints = res.win_points
     statusGame.dynastyName = res.name_rus
     statusGame.gold = res.gold
