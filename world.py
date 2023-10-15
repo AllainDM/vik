@@ -160,10 +160,14 @@ class FirstWorld:
     # TODO Создать поселение игрока
     # TODO доделать
     def create_settlement(self, row_id, player_id, name_rus, name):
-        # Обьект с экземпляром класса английское название. Список поселений с русским название
+        # Объект с экземпляром класса английское название. Список поселений с русским название
         # TODO Можно ли сделать тоже на русском?
         self.settlements[name] = Settlement(self, row_id=row_id, ruler=player_id, name_rus=name_rus, name=name)
         self.settlements_list.append(name_rus)
+        # TODO нужно что-то куда-то добавлять еще?
+
+        # Сохраним в файл
+        self.settlements[name].save_to_file()
 
     # Восстановить династии и поселения из файла. Запускается при обсчете хода.
     # Восстанавливаем все классы и считаем ход

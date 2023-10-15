@@ -6,7 +6,6 @@ const chooseList = document.querySelector('.choose-list');
 
 // Отображаемые в интерфейсе параметры, одновляются при запросе на сервер
 let statusGame = {
-    dynastyName: "Страна не загрузилась",
     year: 800,
     turn: 1,
     end_turn: false,
@@ -21,6 +20,7 @@ let statusGame = {
     allLogsParty: [],        // Все логи итогов хода всех стран за всю партию
 
     // Игрок
+    dynastyName: "Страна не загрузилась",
     gold: 0,            // Золото игрока
     title: 0,           // Титул игрока, пока числом, будет строкой, типо "Ярл"
     bodyPoints: 0,      // Очки действия для игрока
@@ -221,9 +221,6 @@ function actualVar(res) {
     // Инфа об условиях победы
     statusGame.wpForWin = res.need_win_points_for_win
 
-    // Пожертвования
-    statusGame.donateLeader = res.donate_leader;
-
     // Логи
     statusGame.allLogs = res.all_logs;
     statusGame.allLogsParty = res.all_logs_party;
@@ -253,24 +250,28 @@ const buildingsNameHtml = document.querySelector(".stats-buildings");
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
-    console.log("statusGame")
+    console.log("statusGame old")
     console.log(statusGame)
-    statusGame.winPoints = res.win_points
-    statusGame.dynastyName = res.name_rus
-    statusGame.gold = res.gold
+    statusGame.winPoints = res[0].win_points
+    statusGame.dynastyName = res[0].name_rus
+    statusGame.gold = res[0].gold
 
-    statusGame.title = res.title
-    statusGame.bodyPoints = res.body_points
-    statusGame.end_turn = res.end_turn
+    statusGame.title = res[0].title
+    statusGame.bodyPoints = res[0].body_points
+    statusGame.end_turn = res[0].end_turn
 
     // Игроки    
 
     //  Запись не выполненных действий, массив обновляется на беке при выполнении и остаток возвращается на фронт
-    statusGame.acts = res.acts
+    statusGame.acts = res[0].acts
     // statusGame.actsText = res.acts_text
-    statusGame.logsText = res.result_logs_text
-    statusGame.logsTextAllTurns = res.result_logs_text_all_turns
-    statusGame.endTurnKnow = res.end_turn_know;
+    statusGame.logsText = res[0].result_logs_text
+    statusGame.logsTextAllTurns = res[0].result_logs_text_all_turns
+    statusGame.endTurnKnow = res[0].end_turn_know;
+
+
+    console.log("statusGame new")
+    console.log(statusGame)
 
     // buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
 

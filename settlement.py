@@ -1,5 +1,7 @@
 # Тут можно взять класс Buildings для взаимодействия
 # и заранее созданные экземпляр для сохранения каких либо параметров
+import json
+
 import buildings
 from goods import Goods
 import pickle
@@ -8,7 +10,7 @@ import pickle
 class Settlement:
     def __init__(self, game, row_id, ruler=0, name_rus="defaut_name", name="defaut_name", population=1000, gold=0):
         self.game_id = game.row_id
-        self.row_id = row_id
+        self.row_id = ruler  # TODO row_id пока не существует, записываем ид игрока
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
         self.name_rus = name_rus
         self.name = name
@@ -43,6 +45,7 @@ class Settlement:
         data = {
             "game_id": self.game_id,
             "row_id": self.row_id,
+
             "ruler": self.ruler,
             "name_rus": self.name_rus,
             "name": self.name,
@@ -60,8 +63,8 @@ class Settlement:
         # Пишем в pickle.
         # Тут нужно отловить ошибку отсутствия файла
         try:
-            with open(f"games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking", 'wb') as f:
-                pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+            with open(f"games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking", 'w') as f:
+                json.dump(data, f)
         except FileNotFoundError:
             print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking' не найден")
             return ""
@@ -69,8 +72,8 @@ class Settlement:
     def load_from_file(self, game_id, row_id):
         # Тут нужно отловить ошибку отсутствия файла
         try:
-            with open(f"games/{game_id}/gameID_{game_id}_settlementID_{row_id}.viking", 'rb') as f:
-                data = pickle.load(f)
+            with open(f"games/{game_id}/gameID_{game_id}_settlementID_{row_id}.viking", 'r') as f:
+                data = json.load(f)
                 # print(f"Восстанавливаем династию: {data}")
         except FileNotFoundError:
             print(f"Файл 'games/{game_id}/gameID_{game_id}_settlementID_{row_id}.viking' не найден")

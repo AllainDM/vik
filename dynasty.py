@@ -20,16 +20,15 @@ rediska = redis.StrictRedis(
 
 
 class Dynasty:
-    def __init__(self, game, row_id=0, player_id=0, name="default_name", name_rus="Страна", gold=0, settlements=None):
-        if settlements is None:
-            settlements = []
-        # self.row_id = row_id
-        self.row_id = player_id  # Для id династии присвоим id игрока
+    def __init__(self, game, row_id, player_id=0, name="default_name", name_rus="Страна", gold=0):
+        self.row_id = row_id
+        # self.row_id = player_id  # Для id династии присвоим id игрока
         self.player_id = player_id  # id игрока
         self.name = name            # Имя Династии игрока на английском
         self.name_rus = name_rus    # Имя Династии игрока на русском
         self.gold = gold            # Казна непосредственно игрока
-        self.settlements = settlements  # Список ид поселений под управлением игрока
+        self.main_settlement = 0  # ид "главного" поселения игрока(управляемого)
+        self.settlements = []  # Список ид поселений под управлением игрока
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
         self.body_points = 3        # Очки действий игрока
@@ -72,6 +71,7 @@ class Dynasty:
             "body_points": self.body_points,
             "authority": self.authority,
 
+            "main_settlement": self.main_settlement,
             "settlements": self.settlements,
 
             "win_points": self.win_points,
@@ -130,8 +130,10 @@ class Dynasty:
         self.body_points = data["body_points"]
         self.authority = data["authority"]
 
-        self.win_points = data["win_points"]
+        self.main_settlement = data["main_settlement"]
         self.settlements = data["settlements"]
+
+        self.win_points = data["win_points"]
 
         # TODO убрать. Сейчас как напоминание о том, что где-то будет определяться доступные постройки
         # Список доступных для строительства построек

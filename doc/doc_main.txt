@@ -26,3 +26,10 @@ new_check.py
     for dynasty_name in game.dynasty_list:
         game.restore_dynasty(game_id, game.player_list[dynasty_player_id], dynasty_name)
 
+
+
+
+!!!!!!!!!!!!!!!!!!!!
+TODO
+На данный момент новому поселению мы присваиваем в качестве row_id id игрока,
+что в дальнейшем приведет к проблемам, нужна выдача порядкового id

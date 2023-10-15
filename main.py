@@ -422,6 +422,9 @@ def create_game(setting):  # Получаем только список игро
     # Создадим экземпляр игры, династии и поселения для первого игрока.
     this_game = FirstWorld(last_row_id, date_now, setting[0]["maxPlayers"])
     this_game.create_dynasty(last_row_id, setting[1]["playerId"], setting[1]["nameEng"], setting[1]["nameRus"], 10000)  # Золото пока не передается
+    # Имя поселение временно первое из списка
+    # TODO на данный момент мы создаем поселение с row_id = id игрока, что не верно
+    # В дальнейшем с этим будут возникать проблемы при смене игрока или управляемого поселения
     this_game.create_settlement(last_row_id, setting[1]["playerId"], settlements_names[0], settlements_names_eng[0])
 
     this_game.save_to_file()
@@ -512,13 +515,20 @@ def req_status_game_player():
     game_id = rediska.get(f'playerID_{player}_active_gameID')
     # Выходит что нам не нужно обращаться к классу Династии запуская ее метод
     try:
+        # Запросим династию игрока
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
-            data = json.load(f)
-            print(data)
+            data_dynasty = json.load(f)
+            print(f"data_dynasty {data_dynasty}")
+        # Запросим поселение игрока
+        with open(f"games/{game_id}/gameID_{game_id}_settlementID_{player}.viking", 'r') as f:
+            data_settlement = json.load(f)
+            print(f"data_settlement {data_settlement}")
+        all_data = [data_dynasty, data_settlement]
+        print(f"all_data {all_data}")
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
-        return ""
-    return jsonify(data)
+        return "Файлы не найдены"
+    return jsonify(all_data)
 
 
 @app.route("/req_status_game", methods=["GET"])  # Запрос общих параметров партии
