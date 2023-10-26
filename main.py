@@ -68,8 +68,8 @@ menu_admin = [
 
 # Временный глобальный список поселений, будет использоваться для быстрого создания партии
 # Дания = "Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг"
-settlements_names = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",
-                     "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
+settlements_names_rus = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",
+                         "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
 settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg",
                          "Settlement 6", "Settlement 7", "Settlement 8", "Settlement 9", "Settlement 10"]
 
@@ -409,23 +409,28 @@ def create_game(setting):  # Получаем только список игро
     # Делаем стартовую запись в БД. В списке игроков только создавший партию
     # Номер хода, Стартовый год, ид первого игрока, тек. количество игроков, макс. количество игроков
     # setting можно посмотреть в функции выше
-    last_row_id = dbase.add_game(1, 800, [setting[1]["playerId"]], 1, setting[0]["maxPlayers"])
+    last_game_row_id = dbase.add_game(1, 800, [setting[1]["playerId"]], 1, setting[0]["maxPlayers"])
 
     # Создадим папки игры для сохранений
     if not os.path.exists(f"games"):
         os.makedirs(f"games")
-    if not os.path.exists(f"games/{last_row_id}"):
-        os.makedirs(f"games/{last_row_id}")
-    if not os.path.exists(f"games/{last_row_id}/acts"):
-        os.makedirs(f"games/{last_row_id}/acts")
+    if not os.path.exists(f"games/{last_game_row_id}"):
+        os.makedirs(f"games/{last_game_row_id}")
+    if not os.path.exists(f"games/{last_game_row_id}/acts"):
+        os.makedirs(f"games/{last_game_row_id}/acts")
 
-    # Создадим экземпляр игры, династии и поселения для первого игрока.
-    this_game = FirstWorld(last_row_id, date_now, setting[0]["maxPlayers"])
-    this_game.create_dynasty(last_row_id, setting[1]["playerId"], setting[1]["nameEng"], setting[1]["nameRus"], 10000)  # Золото пока не передается
-    # Имя поселение временно первое из списка
-    # TODO на данный момент мы создаем поселение с row_id = id игрока, что не верно
-    # В дальнейшем с этим будут возникать проблемы при смене игрока или управляемого поселения
-    this_game.create_settlement(last_row_id, setting[1]["playerId"], settlements_names[0], settlements_names_eng[0])
+    # Создадим экземпляр игры, а так же поселения и династии для первого игрока.
+    this_game = FirstWorld(last_game_row_id, date_now, setting[0]["maxPlayers"])
+
+    # Имя поселения временно первое из списка.
+    # Запишем в БД, получим row_id, его используем при сохранении поселения в файл.
+    last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
+                                                  settlements_names_rus[0], setting[1]["playerId"])
+    this_game.create_settlement(last_game_row_id, last_settlement_row_id, setting[1]["playerId"],
+                                settlements_names_rus[0], settlements_names_eng[0])
+    # Так же передадим ид только что созданного поселения
+    this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
+                             setting[1]["nameEng"], setting[1]["nameRus"], last_settlement_row_id, 10000)
 
     this_game.save_to_file()
 
@@ -445,11 +450,23 @@ def create_game(setting):  # Получаем только список игро
 
 # Присоединение к игре
 def add_dynasty(game_id, player):
+    print("Добавление нового игрока.")
     game = FirstWorld(game_id)  # Восстановим саму игру.
     game.load_from_file(game_id)  # Запустим метод считающий данные из файла.
-    # TODO исправить первый аргумент???
-    # TODO так же исправить количество золота
-    game.create_dynasty(1, player[0], player[6], player[6], 10000)
+    # Добавим запись о поселении для игрока в БД заодно получив его row_id для сохранения.
+    # TODO нужно переработать выбор названия поселения
+    last_settlement_row_id = dbase.add_settlement(game_id=game_id, name_eng=settlements_names_eng[0],
+                                                  name_rus=settlements_names_rus[0], ruler=player[0])
+
+    # Создадим династию.
+    # TODO Последний аргумент количество золота, у него есть дефолтное значение.
+    game.create_dynasty(game_id, player_id=player[0], name_eng=player[6],
+                        name_rus=player[6], main_settlement=last_settlement_row_id)
+    # Создадим поселение.
+    game.create_settlement(game_id=game_id, row_id=last_settlement_row_id, ruler=player[0],
+                           name_rus=settlements_names_rus[last_settlement_row_id],
+                           name_eng=settlements_names_eng[last_settlement_row_id])
+
     game.save_to_file()
 
 
@@ -519,16 +536,24 @@ def req_status_game_player():
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
             data_dynasty = json.load(f)
             print(f"data_dynasty {data_dynasty}")
-        # Запросим поселение игрока
-        with open(f"games/{game_id}/gameID_{game_id}_settlementID_{player}.viking", 'r') as f:
-            data_settlement = json.load(f)
-            print(f"data_settlement {data_settlement}")
+        # Возьмем из файла ид управляемого поселения
+        ruler_settlement_id = data_dynasty["main_settlement"]
+        if ruler_settlement_id != 0:
+            # Запросим поселение игрока
+            with open(f"games/{game_id}/gameID_{game_id}_settlementID_{ruler_settlement_id}.viking", 'r') as f:
+                data_settlement = json.load(f)
+                print(f"data_settlement {data_settlement}")
+        # TODO реализовать на фронте вариант при котором у игрока нет поселения
+        # TODO Возможно просто возвращая специальное пустое поселение с ид 0
+        else:  # Если у игрока нет поселения
+            data_settlement = []
         all_data = [data_dynasty, data_settlement]
         print(f"all_data {all_data}")
+        return jsonify(all_data)
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
-        return "Файлы не найдены"
-    return jsonify(all_data)
+        return ""
+
 
 
 @app.route("/req_status_game", methods=["GET"])  # Запрос общих параметров партии

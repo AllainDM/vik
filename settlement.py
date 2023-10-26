@@ -8,12 +8,13 @@ import pickle
 
 
 class Settlement:
-    def __init__(self, game, row_id, ruler=0, name_rus="defaut_name", name="defaut_name", population=1000, gold=0):
-        self.game_id = game.row_id
-        self.row_id = ruler  # TODO row_id пока не существует, записываем ид игрока
+    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1000, gold=0):
+        # self.game_id = game.row_id
+        self.game_id = game_id
+        self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
         self.name_rus = name_rus
-        self.name = name
+        self.name_eng = name_eng
 
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?
@@ -32,10 +33,10 @@ class Settlement:
         # Попробуем сделать перебор по экземпляру класса
         self.size = 0
         for k, v in self.buildings.buildings_list.items():
-            print(f"Постройка: {k}, количество {v}")
-            print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
+            # print(f"Постройка: {k}, количество {v}")
+            # print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
             self.size += self.buildings.buildings_size[k] * self.buildings.buildings_list[k]
-        print(f"Текущий размер поселения {self.size}")
+        # print(f"Текущий размер поселения {self.size}")
 
     def calc_turn(self):
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
@@ -48,7 +49,7 @@ class Settlement:
 
             "ruler": self.ruler,
             "name_rus": self.name_rus,
-            "name": self.name,
+            "name_eng": self.name_eng,
 
             # Экземпляры класса не сохраняем
             # "goods": self.goods,
@@ -82,7 +83,7 @@ class Settlement:
         self.row_id = data["row_id"]
         self.ruler = data["ruler"]
         self.name_rus = data["name_rus"]
-        self.name = data["name"]
+        self.name_eng = data["name_eng"]
 
         self.buildings_list = data["buildings_list"]
 

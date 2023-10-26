@@ -487,3 +487,16 @@ footer {
     bottom: 0;
     width: 100%;
   }
+
+/* Новое для Викинг гейм */
+/* Два блока в одну линию */
+.wrapper {
+    display: flex;
+  }
+.two-block {
+    display: block;
+    /* display: inline-block; */
+    /* border: 1px solid blue; */
+    margin: 2px;
+}
+  

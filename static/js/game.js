@@ -26,7 +26,8 @@ let statusGame = {
     bodyPoints: 0,      // Очки действия для игрока
 
     // Поселение
-    buildingsList: [],
+    buildingsList: [],  // Список построек
+    population: 0,  // Размер населения
 
     // Игроки
     dynastyList: [],
@@ -92,6 +93,9 @@ function updateVar() {
         document.getElementById('end-turn-bool').innerText = "Ход НЕ готов"
     }
 
+    // Поселение
+    document.getElementById("population").innerText = statusGame.population;
+
     // Меню разработки
     document.getElementById('player').innerText = 'Игрок: ' + statusGame.user_name;
     document.getElementById('game-id').innerText = 'Игра: ' + statusGame.game_id;
@@ -154,6 +158,7 @@ function requestStatusPlayer() {
         if (request.status === 200) {
             if (request.response == "") {
                 console.log("К нам пришла пустая строка");
+                alert("Произошла ошибка на сервере!")
                 
             } else {
                 const response = JSON.parse(request.response);
@@ -232,10 +237,6 @@ function actualVar(res) {
     statusGame.curNumPlayers = res.dynasty_list.length  // Текущим количеством игроков выведем длинну списка стран
     statusGame.maxPlayers = res.max_players
 
-    console.log("тут_231234");
-    console.log(res.all_goods_prices);
-
-
     updateVar();
     logAllResultStart();
     // При загрузке запустим запрос статистики игроков для отображения в отдельном окошке
@@ -244,9 +245,9 @@ function actualVar(res) {
 
 
 
+const settlementNameHtml = document.querySelector(".stats-settlement");
 const goodsNameHtml = document.querySelector(".stats-resources");
 const buildingsNameHtml = document.querySelector(".stats-buildings");
-// const goodsNameHtml = document.querySelector('.choose-list');
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
@@ -272,6 +273,10 @@ function actualVarPlayer(res) {
 
     console.log("statusGame new")
     console.log(statusGame)
+
+    // Поселение
+    statusGame.population= res[1].population;
+    
 
     // buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
 

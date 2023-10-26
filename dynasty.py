@@ -20,14 +20,14 @@ rediska = redis.StrictRedis(
 
 
 class Dynasty:
-    def __init__(self, game, row_id, player_id=0, name="default_name", name_rus="Страна", gold=0):
+    def __init__(self, game, row_id, player_id=0, name_eng="default_name", name_rus="Страна", main_settlement=0, gold=0):
         self.row_id = row_id
         # self.row_id = player_id  # Для id династии присвоим id игрока
         self.player_id = player_id  # id игрока
-        self.name = name            # Имя Династии игрока на английском
+        self.name_eng = name_eng            # Имя Династии игрока на английском
         self.name_rus = name_rus    # Имя Династии игрока на русском
         self.gold = gold            # Казна непосредственно игрока
-        self.main_settlement = 0  # ид "главного" поселения игрока(управляемого)
+        self.main_settlement = main_settlement  # ид "главного" поселения игрока(управляемого)
         self.settlements = []  # Список ид поселений под управлением игрока
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
@@ -63,7 +63,7 @@ class Dynasty:
             "row_id": self.row_id,
             "game_id": self.game_id,
             "player_id": self.player_id,
-            "name": self.name,
+            "name_eng": self.name_eng,
             "name_rus": self.name_rus,
             "gold": self.gold,
 
@@ -122,7 +122,7 @@ class Dynasty:
         self.row_id = data["row_id"]
         self.game_id = data["game_id"]
         self.player_id = data["player_id"]
-        self.name = data["name"]
+        self.name_eng = data["name_eng"]
         self.name_rus = data["name_rus"]
 
         self.gold = data["gold"]

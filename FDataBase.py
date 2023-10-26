@@ -47,7 +47,7 @@ class FDataBase:
             self.__db.commit()
             print(f"Добавилось? id:{user_id} name: {user_name} text: {mess} date: {date}")
         except Exception as _ex:
-            print("Ошибка добавления данных в БД", _ex)
+            print("Ошибка добавления данных в БД 1", _ex)
             return False
 
         return True
@@ -69,7 +69,26 @@ class FDataBase:
                   f"date_create: {date_create}")
             return row_id
         except Exception as _ex:
-            print("Ошибка добавления данных в БД", _ex)
+            print("Ошибка добавления данных в БД 2", _ex)
+            return False
+        # Если все норм, то запрос возвращает ид записи, выше
+        # return True
+
+    def add_settlement(self, game_id, name_eng="default_name", name_rus="поселение", ruler=0):
+        try:
+            # Пока без даты, надо модифицировать таблицу
+            date_create = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
+            self.__cur.execute("INSERT INTO settlements (game_id, name_eng, name_rus, ruler, date_create) "
+                               "VALUES(%s, %s, %s, %s, %s) "
+                               "RETURNING row_id",
+                               (game_id, name_eng, name_rus, ruler, date_create))
+            # Вернем ид записи
+            row_id = self.__cur.fetchone()[0]
+            self.__db.commit()
+            print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
+            return row_id
+        except Exception as _ex:
+            print("Ошибка добавления данных в БД 3", _ex)
             return False
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
