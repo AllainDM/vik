@@ -476,32 +476,33 @@ function logAllResultStart() {       //Функция запуска лога и
 // Строительство 
 document.getElementById('menu-new-building').addEventListener('click', () => {
     hiddenAllMenu();  // Скроем все меню
-    chooseList.innerHTML = `<span>Выберите постройку:</span>`;  // Добавим подсказку
-    statusGame.colonyListForBuild.forEach((item, id) => {
-        // if (id > 0) {
-            chooseList.innerHTML += `<button class="menu-buttons-choose custom-btn btn-15">${item} Стоимость: ${statusGame.colonyPrice[item]}</button>`;
-            console.log(item);
-        // };        
-    });
+    chooseList.innerHTML = `<span>Пока что здесь пусто</span>`;  // Добавим подсказку
+    // chooseList.innerHTML = `<span>Выберите постройку:</span>`;  // Добавим подсказку
+    // statusGame.colonyListForBuild.forEach((item, id) => {
+    //     // if (id > 0) {
+    //         chooseList.innerHTML += `<button class="menu-buttons-choose custom-btn btn-15">${item} Стоимость: ${statusGame.colonyPrice[item]}</button>`;
+    //         console.log(item);
+    //     // };        
+    // });
 
     // Нарисуем кнопку отмены(выхода)
     chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-choose-exit">Отмена</button>`;
     document.getElementById('menu-choose-exit').addEventListener('click', () => { chooseList.innerHTML = ''; exitToMainMenuButtons(); });
 
     // Определяем позицию кнопки и "создаем" соответсвующий приказ
-    document.querySelectorAll(".menu-buttons-choose").forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-            statusGame.acts.push([
-                `Строим: ${statusGame.colonyListForBuild[i-1]}`, 101, statusGame.colonyListForBuild[i-1]
-            ]);         
-            // 101 это главный ид действия. i индекс постройки в списке построек в беке. Ну и текст описание действия
-            postAct(statusGame.game_id);
-            logStart();
-            console.log(statusGame.acts);
-            exitToMainMenuButtons();    // Скрываем меню
-            chooseList.innerHTML = '';  // Чистим(скрываем) список
-        });
-    });
+    // document.querySelectorAll(".menu-buttons-choose").forEach((btn, i) => {
+    //     btn.addEventListener('click', () => {
+    //         statusGame.acts.push([
+    //             `Строим: ${statusGame.colonyListForBuild[i-1]}`, 101, statusGame.colonyListForBuild[i-1]
+    //         ]);         
+    //         // 101 это главный ид действия. i индекс постройки в списке построек в беке. Ну и текст описание действия
+    //         postAct(statusGame.game_id);
+    //         logStart();
+    //         console.log(statusGame.acts);
+    //         exitToMainMenuButtons();    // Скрываем меню
+    //         chooseList.innerHTML = '';  // Чистим(скрываем) список
+    //     });
+    // });
 
 }) 
 
@@ -524,7 +525,11 @@ document.getElementById('menu-trade').addEventListener('click', () => {
 // !!!!!!!!!!!!! Старое
 // Выбрать город для торговли
 function tradeChooseCity() { 
-    console.log("Городов для выбора нет")
+    console.log("Городов для выбора нет");
+    chooseList.innerHTML += 
+        `<span>
+            Пока что здесь пусто.
+        </span>`;
     // statusGame.cities.forEach((item, id) => {
     //     chooseList.innerHTML += 
     //     `<button class="menu-buttons-show-trade custom-btn btn-15">
@@ -644,25 +649,26 @@ document.getElementById('menu-decision').addEventListener('click', () => {
 
 });
 
-document.getElementById('buy-title').addEventListener('click', () => {
+// document.getElementById('buy-title').addEventListener('click', () => {
 
-    modal.style.display = "block";
-    let content = document.getElementById("show-content");
-    content.innerHTML = `
-        <div style="font-size: 20px">
-            <div>Купить титул</div>
-            <div>Стоимость: 1000 за 1 ранг + 100 за каждый купленный ранг игроками.</div>
-            <button onclick = buyTitle() style="font-size: 25px; margin-top: 10px">Купить</button>
-            <button onclick = closeModal() style="font-size: 25px">Отмена</button>
-        </div>
-    `;
+//     modal.style.display = "block";
+//     let content = document.getElementById("show-content");
+//     content.innerHTML = `
+//         <div style="font-size: 20px">
+//             <div>Купить титул</div>
+//             <div>Стоимость: 1000 за 1 ранг + 100 за каждый купленный ранг игроками.</div>
+//             <button onclick = buyTitle() style="font-size: 25px; margin-top: 10px">Купить</button>
+//             <button onclick = closeModal() style="font-size: 25px">Отмена</button>
+//         </div>
+//     `;
     
-    console.log("Модалка открыта");
+//     console.log("Модалка открыта");
 
-});
+// });
+
 function buyTitle() {
-    console.log("Купить титул");
-    statusGame.acts.push([`Покупаем титул`, 301]); 
+    console.log("Раздать деньги");
+    statusGame.acts.push([`Раздаем деньги`, 301]); 
     postAct(statusGame.game_id);
     logStart();
     chooseList.innerHTML = ''; 
@@ -676,9 +682,7 @@ document.getElementById('make-donation').addEventListener('click', () => {
     let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
     content.innerHTML = `
         <div style="font-size: 20px">
-            <div>Сделайте пожертвование на выбранную сумму. Победное очко достается только одному игроку, сделавшему на протяжении партии пожетвований на наибольшую сумму.</div>
-            <div>Ваши пожертвования: ${statusGame.donateSum}.</div>
-            <div>Лидер пожертвований: ${statusGame.donateLeader}.</div>
+            <div>Раздать часть казны жителям поселения.</div>
             <button onclick = makeDonation(100) style="font-size: 25px; margin-top: 10px">100</button>
             <button onclick = makeDonation(200) style="font-size: 25px; margin-top: 10px">200</button>
             <button onclick = makeDonation(300) style="font-size: 25px; margin-top: 10px">300</button>
@@ -693,8 +697,8 @@ document.getElementById('make-donation').addEventListener('click', () => {
 });
 
 function makeDonation(sum) {
-    console.log("Сделать пожертвование");
-    statusGame.acts.push([`Делаем пожертвование на ${sum} золота`, 302, sum]); 
+    console.log("Раздать деньги");
+    statusGame.acts.push([`Раздаем деньги: ${sum} с.`, 301, sum]); 
     postAct(statusGame.game_id);
     logStart();
     chooseList.innerHTML = ''; 

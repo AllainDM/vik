@@ -226,7 +226,7 @@ def load_all_new_games():  # Делаю подпись html, чтоб разде
     game_arr = dbase.get_all_not_full_games()  # Список игр, где еще есть места
     # Выше мы получили кортеж с данными страны, под 5 индексом список ИД игроков
     # Нужно перебрать список ИД игроков и вынести имена игроков
-    print(f"game_arr для списка новых игр: {game_arr}")
+    print(f"Список новых игр: {game_arr}")
     games_list = []  # Это список игр для отправки админу game_arr,
     # players_list = []  # Это список игр для отправки админу
     for game in game_arr:
@@ -272,7 +272,7 @@ def load_all_my_game():  # Делаю подпись html, чтоб раздел
     game_arr = dbase.get_all_active_games()
     player = int(current_user.get_id())
     games_list = []  # Это список игр для отправки игроку для выбора
-    print(f"game_arr1: {game_arr}")
+    print(f"Список моих игр: {game_arr}")
     for my_g in game_arr:
         if player in my_g[5]:
             pl_in_game = []
@@ -535,25 +535,24 @@ def req_status_game_player():
         # Запросим династию игрока
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
             data_dynasty = json.load(f)
-            print(f"data_dynasty {data_dynasty}")
+            print(f"1Информация о династии {data_dynasty}")
         # Возьмем из файла ид управляемого поселения
         ruler_settlement_id = data_dynasty["main_settlement"]
         if ruler_settlement_id != 0:
             # Запросим поселение игрока
             with open(f"games/{game_id}/gameID_{game_id}_settlementID_{ruler_settlement_id}.viking", 'r') as f:
                 data_settlement = json.load(f)
-                print(f"data_settlement {data_settlement}")
+                print(f"2Информация о поселении {data_settlement}")
         # TODO реализовать на фронте вариант при котором у игрока нет поселения
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
         else:  # Если у игрока нет поселения
             data_settlement = []
         all_data = [data_dynasty, data_settlement]
-        print(f"all_data {all_data}")
+        print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
         return ""
-
 
 
 @app.route("/req_status_game", methods=["GET"])  # Запрос общих параметров партии
@@ -570,7 +569,7 @@ def req_status_game():
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}.viking' не найден")
         return ""
-    print(f"my_world: {my_world}")
+    print(f"Моя игра, информация о классе World: {my_world}")
     # Так же загрузим список городов для торговли
 
     data = {
@@ -587,7 +586,7 @@ def req_status_game():
             "date_create": my_world["date_create"],
             "user_name": user_name,
         }
-    print(f"data {data}")
+    print(f"4Информация о партии {data}")
     return jsonify(data)
 
 

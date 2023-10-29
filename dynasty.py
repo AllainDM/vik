@@ -167,11 +167,11 @@ class Dynasty:
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             elif self.acts[0][1] == 301:  #
-                # self.act_buy_title()  # Аргументов нет
+                self.act_donate(self.acts[0][2])  # Передадим аргумент, сумму
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             elif self.acts[0][1] == 302:  #
-                # self.act_make_donate(self.acts[0][2])  # Аргументом сумма пожертвования
+                # self.act_make_donate(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             else:
@@ -208,6 +208,20 @@ class Dynasty:
                                             f"{self.name_rus} построили {buildings_name}")
         else:
             self.result_logs_text.append(f"Вы НЕ построили {buildings_name}, не хватило денег.")
+
+    def act_donate(self, summ):     # 301 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+        self.gold = int(self.gold)
+        if self.gold >= summ:
+            self.gold -= summ  # Заберем деньги у игрока
+            # TODO Передадим деньги населению.
+
+            self.result_logs_text.append(f"Вы раздали {summ} с.")
+            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы раздали  {summ} с.")
+            self.game.all_logs.append(f"{self.name_rus} раздали {summ} с. населению.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"{self.name_rus} раздали {summ} с. населению.")
+        else:
+            self.result_logs_text.append(f"Вы НЕ раздали {summ} с. населению, не хватило денег.")
 
     def calc_win_points(self):
         # Возьмем по 1 очку за 3000
