@@ -28,6 +28,7 @@ let statusGame = {
     // Поселение
     buildingsList: [],  // Список построек
     population: 0,  // Размер населения
+    populationGold: 0,  // Золото населения
 
     // Игроки
     dynastyList: [],
@@ -95,6 +96,7 @@ function updateVar() {
 
     // Поселение
     document.getElementById("population").innerText = statusGame.population;
+    document.getElementById("populationGold").innerText = statusGame.populationGold;
 
     // Меню разработки
     document.getElementById('player').innerText = 'Игрок: ' + statusGame.user_name;
@@ -275,7 +277,8 @@ function actualVarPlayer(res) {
     console.log(statusGame)
 
     // Поселение
-    statusGame.population= res[1].population;
+    statusGame.population = res[1].population;
+    statusGame.populationGold = res[1].gold;
     
 
     // buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;

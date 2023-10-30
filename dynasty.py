@@ -27,8 +27,8 @@ class Dynasty:
         self.name_eng = name_eng            # Имя Династии игрока на английском
         self.name_rus = name_rus    # Имя Династии игрока на русском
         self.gold = gold            # Казна непосредственно игрока
-        self.main_settlement = main_settlement  # ид "главного" поселения игрока(управляемого)
-        self.settlements = []  # Список ид поселений под управлением игрока
+        self.main_settlement = str(main_settlement)  # ид "главного" поселения игрока(управляемого). Строка
+        self.our_settlements = []  # Список ид поселений под управлением игрока
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
         self.body_points = 3        # Очки действий игрока
@@ -52,6 +52,9 @@ class Dynasty:
         # Ссылка на мир для взаимодействия.
         # TODO Нет необходимости сохранять в файл?
         self.game = game
+        self.settlements = game.settlements  # Словарь с экземплярами классов поселений
+        self.settlements_list = game.settlements_list  # Тут просто список названий
+        self.settlements_dict = game.settlements_dict  # Словарь, где значением ид, для перебора при "восстановлении"
 
         # TODO не понятен функционал ниже описанного
         # Сохраним ИД игры, для создания правильной ссылки при необходимости
@@ -72,7 +75,7 @@ class Dynasty:
             "authority": self.authority,
 
             "main_settlement": self.main_settlement,
-            "settlements": self.settlements,
+            "our_settlements": self.our_settlements,
 
             "win_points": self.win_points,
 
@@ -131,7 +134,7 @@ class Dynasty:
         self.authority = data["authority"]
 
         self.main_settlement = data["main_settlement"]
-        self.settlements = data["settlements"]
+        self.our_settlements = data["our_settlements"]
 
         self.win_points = data["win_points"]
 
@@ -213,8 +216,11 @@ class Dynasty:
         self.gold = int(self.gold)
         if self.gold >= summ:
             self.gold -= summ  # Заберем деньги у игрока
-            # TODO Передадим деньги населению.
 
+            # TODO Передадим деньги населению.
+            self.settlements[self.settlements_dict[self.main_settlement]].gold += summ
+
+            # Логи
             self.result_logs_text.append(f"Вы раздали {summ} с.")
             self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы раздали  {summ} с.")
             self.game.all_logs.append(f"{self.name_rus} раздали {summ} с. населению.")

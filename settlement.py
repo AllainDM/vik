@@ -8,7 +8,7 @@ import pickle
 
 
 class Settlement:
-    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1000, gold=0):
+    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1000, gold=500):
         # self.game_id = game.row_id
         self.game_id = game_id
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
@@ -41,6 +41,11 @@ class Settlement:
     def calc_turn(self):
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
+
+    def calc_end_turn(self):
+
+        self.save_to_file()
+        print(f"Функция обработки конца хода у поселения")
 
     def save_to_file(self):
         data = {
