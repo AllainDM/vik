@@ -50,11 +50,7 @@ class Dynasty:
         self.end_turn_know = True  # Прочитал ли оповещение о новом ходе
 
         # Ссылка на мир для взаимодействия.
-        # TODO Нет необходимости сохранять в файл?
         self.game = game
-        self.settlements = game.settlements  # Словарь с экземплярами классов поселений
-        self.settlements_list = game.settlements_list  # Тут просто список названий
-        self.settlements_dict = game.settlements_dict  # Словарь, где значением ид, для перебора при "восстановлении"
 
         # TODO не понятен функционал ниже описанного
         # Сохраним ИД игры, для создания правильной ссылки при необходимости
@@ -218,7 +214,7 @@ class Dynasty:
             self.gold -= summ  # Заберем деньги у игрока
 
             # TODO Передадим деньги населению.
-            self.settlements[self.settlements_dict[self.main_settlement]].gold += summ
+            self.game.settlements[self.game.settlements_dict[self.main_settlement]].gold += summ
 
             # Логи
             self.result_logs_text.append(f"Вы раздали {summ} с.")

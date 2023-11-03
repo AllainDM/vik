@@ -29,6 +29,7 @@ let statusGame = {
     buildingsList: [],  // Список построек
     population: 0,  // Размер населения
     populationGold: 0,  // Золото населения
+    settlementName: "Поселение",
 
     // Игроки
     dynastyList: [],
@@ -45,6 +46,39 @@ let statusGame = {
 
     autoUpdate: true,  // Таймер автообновления странички
 };
+
+// Обработка вкладок
+// О партии
+document.getElementById('party-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("party-window").setAttribute('style','visibility:visible');
+});
+// Поселение
+document.getElementById('settlement-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("settlement-window").setAttribute('style','visibility:visible');
+});
+// Карта
+document.getElementById('map-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("map-window").setAttribute('style','visibility:visible');
+});
+// Династия
+document.getElementById('dynasty-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("dynasty-window").setAttribute('style','visibility:visible');
+});
+// Армия
+document.getElementById('army-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("army-window").setAttribute('style','visibility:visible');
+});
+// Игроки
+document.getElementById('players-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("players-window").setAttribute('style','visibility:visible');
+});
+
 
 // Модальное окно
 // Получить модальное окно
@@ -97,6 +131,7 @@ function updateVar() {
     // Поселение
     document.getElementById("population").innerText = statusGame.population;
     document.getElementById("populationGold").innerText = statusGame.populationGold;
+    document.getElementById("settlement-name").innerText = statusGame.settlementName;
 
     // Меню разработки
     document.getElementById('player').innerText = 'Игрок: ' + statusGame.user_name;
@@ -279,6 +314,7 @@ function actualVarPlayer(res) {
     // Поселение
     statusGame.population = res[1].population;
     statusGame.populationGold = res[1].gold;
+    statusGame.settlementName = res[1].name_rus;
     
 
     // buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
@@ -798,7 +834,8 @@ function displayStatisticsOfAllPlayers(playersList) {
 }
 function displayStatisticsOfAllPlayersOnBoard(playersList) {
     const playersStatusList = document.querySelector(".players-stat");
-    playersStatusList.innerHTML = `<div style="margin-top: 2px; text-align: center;">Игроки</div>`
+    // Ниже старая надпись для окошка с игроками
+    // playersStatusList.innerHTML = `<div style="margin-top: 2px; text-align: center;">Игроки</div>`
     console.log("Запуск функции отображения статистики игроков в шапке")
     playersList.forEach((item, id) => {
         if (playersList[id]["end_turn"] == true) {

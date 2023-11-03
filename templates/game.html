@@ -4,7 +4,76 @@
 	{{ super() }}
 
 <header>
-    <div class="container">
+    <ul class="mainmenu" style="background: gray;">
+        <li id="party-button" style="cursor: pointer;">О партии</li>
+        <li id="settlement-button" style="cursor: pointer;">Поселение</li>
+        <li id="map-button" style="cursor: pointer;">Карта</li>
+        <li id="dynasty-button" style="cursor: pointer;">Династия</li>
+        <li id="army-button" style="cursor: pointer;">Армия</li>
+        <li id="players-button" style="cursor: pointer;">Игроки</li>
+
+        <button id="end-turn-btn" style="margin-top: 5px;">Подтвердить ход</button>
+    </ul>
+    <!-- <div class="dashboard-turn">
+        <div id="year-turn">Год: 800 Ход: 1</div>
+        <div id="end-turn-bool">Завершен ли ход</div>
+        <button id="end-turn-btn" class="custom-btn end-turn-btn" style="margin-top: 5px;">Подтвердить ход</button>
+        <div id="timer">таймер автообновления 10 секунд. ОТКЛЮЧЕН</div>
+    </div> -->
+    <div class="container" id="party-window">
+        <div id="player">Имя игрока</div>
+        <div id="game-id">Номер игры</div>
+        <div id="game-date">Время создания</div>
+        <div id="cur-num-players">Игроков:</div>
+        <div id="max-players">Макс. игроков:</div>
+        <div id="victory-conditions">Условия победы: Набрать 666 очков</div>
+        <div id="winners">Победитель(и): не определен</div>
+        <div id="win-points">Победные очки:</div>
+        <div id="year-turn">Год: 800 Ход: 1</div>
+        <div id="end-turn-bool">Завершен ли ход</div>
+
+    </div>
+    <div class="container" id="settlement-window">
+        <div id="province-name" style="text-align: center;">Игра не загрузилась</div>
+        <div id="gold"> </div>            
+        <div id="body-points">Очки действий:</div>
+
+
+
+        <div class="dashboard-resources stats-buildings">
+            <div style="margin-top: 2px; text-align: center;">Постройки</div>
+            <div>Ничего нет</div>
+
+        </div>
+
+        <div class="dashboard-resources stats-resources">
+
+            <div style="margin-top: 2px; text-align: center;">Баланс ресурсов</div>
+            <div>Ничего нет</div>
+        </div>
+    </div>
+
+    <div class="container" id="map-window">
+
+    </div>
+
+    <div class="container" id="dynasty-window">
+
+        <div id="rank">Титул: 0</div>
+        <div id="gold"> </div>            
+        <div id="body-points">Очки действий:</div>
+    </div>
+
+    <div class="container" id="army-window">
+
+    </div>
+
+    <div class="container players-stat" id="players-window">
+
+    </div>
+
+    <!-- Старое меню с вкладками -->
+    <!-- <div class="container">
         <div class="dashboard-dev">
             <div style="text-align: center;">Разработка</div>
             <div id="player">Имя игрока</div>
@@ -27,15 +96,7 @@
         <div class="dashboard-stat players-stat">
 
         </div>
-        <div class="dashboard-turn">
-            <div id="year-turn">Год: 800 Ход: 1</div>
-            <div id="end-turn-bool">Завершен ли ход</div>
-            <!-- <div class="stats header-buttons"> -->
-            <button id="end-turn-btn" class="custom-btn end-turn-btn" style="margin-top: 5px;">Подтвердить ход</button>
-            <div id="timer">таймер автообновления 10 секунд. ОТКЛЮЧЕН</div>
-            <!-- </div> -->
-        </div>
-    </div>
+    </div> -->
 </header>
 <div class="container" style="margin-top: 50px;">
     <div class="dashboard">
@@ -103,7 +164,7 @@
             <div id="province-name">Игра не загрузилась</div>
         </div> -->
         <div class="dashboard-resources stats-settlement">
-            <div style="margin-top: 2px; text-align: center;">Поселение</div>
+            <div style="margin-top: 2px; text-align: center;" id="settlement-name" >Поселение</div>
             <div class="wrapper">
                 <div class="two-block" style="float: left;">Население: </div>
                 <div class="two-block" id="population" style="margin-left: auto; margin-right: 0;">? 500</div>
@@ -115,16 +176,30 @@
             </div>
 
         </div>
-
-        <div class="dashboard-resources stats-buildings">
-            <div style="margin-top: 2px; text-align: center;">Постройки</div>
-            <div>Ничего нет</div>
+        <div class="dashboard-resources stats-dynasty">
+            <div style="margin-top: 2px; text-align: center;" id="dynasty-name" >Игрок</div>
+            <!-- <div class="wrapper">
+                <div class="two-block" style="float: left;">Население: </div>
+                <div class="two-block" id="population" style="margin-left: auto; margin-right: 0;">? 500</div>
+            </div>
+            <div class="wrapper">
+                <div class="two-block" style="float: left;">Благосостояние: </div>
+                <div class="two-block" style="float: left;"> </div>
+                <div class="two-block" id="populationGold" style="margin-left: auto; margin-right: 0;">? Бедное</div>
+            </div> -->
 
         </div>
-
-        <div class="dashboard-resources stats-resources">
-            <div style="margin-top: 2px; text-align: center;">Баланс ресурсов</div>
-            <div>Ничего нет</div>
+        <div class="dashboard-resources stats-army">
+            <div style="margin-top: 2px; text-align: center;" id="army-name" >Армия</div>
+            <!-- <div class="wrapper">
+                <div class="two-block" style="float: left;">Население: </div>
+                <div class="two-block" id="population" style="margin-left: auto; margin-right: 0;">? 500</div>
+            </div>
+            <div class="wrapper">
+                <div class="two-block" style="float: left;">Благосостояние: </div>
+                <div class="two-block" style="float: left;"> </div>
+                <div class="two-block" id="populationGold" style="margin-left: auto; margin-right: 0;">? Бедное</div>
+            </div> -->
 
         </div>
     </div>

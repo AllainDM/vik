@@ -1,4 +1,18 @@
 console.log('Стрипт навигации успешно загружен');
+
+// Навигация по вкладкам партии
+function hiddenAllWindows() {
+    document.getElementById("party-window").setAttribute('style', 'display: none');
+    document.getElementById("settlement-window").setAttribute('style', 'display: none');
+    document.getElementById("map-window").setAttribute('style', 'display: none');
+    document.getElementById("dynasty-window").setAttribute('style', 'display: none');
+    document.getElementById("army-window").setAttribute('style', 'display: none');
+    document.getElementById("players-window").setAttribute('style', 'display: none');
+}
+
+
+hiddenAllWindows();
+
 // Переключения в меню
 
 function hiddenAllMenu() {  //Скрыть все доп меню
