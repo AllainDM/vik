@@ -51,32 +51,38 @@ let statusGame = {
 // О партии
 document.getElementById('party-button').addEventListener('click', () => {
     hiddenAllWindows();
-    document.getElementById("party-window").setAttribute('style','visibility:visible');
+    document.getElementById("party-window").setAttribute('style','visibility:visible;');
+    document.getElementById("party-button").setAttribute('style','color:red; cursor: pointer;');
 });
 // Поселение
 document.getElementById('settlement-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("settlement-window").setAttribute('style','visibility:visible');
+    document.getElementById("settlement-button").setAttribute('style','color:red; cursor: pointer;');
 });
 // Карта
 document.getElementById('map-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("map-window").setAttribute('style','visibility:visible');
+    document.getElementById("map-button").setAttribute('style','color:red; cursor: pointer;');
 });
 // Династия
 document.getElementById('dynasty-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("dynasty-window").setAttribute('style','visibility:visible');
+    document.getElementById("dynasty-button").setAttribute('style','color:red; cursor: pointer;');
 });
 // Армия
 document.getElementById('army-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("army-window").setAttribute('style','visibility:visible');
+    document.getElementById("army-button").setAttribute('style','color:red; cursor: pointer;');
 });
 // Игроки
 document.getElementById('players-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("players-window").setAttribute('style','visibility:visible');
+    document.getElementById("players-button").setAttribute('style','color:red; cursor: pointer;');
 });
 
 

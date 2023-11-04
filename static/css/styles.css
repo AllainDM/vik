@@ -6,14 +6,48 @@ body {
     /* font-family: Verdana, Arial; */
     font-family: 'Times New Roman', Times, serif;
     padding: 0px;
-    width: 75%;
+    /* width: 75%; */
     margin: 0 auto;
 }
 
 header {
-    height: 20px;
+    /* height: 20px; */
+    width: 100%;
 }
 
+section {
+    /* margin: 0 auto; */
+    margin-top: 0px;
+    /* padding: 0 20px; */
+    /* position: relative; */
+    /* margin-top: 100px; */
+    float: left;
+    margin-left: 0;
+    /* width: 60%; */
+}
+aside {
+    float: left;
+    width: 200px;
+    /* padding-bottom: 10px; */
+    /* margin-right: 40px; */
+}
+
+.aside_left {
+	float: left;
+	width: 200px;
+	/* height: 100px; */
+	/* padding-bottom: 10px; */
+	/* margin-right: 40px; */
+	/* margin: 20px 20px 20px; */
+}
+.aside_right {
+	float: right;
+	width: 200px;
+	/* height: 100px; */
+	/* padding-bottom: 10px; */
+	/* margin-right: 40px; */
+	/* margin: 20px 20px 20px; */
+}
 .form-contact label {
     display: inline-block; 
     min-width: 80px;
@@ -25,6 +59,7 @@ header {
 }
 
 ul.mainmenu {
+    text-align: center;
 	list-style: none;
 	/* background: #4b4b4b; */
 	background: #222121;
@@ -37,8 +72,9 @@ ul.mainmenu {
     /* width: 75%; */
 }
 ul.mainmenu li {
+    /* display: inline-block; */
 	float: left;
-	margin: 10px 30px 0 30px;
+	margin: 10px 5% 0 30px;
 }
 ul.mainmenu li.last {float: right;}
 
@@ -106,14 +142,6 @@ div.content {
     float: left;
 }
 
-.aside_left {
-	float: left;
-	width: 100px;
-	height: 1000px;
-	padding-bottom: 10px;
-	margin-right: 40px;
-	margin: 20px 20px 20px;
-}
 .end-turn {
     display: table-cell;
     width: 20%;
@@ -170,10 +198,10 @@ div.content {
 .dashboard-turn{
     /* flex-wrap: nowrap; */
     font-size: 16px;
-    width: 210px;
-    height: 170px;
+    width: 200px;
+    /* height: 100px; */
     display: inline-block;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     vertical-align:top;
     
     background: rgb(187, 183, 172); /* Цвет фона */
@@ -203,6 +231,7 @@ div.content {
 .map-block {
     width: 63%;
     height: 280px;
+    margin-left: 5px;
     float: left;
 
     /* outline: 1px solid #000; Чёрная рамка */
@@ -219,12 +248,6 @@ div.content {
     height: 10%;
 
 }
-/* img{
-    position:absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  } */
 .menu-block {
     /* width: 35%; */
     height: 280px;
