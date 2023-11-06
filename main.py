@@ -434,7 +434,7 @@ def create_game(setting):  # Получаем только список игро
                                 settlements_names_rus[0], settlements_names_eng[0])
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
-                             setting[1]["nameEng"], setting[1]["nameRus"], last_settlement_row_id, 10000)
+                             setting[1]["nameEng"], setting[1]["nameRus"], last_settlement_row_id, 100)
 
     this_game.save_to_file()
 

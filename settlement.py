@@ -1,6 +1,7 @@
 # Тут можно взять класс Buildings для взаимодействия
 # и заранее созданные экземпляр для сохранения каких либо параметров
 import json
+import random
 
 import buildings
 from goods import Goods
@@ -8,7 +9,7 @@ import pickle
 
 
 class Settlement:
-    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1000, gold=500):
+    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1, gold=50):
         # self.game_id = game.row_id
         self.game_id = game_id
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
@@ -26,8 +27,8 @@ class Settlement:
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
         self.population = population
         self.gold = gold  # Запасы золота у населения
-        # TODO временно для определения размера возьмем население / 100
-        self.max_size = self.population / 100
+        # TODO Размером будет количество населения
+        self.max_size = self.population
 
         # TODO как рассчитать размер поселения
         # Попробуем сделать перебор по экземпляру класса
@@ -43,9 +44,27 @@ class Settlement:
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
 
     def calc_end_turn(self):
-
+        # Рост/убыль населения
+        self.growth_pop_natural()
+        self.growth_pop_migration()
         self.save_to_file()
         print(f"Функция обработки конца хода у поселения")
+
+    def growth_pop_natural(self):
+        rnd = random.randint(0, 10)
+        grown = 5  # TODO тестовый рост в 50% без модификаторов
+
+        # TODO тут только положительный рост, как сделать отрицательный?
+        self.population += 1 if grown > rnd else 0
+        # return 1 if grown > rnd else 0
+
+    def growth_pop_migration(self):
+        rnd = random.randint(0, 10)
+        grown = 5  # TODO тестовый рост в 50% без модификаторов
+
+        # TODO тут только положительный рост, как сделать отрицательный?
+        self.population += 1 if grown > rnd else 0
+        # return 1 if grown > rnd else 0
 
     def save_to_file(self):
         data = {

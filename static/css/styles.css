@@ -519,7 +519,7 @@ footer {
     display: flex;
   }
 .two-block {
-    display: block;
+    /* display: block; */
     /* display: inline-block; */
     /* border: 1px solid blue; */
     margin: 2px;
