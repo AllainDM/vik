@@ -230,9 +230,12 @@ def calculate_turn(game_id):
     for k, v in game.settlements_dict.items():
         game.restore_settlement(game_id=game_id, settlement_id=k, name_eng=v)
 
-    # Очистим логи у стран
+    # Очистим логи у стран.
     for dyns in game.dynasty:
         game.dynasty[dyns].result_logs_text = []
+    # Очистим логи у поселений.
+    for settl in game.settlements:
+        game.settlements[settl].result_events_text = []
     # Так же почистим общий лог
     game.all_logs = []
 

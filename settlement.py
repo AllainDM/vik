@@ -10,7 +10,7 @@ import pickle
 
 class Settlement:
     def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1, gold=50):
-        # self.game_id = game.row_id
+        self.game = game  # Ссылка на игру
         self.game_id = game_id
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
@@ -39,6 +39,11 @@ class Settlement:
             self.size += self.buildings.buildings_size[k] * self.buildings.buildings_list[k]
         # print(f"Текущий размер поселения {self.size}")
 
+        # Логи поселения. Или события, то, что напрямую не зависит от игрока.
+        # self.acts = []  # Список действий Это для Династии
+        self.result_events_text = []  # Список с текстом событий за прошедший ход
+        self.result_events_text_all_turns = []  # Список с текстом событий за всю игру
+
     def calc_turn(self):
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
@@ -55,16 +60,28 @@ class Settlement:
         grown = 5  # TODO тестовый рост в 50% без модификаторов
 
         # TODO тут только положительный рост, как сделать отрицательный?
-        self.population += 1 if grown > rnd else 0
-        # return 1 if grown > rnd else 0
+        # self.population += 1 if grown > rnd else 0
+        if grown > rnd:
+            self.population += 1
+            self.result_events_text.append(f"Население выросло на 1.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Население выросло на 1.")
+            self.game.all_logs.append(f"В {self.name_rus} население выросло на 1.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"В {self.name_rus} население выросло на 1.")
 
     def growth_pop_migration(self):
         rnd = random.randint(0, 10)
         grown = 5  # TODO тестовый рост в 50% без модификаторов
 
         # TODO тут только положительный рост, как сделать отрицательный?
-        self.population += 1 if grown > rnd else 0
-        # return 1 if grown > rnd else 0
+        # self.population += 1 if grown > rnd else 0
+        if grown > rnd:
+            self.population += 1
+            self.result_events_text.append(f"Миграция 1 ед населения в поселение.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Миграция 1 ед населения в поселение.")
+            self.game.all_logs.append(f"В {self.name_rus} миграция 1 ед населения.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"Миграция 1 ед населения в поселение {self.name_rus}.")
 
     def save_to_file(self):
         data = {
@@ -84,6 +101,10 @@ class Settlement:
             # Размер не сохраняем, высчитывается каждый раз при создании
             # "max_size": self.max_size,
             # "size": self.size,
+
+            # Логи
+            "result_events_text": self.result_events_text,
+            "result_events_text_all_turns": self.result_events_text_all_turns,
         }
         # Пишем в pickle.
         # Тут нужно отловить ошибку отсутствия файла
@@ -113,3 +134,6 @@ class Settlement:
 
         self.population = data["population"]
         self.gold = data["gold"]
+
+        self.result_events_text = data["result_events_text"]
+        self.result_events_text_all_turns = data["result_events_text_all_turns"]

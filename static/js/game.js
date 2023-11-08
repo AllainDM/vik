@@ -307,11 +307,21 @@ function actualVarPlayer(res) {
     // Игроки    
 
     //  Запись не выполненных действий, массив обновляется на беке при выполнении и остаток возвращается на фронт
-    statusGame.acts = res[0].acts
-    // statusGame.actsText = res.acts_text
-    statusGame.logsText = res[0].result_logs_text
-    statusGame.logsTextAllTurns = res[0].result_logs_text_all_turns
+    statusGame.acts = res[0].acts    
     statusGame.endTurnKnow = res[0].end_turn_know;
+    // statusGame.actsText = res.acts_text
+    // Логи игрока
+    statusGame.logsText = [...res[0].result_logs_text, ...res[1].result_events_text]
+    statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, ...res[1].result_events_text_all_turns]
+    console.log("tyt")
+    console.log(typeof(statusGame.logsText))
+    console.log(statusGame.logsText)
+    console.log(typeof(statusGame.logsTextAllTurns))
+    // Логи поселения. Или события, то, что напрямую не зависит от игрока.
+    // statusGame.logsText = res[1].result_events_text
+    // statusGame.logsTextAllTurns += res[1].result_events_text_all_turns
+    // console.log(typeof(statusGame.logsText))
+    // console.log(typeof(statusGame.logsTextAllTurns))
 
 
     console.log("statusGame new")
@@ -501,6 +511,7 @@ function logStart() {       //Функция запуска будущего л�
 
 function logResultStart() {       //Функция запуска лога итога хода
     document.getElementById('logs-result').innerText = 'Лог прошлого хода';  // Очистим + подсказка
+    console.log(`Тут выведем все логи: ${statusGame.logsText}`)
     statusGame.logsText.forEach((item, num) => {  
         let a = document.getElementById('logs-result');
         a.insertAdjacentHTML('beforeend', `<div>${num + 1}: ${item}</div>`);
