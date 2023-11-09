@@ -21,7 +21,7 @@ class Settlement:
         # TODO зачем?
         self.goods = Goods()
         self.buildings = buildings.Buildings()  # Класс для взаимодействия
-        self.buildings_list = buildings.buildings.buildings_list  # Список для сохранения
+        self.buildings_list = self.buildings.buildings_list  # Список для сохранения
 
         # Примерные параметры
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами

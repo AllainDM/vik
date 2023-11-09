@@ -25,11 +25,6 @@ let statusGame = {
     title: 0,           // Титул игрока, пока числом, будет строкой, типо "Ярл"
     bodyPoints: 0,      // Очки действия для игрока
 
-    // Поселение
-    buildingsList: [],  // Список построек
-    population: 0,  // Размер населения
-    populationGold: 0,  // Золото населения
-    settlementName: "Поселение",
 
     // Игроки
     dynastyList: [],
@@ -46,6 +41,14 @@ let statusGame = {
 
     autoUpdate: true,  // Таймер автообновления странички
 };
+
+// Поселение
+let statusSettlement = {
+    buildingsList: [],  // Список построек
+    population: 0,  // Размер населения
+    populationGold: 0,  // Золото населения
+    settlementName: "Поселение",
+}
 
 // Обработка вкладок
 // О партии
@@ -135,9 +138,9 @@ function updateVar() {
     }
 
     // Поселение
-    document.getElementById("population").innerText = statusGame.population;
-    document.getElementById("populationGold").innerText = statusGame.populationGold;
-    document.getElementById("settlement-name").innerText = statusGame.settlementName;
+    document.getElementById("population").innerText = statusSettlement.population;
+    document.getElementById("populationGold").innerText = statusSettlement.populationGold;
+    document.getElementById("settlement-name").innerText = statusSettlement.settlementName;
 
     // Меню разработки
     document.getElementById('player').innerText = 'Игрок: ' + statusGame.user_name;
@@ -328,26 +331,37 @@ function actualVarPlayer(res) {
     console.log(statusGame)
 
     // Поселение
-    statusGame.population = res[1].population;
-    statusGame.populationGold = res[1].gold;
-    statusGame.settlementName = res[1].name_rus;
+    statusSettlement.buildingsList = res[1].buildings_list;
+    statusSettlement.population = res[1].population;
+    statusSettlement.populationGold = res[1].gold;
+    statusSettlement.settlementName = res[1].name_rus;
     
 
-    // buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
-
-    // // if (res.buildings_list.length > 0) {
-    //     res.buildings_name_list.forEach((item, id) => {
+    buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
+    for (let key in statusSettlement.buildingsList) {
+            buildingsNameHtml.innerHTML +=   
+            `<div>
+                ${key}: ${statusSettlement.buildingsList[key]}
+            </div>`;
+    }
+    // if (res[1].buildings_list.length > 0) {
+    //     console.log("Постройки есть.");
+        
+    //     res[1].buildings_list.forEach((item, id) => {
+    //     // res[1].buildings_name_list.forEach((item, id) => {
     //         console.log("forEach 3 Тут выводим список ресурсов");
-    //         if (res.buildings_list[item] > 0) {
+    //         if (res[1].buildings_list[item] > 0) {
     //             buildingsNameHtml.innerHTML +=   
     //             `<div>
-    //                 ${item}: ${res.buildings_list[item]}
+    //                 ${item}: ${res[1].buildings_list[item]}
     //             </div>`;
     //         };        
     //     });
-    // // } else {
-    // //     buildingsNameHtml.innerHTML += `<div>Ничего нет</div>`;
-    // // }
+    // } else {
+    //     buildingsNameHtml.innerHTML += `<div>Ничего нет</div>`;
+    // }
+    console.log(`Список построек1:? ${res[1].buildings_list[2]}`);
+    console.log(`Список построек2:? ${statusSettlement.buildingsList["Гавань1"]}`);
 
     // !!!!!!!!!!!!!! Старое
     // Вывод на экран количества ресурсов и построек
