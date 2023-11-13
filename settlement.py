@@ -30,6 +30,10 @@ class Settlement:
         # TODO Размером будет количество населения
         self.max_size = self.population
 
+        # Отдельные переменные под расчет еды
+        self.food = 0  # Тестовая переменная, под хз знает что
+        self.balance_food = self.food - self.population  # Баланс еды: еда - население
+
         # TODO как рассчитать размер поселения
         # Попробуем сделать перебор по экземпляру класса
         self.size = 0
@@ -45,13 +49,16 @@ class Settlement:
         self.result_events_text_all_turns = []  # Список с текстом событий за всю игру
 
     def calc_turn(self):
+        self.food = 0  # Обнулим запас еды. Производство не накапливается
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
+        print(f"Рассчитываем производство в {self.name_rus}")
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
 
     def calc_end_turn(self):
         # Рост/убыль населения
         self.growth_pop_natural()
         self.growth_pop_migration()
+        self.balance_food = self.food - self.population  # Баланс еды: еда - население
         self.save_to_file()
         print(f"Функция обработки конца хода у поселения")
 
@@ -98,6 +105,10 @@ class Settlement:
 
             "population": self.population,
             "gold": self.gold,
+
+            # Еда
+            "food": self.food,
+            "balance_food": self.balance_food,
             # Размер не сохраняем, высчитывается каждый раз при создании
             # "max_size": self.max_size,
             # "size": self.size,
@@ -134,6 +145,10 @@ class Settlement:
 
         self.population = data["population"]
         self.gold = data["gold"]
+
+        # Еда
+        self.food = data["food"]
+        self.balance_food = data["balance_food"]
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]

@@ -25,8 +25,10 @@ class Buildings:
 
     # Производство товаров
     def prod(self, settlement):
+        print(f"Рассчитываем производство в {settlement}")
         # Пристань
-        # +2 рыба и -1 дерево(типо на лодки)
+        # +2 еда +2 рыба и -1 дерево(типо на лодки)
+        settlement.food += self.buildings_list["Гавань"] * 2
         settlement.goods.resources_list["Рыба"] += self.buildings_list["Гавань"] * 2
         settlement.goods.resources_list["Дерево"] -= self.buildings_list["Гавань"] * 1
 

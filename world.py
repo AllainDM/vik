@@ -269,6 +269,9 @@ def calculate_turn(game_id):
     # TODO пост обсчет поселения. Например баланс ресурсов, торговля и рост населения.
     # TODO нужно ли рандомить пост обсчет для поселений?
     for settlement in game.settlements:
+        print(f"Обсчитываем поселение")
+        print(game.settlements[settlement])
+        game.settlements[settlement].calc_turn()
         game.settlements[settlement].calc_end_turn()
 
     # Пост обсчет хода для игрока. Не зависящие от его действий, по типу +1 к возрасту персонажей.
