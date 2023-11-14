@@ -276,6 +276,7 @@ div.content {
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
+    margin-top: 5px;
 }
 .menu-btn {
     user-select: none;

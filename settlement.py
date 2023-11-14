@@ -53,6 +53,8 @@ class Settlement:
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
         print(f"Рассчитываем производство в {self.name_rus}")
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
+        self.balance_food = self.food - self.population  # Баланс еды: еда - население. Расчет перед ростом для торговли
+        self.pop_trade()  # Расчет торговли населения.
 
     def calc_end_turn(self):
         # Рост/убыль населения
@@ -61,6 +63,24 @@ class Settlement:
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
         self.save_to_file()
         print(f"Функция обработки конца хода у поселения")
+
+    def pop_trade(self):  # Расчет торговли населения.
+        # Торговля едой
+        # TODO временно покупка 100% недостатка
+        # !!! Торговля едо до роста населения(функция calc_end_turn)
+        self.gold += self.balance_food * self.goods.resources_price["Еда"]
+        if self.balance_food < 0:
+            self.result_events_text.append(f"Население купило {self.balance_food*-1} еды.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Население купило {self.balance_food*-1} еды.")
+            self.game.all_logs.append(f"В {self.name_rus} население купило {self.balance_food*-1} еды.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"В {self.name_rus} купило {self.balance_food*-1} еды.")
+        elif self.balance_food > 0:
+            self.result_events_text.append(f"Население продало {self.balance_food} еды.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Население продало {self.balance_food} еды.")
+            self.game.all_logs.append(f"В {self.name_rus} население продало {self.balance_food} еды.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"В {self.name_rus} продало {self.balance_food} еды.")
 
     def growth_pop_natural(self):
         rnd = random.randint(0, 10)
