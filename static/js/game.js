@@ -47,6 +47,7 @@ let statusSettlement = {
     buildingsList: [],  // Список построек
     population: 0,  // Размер населения
     populationGold: 0,  // Золото населения
+    wealthStatus: "",  // Благосостояние населения
     settlementName: "Поселение",
     food: 0,        // Производство еды
     balanceFood: 0, // Баланс еды
@@ -141,8 +142,9 @@ function updateVar() {
 
     // Поселение
     document.getElementById("settlement-name").innerText = statusSettlement.settlementName;
-    document.getElementById("population").innerText = statusSettlement.population;
-    document.getElementById("population-gold").innerText = statusSettlement.populationGold;
+    document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
+    // document.getElementById("population-gold").innerText = statusSettlement.populationGold;
+    document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
     document.getElementById("food").innerText = statusSettlement.food;
     document.getElementById("balance-food").innerText = statusSettlement.balanceFood;
 
@@ -339,6 +341,7 @@ function actualVarPlayer(res) {
     statusSettlement.settlementName = res[1].name_rus;
     statusSettlement.population = res[1].population;
     statusSettlement.populationGold = res[1].gold;
+    statusSettlement.wealthStatus = res[1].wealth_status;
     statusSettlement.food = res[1].food;
     statusSettlement.balanceFood = res[1].balance_food;
     

@@ -15,6 +15,7 @@ from FDataBase import FDataBase
 # Попробуем импортировать main для доступа к БД
 # Нельзя, получается цикл
 import maindb
+import mod  # Различные модификаторы as MOD
 
 
 class FirstWorld:

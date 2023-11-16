@@ -5,11 +5,15 @@ import random
 
 import buildings
 from goods import Goods
-import pickle
+# import pickle
+import mod as MOD
+
+wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хорошее", "Отличное"]
 
 
 class Settlement:
-    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="defaut_name", name_eng="defaut_name", population=1, gold=50):
+    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="default_name", name_eng="default_name", population=1,
+                 gold=50):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
@@ -27,6 +31,8 @@ class Settlement:
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
         self.population = population
         self.gold = gold  # Запасы золота у населения
+        self.wealth = self.gold / self.population  # Благосостояние населения в цифрах
+        self.wealth_status = "..."  # Благосостояние населения в значении
         # TODO Размером будет количество населения
         self.max_size = self.population
 
@@ -50,6 +56,14 @@ class Settlement:
 
     def calc_turn(self):
         self.food = 0  # Обнулим запас еды. Производство не накапливается
+        # Рассчитаем уровень благосостояния.
+        self.wealth = self.gold / self.population
+        # if self.wealth >=
+        # Посчитаем статус благосостояние, округлив деление на модификатор
+        try:
+            self.wealth_status = wealth_status_names[round(self.wealth / MOD.WEALTH_STATUS)]
+        except IndexError:
+            self.wealth_status = "Отличное"
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
         print(f"Рассчитываем производство в {self.name_rus}")
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
@@ -71,13 +85,15 @@ class Settlement:
         self.gold += self.balance_food * self.goods.resources_price["Еда"]
         if self.balance_food < 0:
             self.result_events_text.append(f"Население купило {self.balance_food*-1} еды.")
-            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Население купило {self.balance_food*-1} еды.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
+                                                     f"Население купило {self.balance_food*-1} еды.")
             self.game.all_logs.append(f"В {self.name_rus} население купило {self.balance_food*-1} еды.")
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"В {self.name_rus} купило {self.balance_food*-1} еды.")
         elif self.balance_food > 0:
             self.result_events_text.append(f"Население продало {self.balance_food} еды.")
-            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Население продало {self.balance_food} еды.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
+                                                     f"Население продало {self.balance_food} еды.")
             self.game.all_logs.append(f"В {self.name_rus} население продало {self.balance_food} еды.")
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"В {self.name_rus} продало {self.balance_food} еды.")
@@ -104,6 +120,15 @@ class Settlement:
         # self.population += 1 if grown > rnd else 0
         if grown > rnd:
             self.population += 1
+            self.gold += 10  # Мигранты приносят с собой немного денег
+            # Запись лога через отдельную функцию
+            # Не имеет смысла. Строк столько же.
+            # Проблема в том, что всегда надо 4 строки, а это не всегда необходимо
+            # self.write_log(
+            #     f"Миграция 1 ед населения в поселение.",
+            #     f"Ход {self.game.turn}. Миграция 1 ед. населения в поселение.",
+            #     f"В {self.name_rus} миграция 1 ед. населения.",
+            #     f"Ход {self.game.turn}. Миграция 1 ед. населения в поселение {self.name_rus}.")
             self.result_events_text.append(f"Миграция 1 ед населения в поселение.")
             self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Миграция 1 ед населения в поселение.")
             self.game.all_logs.append(f"В {self.name_rus} миграция 1 ед населения.")
@@ -125,6 +150,8 @@ class Settlement:
 
             "population": self.population,
             "gold": self.gold,
+            "wealth_status": self.wealth_status,
+            "wealth": self.wealth,
 
             # Еда
             "food": self.food,
@@ -165,6 +192,8 @@ class Settlement:
 
         self.population = data["population"]
         self.gold = data["gold"]
+        self.wealth_status = data["wealth_status"]
+        self.wealth = data["wealth"]
 
         # Еда
         self.food = data["food"]
@@ -172,3 +201,12 @@ class Settlement:
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]
+
+    # Запись лога через отдельную функцию.
+    # Не имеет смысла. Строк столько же.
+    # Проблема в том, что всегда надо 4 строки, а это не всегда необходимо.
+    def write_log(self, our_log, our_log_turn, all_log, all_log_turn):
+        self.result_events_text.append(our_log)
+        self.result_events_text_all_turns.append(our_log_turn)
+        self.game.all_logs.append(all_log)
+        self.game.all_logs_party.append(all_log_turn)
