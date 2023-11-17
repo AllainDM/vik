@@ -36,6 +36,9 @@ class Settlement:
         # TODO Размером будет количество населения
         self.max_size = self.population
 
+        # TODO размер торговых операция населения, для подсчета налога у правителя.
+        self.gold_traded = 0
+
         # Отдельные переменные под расчет еды
         self.food = 0  # Тестовая переменная, под хз знает что
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
@@ -79,6 +82,7 @@ class Settlement:
         print(f"Функция обработки конца хода у поселения")
 
     def pop_trade(self):  # Расчет торговли населения.
+        # TODO нужно ввести предварительную переменную трат(доходов) для высчета налога.
         # Торговля едой
         # TODO временно покупка 100% недостатка
         # !!! Торговля едо до роста населения(функция calc_end_turn)
@@ -97,6 +101,43 @@ class Settlement:
             self.game.all_logs.append(f"В {self.name_rus} население продало {self.balance_food} еды.")
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"В {self.name_rus} продало {self.balance_food} еды.")
+        # Остальная торговля
+        self.gold_traded = 0  # Обнулим расчет прошлого хода
+        list_trade_buy = ""  # Составим список чем торговли
+        list_trade_sell = ""  # Составим список чем торговли
+        for k, v in self.goods.resources_list.items():
+            print("Что у нас тут с торговлей")
+            print(k, v)
+            if v > 0:  # Продажа излишек
+                self.gold += v * self.goods.resources_price[k]  # Доход населения
+                self.gold_traded += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
+                if len(list_trade_sell) > 0:
+                    list_trade_sell += f", {k}({v})"
+                else:
+                    list_trade_sell += f"{k}({v})"
+            elif v < 0:  # Покупка недостатка
+                self.gold -= v * self.goods.resources_price[k]  # Доход населения
+                self.gold_traded += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
+                if len(list_trade_buy) > 0:
+                    list_trade_buy += f", {k}({v*-1})"
+                else:
+                    list_trade_buy += f"{k}({v*-1})"
+        # Общий лог покупки
+        if len(list_trade_buy) > 0:
+            self.result_events_text.append(f"Население покупает: {list_trade_buy}.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
+                                                     f"Население покупает: {list_trade_buy}.")
+            self.game.all_logs.append(f"В {self.name_rus} население покупает: {list_trade_buy}.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"В {self.name_rus} покупает: {list_trade_buy}.")
+        # Общий лог продажи
+        if len(list_trade_sell) > 0:
+            self.result_events_text.append(f"Население продает: {list_trade_sell}.")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
+                                                     f"Население продает: {list_trade_sell}.")
+            self.game.all_logs.append(f"В {self.name_rus} население продает: {list_trade_sell}.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"В {self.name_rus} продает: {list_trade_sell}.")
 
     def growth_pop_natural(self):
         rnd = random.randint(0, 10)

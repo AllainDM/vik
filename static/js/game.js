@@ -1,5 +1,8 @@
 console.log('Стрипт странички игры успешно загружен');
 
+// Для поиска:
+// Вкладки
+
 
 // Меню для уточнения количества
 const chooseList = document.querySelector('.choose-list');
@@ -104,23 +107,34 @@ const btnShowAllLogsPartyPlayers = document.getElementById("show_all_logs_party_
 const span = document.getElementsByClassName("close")[0];
 
 
-// Обычная функция обновления параметров на страничке
+// Основная функция обновления параметров на страничке
 // Неплохо бы делать вывод только тех товаров, что есть в наличии через создание верстки перебором массива с ресурсами forEach
+// !!!!!!!!!!! Внимание, разделение вывода по старым окошкам
 function updateVar() {
     // Первое меню
-    document.getElementById('province-name').innerText = statusGame.dynastyName; 
+    // document.getElementById('province-name').innerText = statusGame.settlementName; 
     // Золото
-    document.getElementById('gold').innerHTML = `Казна: ` + statusGame.gold;  // 'Золото: ' + 
+    // document.getElementById('gold').innerHTML = `Казна: ` + statusGame.gold;  // 'Золото: ' + 
     // document.getElementById('gold').innerHTML = `<img class="icon" src="/static/image/icon/money.png"> ` + statusGame.gold;  // 'Золото: ' + 
     // Очки действий. Покрасим в красный цвет в случае ухода в минус
     const showBodyPoints = document.getElementById('body-points');
+    // showBodyPoints.forEach((item, id) => {
+    //     item.innerText = `Очки действий: ${statusGame.bodyPoints - statusGame.acts.length}`;
+    //     if (statusGame.bodyPoints - statusGame.acts.length < 0) {
+    //         console.log("Нехватает очков действий");
+    //         item.classList.add("set-red-font");
+    //     } else {
+    //         item.classList.remove("set-red-font");   
+    //     }
+    // })
     showBodyPoints.innerText = `Очки действий: ${statusGame.bodyPoints - statusGame.acts.length}`;
     if (statusGame.bodyPoints - statusGame.acts.length < 0) {
         console.log("Нехватает очков действий");
         showBodyPoints.classList.add("set-red-font");
     } else {
-        showBodyPoints.classList.remove("set-red-font");    
-    document.getElementById('rank').innerText = 'Титул: ' + statusGame.title;}  // Титул(ранг) игрока    
+        showBodyPoints.classList.remove("set-red-font");   
+    }
+    document.getElementById('rank').innerText = 'Титул: ' + statusGame.title;  // Титул(ранг) игрока    
     document.getElementById('win-points').innerText = 'Победные очки: ' + statusGame.winPoints;
 
     // Второе меню
@@ -141,7 +155,7 @@ function updateVar() {
     }
 
     // Поселение
-    document.getElementById("settlement-name").innerText = statusSettlement.settlementName;
+    document.querySelector(".settlement-name").innerText = statusSettlement.settlementName;
     document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
     // document.getElementById("population-gold").innerText = statusSettlement.populationGold;
     document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
@@ -322,10 +336,10 @@ function actualVarPlayer(res) {
     // Логи игрока
     statusGame.logsText = [...res[0].result_logs_text, ...res[1].result_events_text]
     statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, ...res[1].result_events_text_all_turns]
-    console.log("tyt")
-    console.log(typeof(statusGame.logsText))
+    // console.log("tyt")
+    // console.log(typeof(statusGame.logsText))
     console.log(statusGame.logsText)
-    console.log(typeof(statusGame.logsTextAllTurns))
+    // console.log(typeof(statusGame.logsTextAllTurns))
     // Логи поселения. Или события, то, что напрямую не зависит от игрока.
     // statusGame.logsText = res[1].result_events_text
     // statusGame.logsTextAllTurns += res[1].result_events_text_all_turns
@@ -762,11 +776,11 @@ document.getElementById('make-donation').addEventListener('click', () => {
     content.innerHTML = `
         <div style="font-size: 20px">
             <div>Раздать часть казны жителям поселения.</div>
-            <button onclick = makeDonation(100) style="font-size: 25px; margin-top: 10px">100</button>
-            <button onclick = makeDonation(200) style="font-size: 25px; margin-top: 10px">200</button>
-            <button onclick = makeDonation(300) style="font-size: 25px; margin-top: 10px">300</button>
-            <button onclick = makeDonation(400) style="font-size: 25px; margin-top: 10px">400</button>
-            <button onclick = makeDonation(500) style="font-size: 25px; margin-top: 10px">500</button>
+            <button onclick = makeDonation(10) style="font-size: 25px; margin-top: 10px">10</button>
+            <button onclick = makeDonation(20) style="font-size: 25px; margin-top: 10px">20</button>
+            <button onclick = makeDonation(30) style="font-size: 25px; margin-top: 10px">30</button>
+            <button onclick = makeDonation(40) style="font-size: 25px; margin-top: 10px">40</button>
+            <button onclick = makeDonation(50) style="font-size: 25px; margin-top: 10px">50</button>
 
             <button onclick = closeModal() style="font-size: 25px">Отмена</button>
         </div>
@@ -875,7 +889,7 @@ function displayStatisticsOfAllPlayers(playersList) {
 function displayStatisticsOfAllPlayersOnBoard(playersList) {
     const playersStatusList = document.querySelector(".players-stat");
     // Ниже старая надпись для окошка с игроками
-    // playersStatusList.innerHTML = `<div style="margin-top: 2px; text-align: center;">Игроки</div>`
+    playersStatusList.innerHTML = `<div style="margin-top: 2px; text-align: center;"></div>`
     console.log("Запуск функции отображения статистики игроков в шапке")
     playersList.forEach((item, id) => {
         if (playersList[id]["end_turn"] == true) {

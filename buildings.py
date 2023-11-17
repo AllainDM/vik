@@ -9,7 +9,7 @@ class Buildings:
         # Количество построек в поселении
         self.buildings_list = {
             'Гавань': 1,
-            'Лесорубка': 1,
+            'Лесорубка': 0,
         }
         # Просто список с названиями построек
         self.buildings_name_list = [
@@ -29,7 +29,7 @@ class Buildings:
         # Пристань
         # +2 еда +2 рыба и -1 дерево(типо на лодки)
         settlement.food += self.buildings_list["Гавань"] * 4
-        settlement.goods.resources_list["Рыба"] += self.buildings_list["Гавань"] * 2
+        settlement.goods.resources_list["Рыба"] += self.buildings_list["Гавань"] * 4
         settlement.goods.resources_list["Дерево"] -= self.buildings_list["Гавань"] * 1
 
         # Лесорубки

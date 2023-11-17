@@ -4,6 +4,7 @@ import pickle
 import redis
 import json
 
+import mod
 from goods import Goods
 from buildings import Buildings
 import decision  # Импортируем решения, будет обращаться напрямую
@@ -181,6 +182,15 @@ class Dynasty:
     # Производство товаров будет обрабатываться здесь
     def calc_end_turn(self):
         # self.() # Рассчитаем баланс товаров(производство-потребление)
+        # TODO Соберем налоги с поселения.
+        trade_tax = self.game.settlements[self.game.settlements_dict[self.main_settlement]].gold_traded * mod.TRADE_TAX
+        trade_tax = round(trade_tax, 1)
+        self.gold += trade_tax
+        self.result_logs_text.append(f"Вы собрали налог с торговли: {trade_tax}")
+        self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы собрали налог с торговли: {trade_tax}")
+        self.game.all_logs.append(f"{self.name_rus} собрали налог с торговли: {trade_tax}")
+        self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                        f"{self.name_rus} собрали налог с торговли: {trade_tax}")
 
         # Выставим False для параметра подтверждающего отправку хода и получение оповещения о новом ходе
         self.end_turn = False
@@ -188,7 +198,7 @@ class Dynasty:
         self.save_to_file()
         print(f"Функция обработки конца хода")
 
-    # TODO не рабочая функция. Оставляем для примера составления логов
+    # !!!!!!!!!!!! TODO не рабочая функция. Оставляем для примера составления логов
     def act_build(self, buildings_name):     # 101 id
         # !!!!!!! На будущее нужно сделать сверку, доступна ли это постройка для игрока
         # Два раза buildings это: 1 = экземпляр класса с постройками, 2 = список построек уже в классе
