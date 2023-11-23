@@ -26,6 +26,9 @@ class Settlement:
         self.goods = Goods()
         self.buildings = buildings.Buildings()  # Класс для взаимодействия
         self.buildings_list = self.buildings.buildings_list  # Список для сохранения
+        # Постройки, для вывода на фронт при строительстве.
+        self.buildings_cost = self.buildings.buildings_cost  # Список стоимости для сохранения
+        self.buildings_icon_name = self.buildings.buildings_icon_name  # Список иконок для сохранения
 
         # Примерные параметры
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
@@ -51,6 +54,10 @@ class Settlement:
             # print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
             self.size += self.buildings.buildings_size[k] * self.buildings.buildings_list[k]
         # print(f"Текущий размер поселения {self.size}")
+
+        # Строительство
+        # Очки строительства. 1 к 1 за свободный размер поселения и 0.5 к 1 за используемый
+        self.build_points = self.population - self.size + self.size * 0.5
 
         # Логи поселения. Или события, то, что напрямую не зависит от игрока.
         # self.acts = []  # Список действий Это для Династии
@@ -78,6 +85,9 @@ class Settlement:
         self.growth_pop_natural()
         self.growth_pop_migration()
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
+        # Пересчитаем очки строительство
+        self.build_points = self.population - self.size + self.size * 0.5
+
         self.save_to_file()
         print(f"Функция обработки конца хода у поселения")
 
@@ -201,6 +211,13 @@ class Settlement:
             # "max_size": self.max_size,
             # "size": self.size,
 
+            # Строительство
+            "build_points": self.build_points,
+
+            # Строительство, сохранение построек для строительства
+            "buildings_cost": self.buildings_cost,
+            "buildings_icon_name": self.buildings_icon_name,
+
             # Логи
             "result_events_text": self.result_events_text,
             "result_events_text_all_turns": self.result_events_text_all_turns,
@@ -239,6 +256,12 @@ class Settlement:
         # Еда
         self.food = data["food"]
         self.balance_food = data["balance_food"]
+
+        self.build_points = data["build_points"]
+
+        # Строительство, сохранение построек
+        self.buildings_cost = data["buildings_cost"]
+        self.buildings_icon_name = data["buildings_icon_name"]
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]

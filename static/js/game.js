@@ -54,7 +54,14 @@ let statusSettlement = {
     settlementName: "Поселение",
     food: 0,        // Производство еды
     balanceFood: 0, // Баланс еды
+    buildPoints: 0,  // Очки строительства
 }
+
+// Постройки для отображения при строительстве
+// Тут список обьектов.
+// 0 - Стоимость
+// 1 - Название иконки
+let statusBuildings = []
 
 // Обработка вкладок
 // О партии
@@ -155,7 +162,11 @@ function updateVar() {
     }
 
     // Поселение
-    document.querySelector(".settlement-name").innerText = statusSettlement.settlementName;
+    const settName = document.querySelectorAll(".settlement-name")
+    settName.forEach((i, id) => {
+        i.innerText = statusSettlement.settlementName;
+    })
+    document.getElementById("build-points").innerText = `Очки строительства: ${statusSettlement.buildPoints}`
     document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
     // document.getElementById("population-gold").innerText = statusSettlement.populationGold;
     document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
@@ -358,7 +369,13 @@ function actualVarPlayer(res) {
     statusSettlement.wealthStatus = res[1].wealth_status;
     statusSettlement.food = res[1].food;
     statusSettlement.balanceFood = res[1].balance_food;
-    
+    statusSettlement.buildPoints = res[1].build_points;
+
+    statusBuildings[0] = res[1].buildings_cost;
+    statusBuildings[1] = res[1].buildings_icon_name;
+    console.log("Инфа о строительстве")    
+    console.log(statusBuildings[0])   
+    console.log(statusBuildings[1])
 
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
@@ -567,9 +584,11 @@ function logAllResultStart() {       //Функция запуска лога и
 // Запись действий игрока
 
 // Строительство 
+// Модалка для строительства
 document.getElementById('menu-new-building').addEventListener('click', () => {
     hiddenAllMenu();  // Скроем все меню
-    chooseList.innerHTML = `<span>Пока что здесь пусто</span>`;  // Добавим подсказку
+    // chooseList.innerHTML = `<span>Пока что здесь пусто</span>`;  // Добавим подсказку
+    // Старый функционал
     // chooseList.innerHTML = `<span>Выберите постройку:</span>`;  // Добавим подсказку
     // statusGame.colonyListForBuild.forEach((item, id) => {
     //     // if (id > 0) {
@@ -578,10 +597,42 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     //     // };        
     // });
 
-    // Нарисуем кнопку отмены(выхода)
-    chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-choose-exit">Отмена</button>`;
-    document.getElementById('menu-choose-exit').addEventListener('click', () => { chooseList.innerHTML = ''; exitToMainMenuButtons(); });
+    modal.style.display = "block";
+    let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
+    content.innerHTML = `
+        <div style="font-size: 20px">
+            <div>Строительство</div>
+    `;
+    // statusBuildings[0].forEach((item, id) => {
+    //     content.innerHTML += `${item} ${id}`
+    // });
+    // for (i = 0; i <= statusBuildings[0].length; i++) {
+    for (let build in statusBuildings[0]) {
+        let cost = statusBuildings[0][build];
+        content.innerHTML += `
+        <div style="border: solid; margin-top: 5px;">
+            <img src="../static/image/buildings/${statusBuildings[1][build]}" alt="Картинки нет, сорян" width = 50px> 
+            <span>${build}.</span> 
+            <span>Стоимость: ${cost}</span> 
+        </div>
+        `
 
+        // <div style="font-size: 20px">${build}</div>
+        // <div style="font-size: 15px">Стоимость: ${cost}</div>
+    }
+    content.innerHTML += `
+            <div style="font-size: 20px">
+                <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
+            </div>
+        </div>
+    `;
+    
+    console.log("Модалка открыта");
+    // Нарисуем кнопку отмены(выхода)
+    // chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-choose-exit">Отмена</button>`;
+    // document.getElementById('menu-choose-exit').addEventListener('click', () => { chooseList.innerHTML = ''; exitToMainMenuButtons(); });
+
+    // Старый функционал
     // Определяем позицию кнопки и "создаем" соответсвующий приказ
     // document.querySelectorAll(".menu-buttons-choose").forEach((btn, i) => {
     //     btn.addEventListener('click', () => {
@@ -598,6 +649,10 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     // });
 
 }) 
+
+document.getElementById('make-donation').addEventListener('click', () => {
+
+});
 
 // Торговля
 document.getElementById('menu-trade').addEventListener('click', () => {
@@ -731,7 +786,6 @@ function tradeChooseNumGoodsTrade(goods, city) {
         exitToMainMenuButtons(); 
     });
 }
-
 
 // Решения 
 document.getElementById('menu-decision').addEventListener('click', () => {
@@ -953,11 +1007,13 @@ btnShowAllLogsPartyPlayers.onclick = function() {
 // Когда пользователь нажимает на <span> (x), закройте модальное окно
 span.onclick = function() {
   modal.style.display = "none";
+  exitToMainMenuButtons(); // На всякий случай выйдем в главное меню кнопок
 }
 
 // Общая функция закрытия модального окна
 function closeModal() {
-    modal.style.display = "none";    
+    modal.style.display = "none";   
+    exitToMainMenuButtons(); // На всякий случай выйдем в главное меню кнопок
 }
 
 // Информационное модальное окошко

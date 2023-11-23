@@ -276,6 +276,8 @@ div.content {
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
+}
+.all-menu-buttons {
     margin-top: 5px;
 }
 .menu-btn {

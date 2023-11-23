@@ -20,7 +20,17 @@ class Buildings:
         self.buildings_size = {
             'Гавань': 0.2,
             'Лесорубка': 0.5,
+        }
+        # Стоимость в очках строительства
+        self.buildings_cost = {
+            'Гавань': 1,
+            'Лесорубка': 1,
+        }
 
+        # Название иконки для фронта
+        self.buildings_icon_name = {
+            'Гавань': "Small_Harbor.png",
+            'Лесорубка': "Logging_Camp.png",
         }
 
     # Производство товаров
