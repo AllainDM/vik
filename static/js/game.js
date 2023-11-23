@@ -614,11 +614,12 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
             <img src="../static/image/buildings/${statusBuildings[1][build]}" alt="Картинки нет, сорян" width = 50px> 
             <span>${build}.</span> 
             <span>Стоимость: ${cost}</span> 
+            <button onclick = build111("${build}")>Построить</button>
         </div>
         `
 
         // <div style="font-size: 20px">${build}</div>
-        // <div style="font-size: 15px">Стоимость: ${cost}</div>
+        // <div style="font-size: 15px">Стоимость: ${cost}</div>  onclick = build111(${build})
     }
     content.innerHTML += `
             <div style="font-size: 20px">
@@ -648,7 +649,18 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     //     });
     // });
 
-}) 
+});
+
+// Вызываем эту фукнцию из создаваемой кнопки в html
+function build111(buildings_name){
+    console.log(`Строим: ${buildings_name}.`);
+    statusGame.acts.push([
+        `Строим: ${buildings_name}`, 101, buildings_name
+    ]);    
+    postAct(statusGame.game_id);
+    logStart();
+    closeModal();
+};
 
 document.getElementById('make-donation').addEventListener('click', () => {
 

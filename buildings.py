@@ -33,6 +33,8 @@ class Buildings:
             'Лесорубка': "Logging_Camp.png",
         }
 
+        # TODO тут будет новые словари с потреблениями и производством ресурсов
+
     # Производство товаров
     def prod(self, settlement):
         print(f"Рассчитываем производство в {settlement}")
