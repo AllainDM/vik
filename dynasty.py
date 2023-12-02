@@ -156,6 +156,9 @@ class Dynasty:
             # Передавать ли аргументы в функцию или вытаскивать их уже в самой функции. Попробуем по разному =>
             if self.acts[0][1] == 101:
                 # self.act_build_colony(self.acts[0][2])  # Тут передадим аргумент
+                # Запустим сразу метод у класса поселение
+                print(f"Вызываем функцию строительства {self.acts[0][2]}")
+                self.game.settlements[self.game.settlements_dict[self.main_settlement]].act_build(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             elif self.acts[0][1] == 201:
@@ -202,9 +205,7 @@ class Dynasty:
     def act_build(self, buildings_name):     # 101 id
         # !!!!!!! На будущее нужно сделать сверку, доступна ли это постройка для игрока
         # Два раза buildings это: 1 = экземпляр класса с постройками, 2 = список построек уже в классе
-        # Преобразуем строку с золотом в число
-        # !!!!!!!! Нужно подумать, где на другом этапе это можно сделать
-        self.gold = int(self.gold)
+
         if self.gold >= self.game.buildings_price[buildings_name]:
             self.buildings_list[buildings_name] += 1  # Добавим постройку Династии
             self.game.buildings_list[buildings_name] += 1  # И добавим к общему количеству в стране

@@ -186,6 +186,22 @@ class Settlement:
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"Миграция 1 ед населения в поселение {self.name_rus}.")
 
+    # Строительство
+    # Вызов функции от игрока(dynasty)
+    def act_build(self, buildings_name):  # 101 id
+
+        self.buildings_list[buildings_name] += 1  # Добавим постройку Династии
+            # self.game.buildings_list[buildings_name] += 1  # И добавим к общему количеству в стране
+            # self.gold -= self.game.buildings_price[buildings_name]
+            #
+            # self.result_logs_text.append(f"Вы построили {buildings_name}")
+            # self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы построили {buildings_name}")
+            # self.game.all_logs.append(f"{self.name_rus} построили {buildings_name}")
+            # self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+            #                                 f"{self.name_rus} построили {buildings_name}")
+        # else:
+        #     self.result_logs_text.append(f"Вы НЕ построили {buildings_name}, не хватило денег.")
+
     def save_to_file(self):
         data = {
             "game_id": self.game_id,

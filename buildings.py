@@ -40,13 +40,13 @@ class Buildings:
         print(f"Рассчитываем производство в {settlement}")
         # Пристань
         # +2 еда +2 рыба и -1 дерево(типо на лодки)
-        settlement.food += self.buildings_list["Гавань"] * 4
-        settlement.goods.resources_list["Рыба"] += self.buildings_list["Гавань"] * 4
-        settlement.goods.resources_list["Дерево"] -= self.buildings_list["Гавань"] * 1
+        settlement.food += settlement.buildings_list["Гавань"] * 4
+        settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Гавань"] * 4
+        settlement.goods.resources_list["Дерево"] -= settlement.buildings_list["Гавань"] * 1
 
         # Лесорубки
         # +2 дерево
-        settlement.goods.resources_list["Дерево"] += self.buildings_list["Лесорубка"] * 2
+        settlement.goods.resources_list["Дерево"] += settlement.buildings_list["Лесорубка"] * 2
 
     # TODO методы из Торговца, пока оставим тут
     # def cost(self, build):
