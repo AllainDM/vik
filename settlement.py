@@ -56,13 +56,22 @@ class Settlement:
         # print(f"Текущий размер поселения {self.size}")
 
         # Строительство
-        # Очки строительства. 1 к 1 за свободный размер поселения и 0.5 к 1 за используемый
-        self.build_points = self.population - self.size + self.size * 0.5
+        self.build_points = 0
 
         # Логи поселения. Или события, то, что напрямую не зависит от игрока.
         # self.acts = []  # Список действий Это для Династии
         self.result_events_text = []  # Список с текстом событий за прошедший ход
         self.result_events_text_all_turns = []  # Список с текстом событий за всю игру
+
+    def update_var(self):
+        print(f"Обновляем данные поселения")
+        # Очки строительства. 1 к 1 за свободный размер поселения и 0.1 к 1 за используемый
+        self.build_points = round(self.population - self.size + self.size * 0.1, 1)
+        # Запустим функцию расчета товаров у построек
+        # TODO проверить не считает ли чего по 2 раза
+        self.buildings.prod(self)
+        # Баланс еды
+        self.balance_food = self.food - self.population  # Баланс еды: еда - население
 
     def calc_turn(self):
         self.food = 0  # Обнулим запас еды. Производство не накапливается
@@ -84,9 +93,8 @@ class Settlement:
         # Рост/убыль населения
         self.growth_pop_natural()
         self.growth_pop_migration()
-        self.balance_food = self.food - self.population  # Баланс еды: еда - население
-        # Пересчитаем очки строительство
-        self.build_points = self.population - self.size + self.size * 0.5
+        # Обновим данные, баланс еды, очки строительства....
+        self.update_var()
 
         self.save_to_file()
         print(f"Функция обработки конца хода у поселения")

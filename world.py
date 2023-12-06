@@ -177,7 +177,8 @@ class FirstWorld:
         # row_id нужен для сохранения файла
         self.settlements_dict[row_id] = name_eng
         # TODO нужно что-то куда-то добавлять еще?
-
+        # Обновим различные данные для поселения
+        self.settlements[name_eng].update_var()
         # Сохраним в файл
         self.settlements[name_eng].save_to_file()
 
