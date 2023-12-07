@@ -28,6 +28,8 @@ class Settlement:
         self.buildings_list = self.buildings.buildings_list  # Список для сохранения
         # Постройки, для вывода на фронт при строительстве.
         self.buildings_cost = self.buildings.buildings_cost  # Список стоимости для сохранения
+        # Сохраним описание построек. Может временно. Может быть будет изменяться для игроков.
+        self.buildings_description = self.buildings.buildings_description
         self.buildings_icon_name = self.buildings.buildings_icon_name  # Список иконок для сохранения
 
         # Примерные параметры
@@ -197,18 +199,18 @@ class Settlement:
     # Строительство
     # Вызов функции от игрока(dynasty)
     def act_build(self, buildings_name):  # 101 id
-
-        self.buildings_list[buildings_name] += 1  # Добавим постройку Династии
-            # self.game.buildings_list[buildings_name] += 1  # И добавим к общему количеству в стране
+        # TODO фронт не считает расход и не выдает предупреждение.
+        if self.build_points >= self.buildings.buildings_cost[buildings_name]:
+            self.buildings_list[buildings_name] += 1  # Добавим постройку поселению
             # self.gold -= self.game.buildings_price[buildings_name]
-            #
-            # self.result_logs_text.append(f"Вы построили {buildings_name}")
-            # self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы построили {buildings_name}")
-            # self.game.all_logs.append(f"{self.name_rus} построили {buildings_name}")
-            # self.game.all_logs_party.append(f"Ход {self.game.turn}. "
-            #                                 f"{self.name_rus} построили {buildings_name}")
-        # else:
-        #     self.result_logs_text.append(f"Вы НЕ построили {buildings_name}, не хватило денег.")
+
+            self.result_events_text.append(f"Вы построили {buildings_name}")
+            self.result_events_text_all_turns.append(f"Ход {self.game.turn}. Вы построили {buildings_name}")
+            self.game.all_logs.append(f"{self.name_rus} построили {buildings_name}")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"{self.name_rus} построили {buildings_name}")
+        else:
+            self.result_events_text.append(f"Вы НЕ построили {buildings_name}, не хватило очков строительства.")
 
     def save_to_file(self):
         data = {
@@ -241,6 +243,7 @@ class Settlement:
             # Строительство, сохранение построек для строительства
             "buildings_cost": self.buildings_cost,
             "buildings_icon_name": self.buildings_icon_name,
+            "buildings_description": self.buildings_description,
 
             # Логи
             "result_events_text": self.result_events_text,
@@ -286,6 +289,7 @@ class Settlement:
         # Строительство, сохранение построек
         self.buildings_cost = data["buildings_cost"]
         self.buildings_icon_name = data["buildings_icon_name"]
+        self.buildings_description = data["buildings_description"]
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]

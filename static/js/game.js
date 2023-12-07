@@ -373,9 +373,11 @@ function actualVarPlayer(res) {
 
     statusBuildings[0] = res[1].buildings_cost;
     statusBuildings[1] = res[1].buildings_icon_name;
+    statusBuildings[2] = res[1].buildings_description;
     console.log("Инфа о строительстве")    
     console.log(statusBuildings[0])   
     console.log(statusBuildings[1])
+    console.log(statusBuildings[2])
 
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
@@ -609,12 +611,14 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     // for (i = 0; i <= statusBuildings[0].length; i++) {
     for (let build in statusBuildings[0]) {
         let cost = statusBuildings[0][build];
+        let description = statusBuildings[2][build];
         content.innerHTML += `
         <div style="border: solid; margin-top: 5px;">
             <img src="../static/image/buildings/${statusBuildings[1][build]}" alt="Картинки нет, сорян" width = 50px> 
+            <button onclick = build111("${build}")>Построить</button>
             <span>${build}.</span> 
             <span>Стоимость: ${cost}</span> 
-            <button onclick = build111("${build}")>Построить</button>
+            <span>Описание: ${description}</span> 
         </div>
         `
 
