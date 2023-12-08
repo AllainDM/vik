@@ -65,6 +65,10 @@ class Settlement:
         self.result_events_text = []  # Список с текстом событий за прошедший ход
         self.result_events_text_all_turns = []  # Список с текстом событий за всю игру
 
+    # Определить доступные для строительства постройки
+    def available_buildings(self):
+        ...
+
     def update_var(self):
         print(f"Обновляем данные поселения")
         # Очки строительства. 1 к 1 за свободный размер поселения и 0.1 к 1 за используемый

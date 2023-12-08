@@ -61,6 +61,7 @@ let statusSettlement = {
 // Тут список обьектов.
 // 0 - Стоимость
 // 1 - Название иконки
+// 3 - Описание
 let statusBuildings = []
 
 // Обработка вкладок
@@ -617,8 +618,8 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
             <img src="../static/image/buildings/${statusBuildings[1][build]}" alt="Картинки нет, сорян" width = 50px> 
             <button onclick = build111("${build}")>Построить</button>
             <span>${build}.</span> 
-            <span>Стоимость: ${cost}</span> 
-            <span>Описание: ${description}</span> 
+            <span>Стоимость: ${cost}.</span> 
+            <span>Описание: ${description}.</span> 
         </div>
         `
 
