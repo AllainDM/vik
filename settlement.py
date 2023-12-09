@@ -25,6 +25,7 @@ class Settlement:
         # TODO зачем?
         self.goods = Goods()
         self.buildings = buildings.Buildings()  # Класс для взаимодействия
+        self.available_buildings = self.available_buildings()
         self.buildings_list = self.buildings.buildings_list  # Список для сохранения
         # Постройки, для вывода на фронт при строительстве.
         self.buildings_cost = self.buildings.buildings_cost  # Список стоимости для сохранения
@@ -48,14 +49,8 @@ class Settlement:
         self.food = 0  # Тестовая переменная, под хз знает что
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
 
-        # TODO как рассчитать размер поселения
-        # Попробуем сделать перебор по экземпляру класса
+        # "Размер" построек
         self.size = 0
-        for k, v in self.buildings.buildings_list.items():
-            # print(f"Постройка: {k}, количество {v}")
-            # print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
-            self.size += self.buildings.buildings_size[k] * self.buildings.buildings_list[k]
-        # print(f"Текущий размер поселения {self.size}")
 
         # Строительство
         self.build_points = 0
@@ -67,12 +62,23 @@ class Settlement:
 
     # Определить доступные для строительства постройки
     def available_buildings(self):
-        ...
+        # Временно возвращаем весь список
+        return self.buildings.buildings_name_list
 
     def update_var(self):
         print(f"Обновляем данные поселения")
+        # TODO как рассчитать размер поселения
+        # Попробуем сделать перебор по экземпляру класса
+        # Размер поселения и свободное место
+        self.size = 0
+        # print(f"Наши постройки: {self.buildings_list}")
+        for k, v in self.buildings_list.items():
+            # print(f"Постройка: {k}, количество {v}")
+            # print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
+            self.size += self.buildings.buildings_size[k] * self.buildings_list[k]
+        # print(f"Текущий размер поселения {self.size}")
         # Очки строительства. 1 к 1 за свободный размер поселения и 0.1 к 1 за используемый
-        self.build_points = round(self.population - self.size + self.size * 0.1, 1)
+        self.build_points = round(self.population - self.size + self.size * 0.2, 1)
         # Запустим функцию расчета товаров у построек
         # TODO проверить не считает ли чего по 2 раза
         self.buildings.prod(self)
@@ -245,6 +251,7 @@ class Settlement:
             "build_points": self.build_points,
 
             # Строительство, сохранение построек для строительства
+            "available_buildings": self.available_buildings,
             "buildings_cost": self.buildings_cost,
             "buildings_icon_name": self.buildings_icon_name,
             "buildings_description": self.buildings_description,
@@ -291,6 +298,7 @@ class Settlement:
         self.build_points = data["build_points"]
 
         # Строительство, сохранение построек
+        self.available_buildings = data["available_buildings"]
         self.buildings_cost = data["buildings_cost"]
         self.buildings_icon_name = data["buildings_icon_name"]
         self.buildings_description = data["buildings_description"]

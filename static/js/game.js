@@ -59,8 +59,9 @@ let statusSettlement = {
 
 // Постройки для отображения при строительстве
 // Тут список обьектов.
-// 0 - Стоимость
-// 1 - Название иконки
+// 0 - Название
+// 1 - Стоимость
+// 2 - Название иконки
 // 3 - Описание
 let statusBuildings = []
 
@@ -372,13 +373,16 @@ function actualVarPlayer(res) {
     statusSettlement.balanceFood = res[1].balance_food;
     statusSettlement.buildPoints = res[1].build_points;
 
-    statusBuildings[0] = res[1].buildings_cost;
-    statusBuildings[1] = res[1].buildings_icon_name;
-    statusBuildings[2] = res[1].buildings_description;
-    console.log("Инфа о строительстве")    
+    statusBuildings[0] = res[1].available_buildings;
+    statusBuildings[1] = res[1].buildings_cost;
+    statusBuildings[2] = res[1].buildings_icon_name;
+    statusBuildings[3] = res[1].buildings_description;
+    console.log("Инфа о строительстве")     
+    console.log(statusBuildings)   
     console.log(statusBuildings[0])   
     console.log(statusBuildings[1])
     console.log(statusBuildings[2])
+    console.log(statusBuildings[3])
 
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
@@ -610,22 +614,29 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     //     content.innerHTML += `${item} ${id}`
     // });
     // for (i = 0; i <= statusBuildings[0].length; i++) {
-    for (let build in statusBuildings[0]) {
-        let cost = statusBuildings[0][build];
-        let description = statusBuildings[2][build];
+    console.table(`Доступные постройки ${statusBuildings}`)
+    console.log(`Доступные постройки0 ${statusBuildings[0]}`)
+    console.log(`Доступные постройки1 ${statusBuildings[1]}`)
+    statusBuildings[0].forEach((build, num) => {
+        console.log(`Доступная постройка ${build}`)
+        let cost = statusBuildings[1][build];
+        let description = statusBuildings[3][build];
         content.innerHTML += `
         <div style="border: solid; margin-top: 5px;">
-            <img src="../static/image/buildings/${statusBuildings[1][build]}" alt="Картинки нет, сорян" width = 50px> 
+            <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
             <button onclick = build111("${build}")>Построить</button>
             <span>${build}.</span> 
             <span>Стоимость: ${cost}.</span> 
             <span>Описание: ${description}.</span> 
         </div>
         `
+    })
+    // for (let build in statusBuildings[0]) {
+        
 
         // <div style="font-size: 20px">${build}</div>
         // <div style="font-size: 15px">Стоимость: ${cost}</div>  onclick = build111(${build})
-    }
+    
     content.innerHTML += `
             <div style="font-size: 20px">
                 <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
