@@ -4,6 +4,7 @@ console.log('Стрипт навигации успешно загружен');
 function hiddenAllWindows() {
     document.getElementById("party-window").setAttribute('style', 'display: none');
     document.getElementById("settlement-window").setAttribute('style', 'display: none');
+    document.getElementById("trade-window").setAttribute('style', 'display: none');
     document.getElementById("map-window").setAttribute('style', 'display: none');
     document.getElementById("dynasty-window").setAttribute('style', 'display: none');
     document.getElementById("army-window").setAttribute('style', 'display: none');
@@ -11,6 +12,7 @@ function hiddenAllWindows() {
 
     document.getElementById("party-button").setAttribute('style', 'color: black; cursor: pointer; ');
     document.getElementById("settlement-button").setAttribute('style', 'color: black; cursor: pointer; ');
+    document.getElementById("trade-button").setAttribute('style', 'color: black; cursor: pointer; ');
     document.getElementById("map-button").setAttribute('style', 'color: black; cursor: pointer; ');
     document.getElementById("dynasty-button").setAttribute('style', 'color: black; cursor: pointer; ');
     document.getElementById("army-button").setAttribute('style', 'color: black; cursor: pointer; ');

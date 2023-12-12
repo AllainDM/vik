@@ -186,7 +186,9 @@ class Dynasty:
     def calc_end_turn(self):
         # self.() # Рассчитаем баланс товаров(производство-потребление)
         # TODO Соберем налоги с поселения.
-        trade_tax = self.game.settlements[self.game.settlements_dict[self.main_settlement]].gold_traded * mod.TRADE_TAX
+        trade_tax = (
+                self.game.settlements[self.game.settlements_dict[self.main_settlement]].gold_traded_for_tax *
+                mod.TRADE_TAX)
         trade_tax = round(trade_tax, 1)
         self.gold += trade_tax
         self.result_logs_text.append(f"Вы собрали налог с торговли: {trade_tax}")

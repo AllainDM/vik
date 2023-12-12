@@ -78,6 +78,12 @@ document.getElementById('settlement-button').addEventListener('click', () => {
     document.getElementById("settlement-window").setAttribute('style','visibility:visible');
     document.getElementById("settlement-button").setAttribute('style','color:red; cursor: pointer;');
 });
+// Торговля
+document.getElementById('trade-button').addEventListener('click', () => {
+    hiddenAllWindows();
+    document.getElementById("trade-window").setAttribute('style','visibility:visible');
+    document.getElementById("trade-button").setAttribute('style','color:red; cursor: pointer;');
+});
 // Карта
 document.getElementById('map-button').addEventListener('click', () => {
     hiddenAllWindows();
@@ -146,16 +152,11 @@ function updateVar() {
     document.getElementById('rank').innerText = 'Титул: ' + statusGame.title;  // Титул(ранг) игрока    
     document.getElementById('win-points').innerText = 'Победные очки: ' + statusGame.winPoints;
 
-    // Второе меню
     document.getElementById('cur-num-players').innerText = `Игроков: ${statusGame.curNumPlayers}`;
     document.getElementById('max-players').innerText = `Макс.игроков: ${statusGame.maxPlayers}`;
     document.getElementById('victory-conditions').innerText = `Условия победы: Набрать ${statusGame.wpForWin} очков`;
     document.getElementById('winners').innerText = 'Победители: ' + statusGame.winners;
 
-    // Третье меню со списком игрков и их готовность
-    //
-
-    // Четвертое меню, даты и хода
     document.getElementById('year-turn').innerText = 'Дата: ' + statusGame.year + " Ход: " + statusGame.turn;
     if (statusGame.end_turn) {
         document.getElementById('end-turn-bool').innerText = "Ход ГОТОВ"
@@ -174,6 +175,10 @@ function updateVar() {
     document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
     document.getElementById("food").innerText = statusSettlement.food;
     document.getElementById("balance-food").innerText = statusSettlement.balanceFood;
+
+    // Вкладка торговли
+    // Тут отображена доступность покупки и продажы товаров.
+    // !!!!!!!!! 
 
     // Меню разработки
     document.getElementById('player').innerText = 'Игрок: ' + statusGame.user_name;
@@ -327,6 +332,8 @@ function actualVar(res) {
 const settlementNameHtml = document.querySelector(".stats-settlement");
 const goodsNameHtml = document.querySelector(".stats-resources");
 const buildingsNameHtml = document.querySelector(".stats-buildings");
+const availableGoodsBuyNameHtml = document.querySelector(".stats-trade-buy");
+const availableGoodsSellNameHtml = document.querySelector(".stats-trade-sell");
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
@@ -373,6 +380,9 @@ function actualVarPlayer(res) {
     statusSettlement.balanceFood = res[1].balance_food;
     statusSettlement.buildPoints = res[1].build_points;
 
+    // Доступность торговли
+    statusSettlement.availableGoodsBuy = res[1].available_goods_buy;
+
     statusBuildings[0] = res[1].available_buildings;
     statusBuildings[1] = res[1].buildings_cost;
     statusBuildings[2] = res[1].buildings_icon_name;
@@ -384,11 +394,20 @@ function actualVarPlayer(res) {
     console.log(statusBuildings[2])
     console.log(statusBuildings[3])
 
+    // Вывод построек в поселении
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
             buildingsNameHtml.innerHTML +=   
             `<div>
                 ${key}: ${statusSettlement.buildingsList[key]}
+            </div>`;
+    }
+    // Вывод доступных для покупки товаров
+    availableGoodsBuyNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Доступно к покупке</div>`;
+    for (let key in statusSettlement.availableGoodsBuy) {
+        availableGoodsBuyNameHtml.innerHTML +=   
+            `<div>
+                ${key}: ${statusSettlement.availableGoodsBuy[key]}
             </div>`;
     }
     // if (res[1].buildings_list.length > 0) {
@@ -622,14 +641,19 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
         let cost = statusBuildings[1][build];
         let description = statusBuildings[3][build];
         content.innerHTML += `
-        <div style="border: solid; margin-top: 5px;">
-            <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
-            <button onclick = build111("${build}")>Построить</button>
-            <span>${build}.</span> 
-            <span>Стоимость: ${cost}.</span> 
-            <span>Описание: ${description}.</span> 
+        <div class="wrapper" style="border: solid; margin-top: 5px;">
+            <div>
+                <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
+            </div>
+            <button onclick = build111('${build}')>Построить</button>
+            <div> 
+                <div>${build}.</div> 
+                <div>Стоимость: ${cost}.</div> 
+                <div>${description}</div> 
+            </div>
         </div>
         `
+        // Описание: 
     })
     // for (let build in statusBuildings[0]) {
         

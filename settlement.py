@@ -4,6 +4,7 @@ import json
 import random
 
 import buildings
+import mod
 from goods import Goods
 # import pickle
 import mod as MOD
@@ -42,8 +43,14 @@ class Settlement:
         # TODO Размером будет количество населения
         self.max_size = self.population
 
+        # Торговля
         # TODO размер торговых операция населения, для подсчета налога у правителя.
-        self.gold_traded = 0
+        self.gold_traded_for_tax = 0  # Наторговано и будет взят налог
+        self.gold_traded = 0  # Наторговано всего, включая случаи когда налог не берется
+        # Список доступных к покупке товаров.
+        self.available_goods_buy = {
+            "Дерево": 1
+        }
 
         # Отдельные переменные под расчет еды
         self.food = 0  # Тестовая переменная, под хз знает что
@@ -132,26 +139,37 @@ class Settlement:
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"В {self.name_rus} продало {self.balance_food} еды.")
         # Остальная торговля
-        self.gold_traded = 0  # Обнулим расчет прошлого хода
+        self.gold_traded_for_tax = 0  # Обнулим расчет прошлого хода
         list_trade_buy = ""  # Составим список чем торговли
         list_trade_sell = ""  # Составим список чем торговли
+        # Перебираем список названий товаров
         for k, v in self.goods.resources_list.items():
             print("Что у нас тут с торговлей")
             print(k, v)
             if v > 0:  # Продажа излишек
                 self.gold += v * self.goods.resources_price[k]  # Доход населения
-                self.gold_traded += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
+                self.gold_traded_for_tax += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
                 if len(list_trade_sell) > 0:
                     list_trade_sell += f", {k}({v})"
                 else:
                     list_trade_sell += f"{k}({v})"
             elif v < 0:  # Покупка недостатка
-                self.gold -= v * self.goods.resources_price[k]  # Доход населения
-                self.gold_traded += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
-                if len(list_trade_buy) > 0:
-                    list_trade_buy += f", {k}({v*-1})"
-                else:
-                    list_trade_buy += f"{k}({v*-1})"
+                # Необходимо учитывать доступные товары для продажи в поселении
+                if k in self.available_goods_buy:  # Если такой товар вообще есть в списке доступных
+                    print("Товар доступен для покупки.")
+                    if self.available_goods_buy[k] < v:  # Если доступно меньше чем необходимо
+                        print("Товара для покупки меньше чем необходимо.")
+                        # Вычтем по обычной цене то, что доступно
+                        gold_tax = self.available_goods_buy[k] * self.goods.resources_price[k]  # Доход населения
+                        # И то, что не доступно со штрафом
+                        gold_no_tax = ((v - self.available_goods_buy[k]) *
+                                       self.goods.resources_price[k] * mod.NO_AVAILABLE_GOODS)
+                        self.gold_traded_for_tax = gold_tax  # Счетчик торговли для налога. Всегда +
+                        self.gold_traded = gold_tax + gold_no_tax  # Счетчик торговли итоговый. Всегда +
+                        if len(list_trade_buy) > 0:
+                            list_trade_buy += f", {k}({v*-1})"
+                        else:
+                            list_trade_buy += f"{k}({v*-1})"
         # Общий лог покупки
         if len(list_trade_buy) > 0:
             self.result_events_text.append(f"Население покупает: {list_trade_buy}.")
@@ -246,6 +264,8 @@ class Settlement:
             # Размер не сохраняем, высчитывается каждый раз при создании
             # "max_size": self.max_size,
             # "size": self.size,
+            # Торговля available_goods_buy
+            "available_goods_buy": self.available_goods_buy,
 
             # Строительство
             "build_points": self.build_points,
@@ -294,6 +314,9 @@ class Settlement:
         # Еда
         self.food = data["food"]
         self.balance_food = data["balance_food"]
+
+        # Торговля
+        self.available_goods_buy = data["available_goods_buy"]
 
         self.build_points = data["build_points"]
 
