@@ -21,6 +21,7 @@ class Settlement:
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
         self.name_rus = name_rus
         self.name_eng = name_eng
+        self.province = 0  # Принадлежность к провинции(соседние поселения)
 
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?

@@ -12,6 +12,7 @@ import redis
 import maindb
 # TODO файл БД еще не создан
 import config
+import mod
 import world
 from FDataBase import FDataBase
 from world import FirstWorld
@@ -430,11 +431,29 @@ def create_game(setting):  # Получаем только список игро
     # Запишем в БД, получим row_id, его используем при сохранении поселения в файл.
     last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
                                                   settlements_names_rus[0], setting[1]["playerId"])
+    # id игры
+    # id поселения(получаем выше из бд)
+    # id игрока владельца
+    # имя поселения на английском
+    # имя поселения на русском
+    # игрок на поселении
     this_game.create_settlement(last_game_row_id, last_settlement_row_id, setting[1]["playerId"],
-                                settlements_names_rus[0], settlements_names_eng[0])
+                                settlements_names_rus[0], settlements_names_eng[0], player=True)
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
                              setting[1]["nameEng"], setting[1]["nameRus"], last_settlement_row_id, 100)
+    # Создадим еще поселения в провинции игрока
+    # TODO выяснить верно ли присваивается ид для поселения
+    for sett in range(mod.SETT_IN_PROVINCE):
+        print("############################################")
+        print(f"Создаем поселение с ид: {last_settlement_row_id+1}")
+        last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id+1}",
+                                                      f"settlements_{last_settlement_row_id+1}", 0)
+        this_game.create_settlement(last_game_row_id, last_settlement_row_id, 0,
+                                    f"settlements_{last_settlement_row_id}",
+                                    f"settlements_{last_settlement_row_id}", player=False)
+        print(f"Создано поселение с ид: {last_settlement_row_id}")
+
 
     this_game.save_to_file()
 

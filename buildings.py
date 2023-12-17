@@ -85,9 +85,9 @@ class Buildings:
         settlement.food = 0
         # Рыбацкая пристань
         # +2 еда +2 рыба и -1 дерево(типо на лодки)
-        settlement.food += settlement.buildings_list["Рыбацкая пристань"] * 4
-        settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Рыбацкая пристань"] * 4
-        settlement.goods.resources_list["Дерево"] -= settlement.buildings_list["Рыбацкая пристань"] * 1
+        settlement.food += settlement.buildings_list["Рыбацкая_пристань"] * 4
+        settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Рыбацкая_пристань"] * 4
+        settlement.goods.resources_list["Дерево"] -= settlement.buildings_list["Рыбацкая_пристань"] * 1
         # Огород
         settlement.food += settlement.buildings_list["Огород"] * 1
         settlement.goods.resources_list["Овощи"] += settlement.buildings_list["Огород"] * 1
@@ -100,7 +100,7 @@ class Buildings:
         settlement.goods.resources_list["Меха"] += settlement.buildings_list["Угодье"] * 2
 
         # Длинный дом. -1 меха
-        settlement.goods.resources_list["Меха"] -= settlement.buildings_list["Длинный дом"] * 1
+        settlement.goods.resources_list["Меха"] -= settlement.buildings_list["Длинный_дом"] * 1
 
     # TODO методы из Торговца, пока оставим тут
     # def cost(self, build):

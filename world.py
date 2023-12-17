@@ -26,6 +26,9 @@ class FirstWorld:
         self.year = 800     # Стартовый год
         self.turn = 1       # Стартовый ход
 
+        # Каждому новому игроку выдается провинция и в ней несколько поселений
+        self.provinces = 0  # Количество провинций(для записи ид провинции)
+
         # Определение победителя
         self.need_win_points_for_win = 8  # Количество баллов для победы
         self.winners = []       # Список победителей, может быть не один
@@ -58,6 +61,8 @@ class FirstWorld:
             "is_active": self.is_active,
             "year": self.year,
             "turn": self.turn,
+
+            "provinces": self.provinces,
 
             # Определение победителя
             "need_win_points_for_win": self.need_win_points_for_win,
@@ -119,6 +124,8 @@ class FirstWorld:
         self.year = data["year"]
         self.turn = data["turn"]
 
+        self.provinces = data["provinces"]
+
         # Определение победителя
         # Список победителей и статус игры, при окончании победитель повторно не определяется
         self.need_win_points_for_win = data["need_win_points_for_win"]
@@ -166,7 +173,7 @@ class FirstWorld:
 
     # TODO Создать поселение игрока
     # TODO доделать
-    def create_settlement(self, game_id, row_id, ruler, name_rus, name_eng):
+    def create_settlement(self, game_id, row_id, ruler, name_rus, name_eng, player):
         # Объект с экземпляром класса английское название. Список поселений с русским название
         # TODO Можно ли сделать тоже на русском?
         self.settlements[name_eng] = Settlement(self, game_id, row_id, ruler, name_rus, name_eng)
