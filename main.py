@@ -75,14 +75,13 @@ menu_admin = [
 # Временный глобальный список поселений, будет использоваться для быстрого создания партии
 # Так же создадим запас названий для других поселений с простыми названиями
 # Дания = "Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг"
-manual_settlements_names_rus = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",]
+manual_settlements_names_rus = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг", ]
 auto_settlements_names_rus = [f"Settlement {s}" for s in range(1000)]
 settlements_names_rus = manual_settlements_names_rus + auto_settlements_names_rus
 
 manual_settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg"]
 auto_settlements_names_eng = [f"Settlement {s}" for s in range(1000)]
 settlements_names_eng = manual_settlements_names_eng + auto_settlements_names_eng
-
 
 
 def get_db():
@@ -505,6 +504,22 @@ def add_dynasty(game_id, player):
     game.create_settlement(game_id=game_id, row_id=real_settlement_id, ruler=player[0],
                            name_rus=settlements_names_rus[real_settlement_id],
                            name_eng=settlements_names_eng[real_settlement_id])
+
+    # Создадим еще поселения в провинции игрока
+    # TODO выяснить верно ли присваивается ид для поселения
+    for sett in range(mod.SETT_IN_PROVINCE):
+        print("############################################")
+        real_settlement_id = len(game.settlements_list)
+        print(f"Реальный ид поселения {real_settlement_id}")
+        # print(f"Создаем поселение с ид: {last_settlement_row_id + 1}")
+        # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id + 1}",
+        #                                               f"settlements_{last_settlement_row_id + 1}", 0)
+        last_settlement_row_id = dbase.add_settlement(game_id, f"settlements_{real_settlement_id}",
+                                                      f"settlements_{real_settlement_id}", 0)
+        game.create_settlement(game_id, real_settlement_id, 0,
+                               f"settlements_{real_settlement_id}",
+                               f"settlements_{real_settlement_id}", player=False)
+        print(f"Создано поселение с ид: {real_settlement_id}")
 
     game.save_to_file()
 
