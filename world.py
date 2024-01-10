@@ -173,7 +173,7 @@ class FirstWorld:
 
     # TODO Создать поселение игрока
     # TODO доделать
-    def create_settlement(self, game_id, row_id, ruler, name_rus, name_eng, player):
+    def create_settlement(self, game_id, row_id, ruler, name_rus, name_eng, player=False):
         # Объект с экземпляром класса английское название. Список поселений с русским название
         # TODO Можно ли сделать тоже на русском?
         self.settlements[name_eng] = Settlement(self, game_id, row_id, ruler, name_rus, name_eng)

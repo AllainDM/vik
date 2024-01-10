@@ -21,6 +21,7 @@ from cities import Cities
 from goods import Goods
 from buildings import Buildings
 from dynasty import Dynasty
+
 # import postgreTables
 
 
@@ -50,21 +51,21 @@ menu = [{"name": "Авторизация", "url": "login"},
         {"name": "Feedback", "url": "contact"}]
 
 menu_auth = [
-             {"name": "Профиль", "url": "profile"},
-             {"name": "Игра", "url": "game"},
-             {"name": "Выбор игры", "url": "choose-game"},
-             {"name": "Игроки", "url": "players"},
-             {"name": "Лог", "url": "log"},
-             # {"name": "Feedback", "url": "contact"}
+    {"name": "Профиль", "url": "profile"},
+    {"name": "Игра", "url": "game"},
+    {"name": "Выбор игры", "url": "choose-game"},
+    {"name": "Игроки", "url": "players"},
+    {"name": "Лог", "url": "log"},
+    # {"name": "Feedback", "url": "contact"}
 ]
 
 menu_admin = [
-              {"name": "Профиль", "url": "profile"},
-              {"name": "Игры", "url": "games"},
-              {"name": "Создать игру", "url": "create-game"},
-              {"name": "Игроки", "url": "players"},
-              {"name": "Лог", "url": "log"},
-              # {"name": "Feedback", "url": "contact"}
+    {"name": "Профиль", "url": "profile"},
+    {"name": "Игры", "url": "games"},
+    {"name": "Создать игру", "url": "create-game"},
+    {"name": "Игроки", "url": "players"},
+    {"name": "Лог", "url": "log"},
+    # {"name": "Feedback", "url": "contact"}
 ]
 
 # menu_party = [
@@ -72,11 +73,16 @@ menu_admin = [
 # ]
 
 # Временный глобальный список поселений, будет использоваться для быстрого создания партии
+# Так же создадим запас названий для других поселений с простыми названиями
 # Дания = "Ольборг", "Орхус", "Хедебю", "Рибе", "Эсбьерг"
-settlements_names_rus = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",
-                         "Поселение 6", "Поселение 7", "Поселение 8", "Поселение 9", "Поселение 10"]
-settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg",
-                         "Settlement 6", "Settlement 7", "Settlement 8", "Settlement 9", "Settlement 10"]
+manual_settlements_names_rus = ["Хедебю", "Ольборг", "Орхус", "Рибе", "Эсбьерг",]
+auto_settlements_names_rus = [f"Settlement {s}" for s in range(1000)]
+settlements_names_rus = manual_settlements_names_rus + auto_settlements_names_rus
+
+manual_settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg"]
+auto_settlements_names_eng = [f"Settlement {s}" for s in range(1000)]
+settlements_names_eng = manual_settlements_names_eng + auto_settlements_names_eng
+
 
 
 def get_db():
@@ -101,6 +107,7 @@ dbase = None
 А так надо разобраться как получать такую переменную при каждой созданной игре.
 Это требуется для одновременного создания нескольких игр, пока не понятно как себя поведет движок
 """
+
 
 # Массив с АЙДишниками игр
 # TODO удалить, если будет работать без него
@@ -139,7 +146,7 @@ def index():
     if user_admin == 1:
         print("this is admin")
         return render_template("index.html", title="Main", menu=menu_admin)
-    return render_template('index.html',  title="Main", menu=menu_auth)
+    return render_template('index.html', title="Main", menu=menu_auth)
 
 
 # Что это за функция??????????????
@@ -150,7 +157,7 @@ def admin_create_new_game():
     if user_admin == 1:
         print("this is admin2")
         return render_template("create-game.html", title="Main", menu=menu_admin)
-    return render_template('index.html',  title="Main", menu=menu_auth)
+    return render_template('index.html', title="Main", menu=menu_auth)
 
 
 @app.route("/game")  # Функция перенаправляет игрока на страницу смой игры, откуда уже происходит запрос параметров
@@ -204,7 +211,7 @@ def log():
     if user_admin == 1:
         print("this is admin")
         return render_template("log.html", title="Main", menu=menu_admin)
-    return render_template('log.html',  title="Main", menu=menu_auth)
+    return render_template('log.html', title="Main", menu=menu_auth)
 
 
 @app.route("/load_all_games")  # Посмотреть список все игр с возможностью их удаления. ТОЛЬКО ДЛЯ АДМИНА
@@ -342,24 +349,24 @@ def req_cities_for_trade():
 
 
 # Создать каждому по одиночной игре
-@app.route("/create_new_single_game")
-@login_required
-def create_new_single_game():
-    user_admin = current_user.get_admin()
-    if user_admin == 1:
-        print("this is admin4")
-        users = dbase.get_all_user()
-        # print(f"users: {users}")
-        for user in users:
-            # print(f"user {user[0]}")
-            player = int(user[0])
-            # [{'playerId': 3, 'nameEng': 'Magonid', 'nameRus': 'Магониды'}]
-            players_dynasty = [{'playerId': player, 'nameEng': 'Magonid', 'nameRus': 'Магониды'}]
-            # print(players_dynasty)
-            create_game(players_dynasty)
-        return jsonify("Ответ от Python: Игра создалась")
-    else:
-        return ""
+# @app.route("/create_new_single_game")
+# @login_required
+# def create_new_single_game():
+#     user_admin = current_user.get_admin()
+#     if user_admin == 1:
+#         print("this is admin4")
+#         users = dbase.get_all_user()
+#         # print(f"users: {users}")
+#         for user in users:
+#             # print(f"user {user[0]}")
+#             player = int(user[0])
+#             # [{'playerId': 3, 'nameEng': 'Magonid', 'nameRus': 'Магониды'}]
+#             players_dynasty = [{'playerId': player, 'nameEng': 'Magonid', 'nameRus': 'Магониды'}]
+#             # print(players_dynasty)
+#             create_game(players_dynasty)
+#         return jsonify("Ответ от Python: Игра создалась")
+#     else:
+#         return ""
 
 
 # Админская версия создания партии
@@ -394,7 +401,7 @@ def create_new_game():
         print(f"player_info: {player_info}")
         # Передаем макс количество игроков и параметры первого игрока, остальные добавляются потом
         setting_for_create_game = [
-            {"maxPlayers": post["maxPlayers"]},    # post[0]
+            {"maxPlayers": post["maxPlayers"]},  # post[0]
             {"playerId": player_info[0], "nameEng": player_info[6], "nameRus": player_info[6]}
         ]
         print(f"setting_for_create_game {setting_for_create_game}")
@@ -429,31 +436,37 @@ def create_game(setting):  # Получаем только список игро
 
     # Имя поселения временно первое из списка.
     # Запишем в БД, получим row_id, его используем при сохранении поселения в файл.
-    last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
-                                                  settlements_names_rus[0], setting[1]["playerId"])
+    # last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
+    #                                               settlements_names_rus[0], setting[1]["playerId"])
+    # Ид поселение теперь берется по количеству поселений из списка в конктретно этой игре
+    real_settlement_id = len(this_game.settlements_list)
+    print(f"Реальный ид поселения {real_settlement_id}")
     # id игры
     # id поселения(получаем выше из бд)
     # id игрока владельца
     # имя поселения на английском
     # имя поселения на русском
     # игрок на поселении
-    this_game.create_settlement(last_game_row_id, last_settlement_row_id, setting[1]["playerId"],
+    this_game.create_settlement(last_game_row_id, real_settlement_id, setting[1]["playerId"],
                                 settlements_names_rus[0], settlements_names_eng[0], player=True)
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
-                             setting[1]["nameEng"], setting[1]["nameRus"], last_settlement_row_id, 100)
+                             setting[1]["nameEng"], setting[1]["nameRus"], real_settlement_id, 100)
     # Создадим еще поселения в провинции игрока
     # TODO выяснить верно ли присваивается ид для поселения
     for sett in range(mod.SETT_IN_PROVINCE):
         print("############################################")
-        print(f"Создаем поселение с ид: {last_settlement_row_id+1}")
-        last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id+1}",
-                                                      f"settlements_{last_settlement_row_id+1}", 0)
-        this_game.create_settlement(last_game_row_id, last_settlement_row_id, 0,
-                                    f"settlements_{last_settlement_row_id}",
-                                    f"settlements_{last_settlement_row_id}", player=False)
-        print(f"Создано поселение с ид: {last_settlement_row_id}")
-
+        real_settlement_id = len(this_game.settlements_list)
+        print(f"Реальный ид поселения {real_settlement_id}")
+        # print(f"Создаем поселение с ид: {last_settlement_row_id + 1}")
+        # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id + 1}",
+        #                                               f"settlements_{last_settlement_row_id + 1}", 0)
+        last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{real_settlement_id}",
+                                                      f"settlements_{real_settlement_id}", 0)
+        this_game.create_settlement(last_game_row_id, real_settlement_id, 0,
+                                    f"settlements_{real_settlement_id}",
+                                    f"settlements_{real_settlement_id}", player=False)
+        print(f"Создано поселение с ид: {real_settlement_id}")
 
     this_game.save_to_file()
 
@@ -478,17 +491,20 @@ def add_dynasty(game_id, player):
     game.load_from_file(game_id)  # Запустим метод считающий данные из файла.
     # Добавим запись о поселении для игрока в БД заодно получив его row_id для сохранения.
     # TODO нужно переработать выбор названия поселения
+    # Ид поселение теперь берется по количеству поселений из списка в конктретно этой игре
+    real_settlement_id = len(game.settlements_list)
+    print(f"Реальный ид поселения {real_settlement_id}")
     last_settlement_row_id = dbase.add_settlement(game_id=game_id, name_eng=settlements_names_eng[0],
                                                   name_rus=settlements_names_rus[0], ruler=player[0])
 
     # Создадим династию.
     # TODO Последний аргумент количество золота, у него есть дефолтное значение.
     game.create_dynasty(game_id, player_id=player[0], name_eng=player[6],
-                        name_rus=player[6], main_settlement=last_settlement_row_id)
+                        name_rus=player[6], main_settlement=real_settlement_id)
     # Создадим поселение.
-    game.create_settlement(game_id=game_id, row_id=last_settlement_row_id, ruler=player[0],
-                           name_rus=settlements_names_rus[last_settlement_row_id],
-                           name_eng=settlements_names_eng[last_settlement_row_id])
+    game.create_settlement(game_id=game_id, row_id=real_settlement_id, ruler=player[0],
+                           name_rus=settlements_names_rus[real_settlement_id],
+                           name_eng=settlements_names_eng[real_settlement_id])
 
     game.save_to_file()
 
@@ -596,19 +612,19 @@ def req_status_game():
     # Так же загрузим список городов для торговли
 
     data = {
-            # Об игроках
-            "max_players": my_world["max_players"],
-            "dynasty_list": my_world["dynasty_list"],
-            "winners": my_world["winners"],  # need_win_points_for_win
-            "need_win_points_for_win": my_world["need_win_points_for_win"],
-            "year": my_world["year"],
-            "turn": my_world["turn"],
-            "all_logs": my_world["all_logs"],
-            "all_logs_party": my_world["all_logs_party"],
-            "game_id": my_world["row_id"],
-            "date_create": my_world["date_create"],
-            "user_name": user_name,
-        }
+        # Об игроках
+        "max_players": my_world["max_players"],
+        "dynasty_list": my_world["dynasty_list"],
+        "winners": my_world["winners"],  # need_win_points_for_win
+        "need_win_points_for_win": my_world["need_win_points_for_win"],
+        "year": my_world["year"],
+        "turn": my_world["turn"],
+        "all_logs": my_world["all_logs"],
+        "all_logs_party": my_world["all_logs_party"],
+        "game_id": my_world["row_id"],
+        "date_create": my_world["date_create"],
+        "user_name": user_name,
+    }
     print(f"4Информация о партии {data}")
     return jsonify(data)
 
@@ -741,7 +757,7 @@ def contact():
     if user_admin == 1:
         print("this is admin")
         return render_template("contact.html", title="Feedback", menu=menu_admin)
-    return render_template('contact.html',  title="Feedback", menu=menu_auth)
+    return render_template('contact.html', title="Feedback", menu=menu_auth)
 
 
 @app.route("/login", methods=["POST", "GET"])  # Авторизация
@@ -759,7 +775,7 @@ def login():
         flash("Wrong login/password", category="error")
         print("Ошибка авторизации")
 
-    return render_template('login.html',  title="Авторизация", menu=menu)
+    return render_template('login.html', title="Авторизация", menu=menu)
 
 
 @app.route('/logout')  # Выход из профиля

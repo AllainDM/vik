@@ -17,6 +17,7 @@ class Settlement:
                  gold=50):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
+        # self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
         self.name_rus = name_rus
