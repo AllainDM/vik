@@ -91,7 +91,7 @@ class FirstWorld:
         # Пишем в json
         try:
             with open(f"games/{self.row_id}/gameID_{self.row_id}.viking", 'w') as f:
-                json.dump(data, f)
+                json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
         except FileNotFoundError:
             print(f"Файл 'games/{self.row_id}/gameID_{self.row_id}.viking' не найден")
             return ""

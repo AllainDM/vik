@@ -87,7 +87,7 @@ class Dynasty:
         # Тут нужно отловить ошибку отсутствия файла
         try:
             with open(f"games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking", 'w') as f:
-                json.dump(data, f)
+                json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
         except FileNotFoundError:
             print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_playerID_{self.player_id}.viking' не найден")
             return ""

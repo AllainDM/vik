@@ -540,7 +540,7 @@ def cancel_act():
             elif what == "last":
                 data["acts"].pop(-1)
             with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as new_f:
-                json.dump(data, new_f)
+                json.dump(data, new_f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
         return "ok"
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
@@ -689,7 +689,7 @@ def post_turn():
         data["end_turn"] = True
         # Снова запишем ход
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
-            json.dump(data, f)
+            json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
         world.check_readiness(game_id)
     # Временно возвращаем пустую строку
     return ""
@@ -724,7 +724,7 @@ def post_act():
         data["acts"] = post
         # Снова запишем ход
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
-            json.dump(data, f)
+            json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
     # Временно возвращаем пустую строку
     return ""
 
@@ -750,7 +750,7 @@ def confirm_rec_turn():
     data["end_turn_know"] = True
     # Снова запишем в файл
     with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
     world.check_readiness(game_id)
     return "ok"
 
