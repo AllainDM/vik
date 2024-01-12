@@ -121,10 +121,11 @@ class Settlement:
         print(f"Функция обработки конца хода у поселения")
 
     def pop_trade(self):  # Расчет торговли населения.
-        # TODO нужно ввести предварительную переменную трат(доходов) для высчета налога.
+        # TODO нужно ввести предварительную переменную трат(доходов) для вычета налога.
         # Торговля едой
         # TODO временно покупка 100% недостатка
         # !!! Торговля едо до роста населения(функция calc_end_turn)
+        # TODO временно отменим продажу и покупку еды
         self.gold += self.balance_food * self.goods.resources_price["Еда"]
         if self.balance_food < 0:
             self.result_events_text.append(f"Население купило {self.balance_food*-1} еды.")
@@ -166,12 +167,19 @@ class Settlement:
                         # И то, что не доступно со штрафом
                         gold_no_tax = ((v - self.available_goods_buy[k]) *
                                        self.goods.resources_price[k] * mod.NO_AVAILABLE_GOODS)
-                        self.gold_traded_for_tax = gold_tax  # Счетчик торговли для налога. Всегда +
-                        self.gold_traded = gold_tax + gold_no_tax  # Счетчик торговли итоговый. Всегда +
-                        if len(list_trade_buy) > 0:
-                            list_trade_buy += f", {k}({v*-1})"
-                        else:
-                            list_trade_buy += f"{k}({v*-1})"
+                    else:  # Иначе если доступно к покупке в необходимом количестве
+                        print("Товара для покупки достаточно.")
+                        # TODO Что это? Почему "доход" населения?
+                        gold_tax = self.available_goods_buy[k] * self.goods.resources_price[k]  # Доход населения
+                        gold_no_tax = 0
+                    self.gold_traded_for_tax = gold_tax  # Счетчик торговли для налога правителю. Всегда +
+                    self.gold_traded = gold_tax + gold_no_tax  # Счетчик торговли итоговый. Всегда +
+                    self.gold -= self.gold_traded  # И вычтем за покупку товара
+                    if len(list_trade_buy) > 0:
+                        list_trade_buy += f", {k}({v*-1})"
+                    else:
+                        list_trade_buy += f"{k}({v*-1})"
+
         # Общий лог покупки
         if len(list_trade_buy) > 0:
             self.result_events_text.append(f"Население покупает: {list_trade_buy}.")
@@ -190,8 +198,8 @@ class Settlement:
                                             f"В {self.name_rus} продает: {list_trade_sell}.")
 
     def growth_pop_natural(self):
-        rnd = random.randint(0, 10)
-        grown = 5  # TODO тестовый рост в 50% без модификаторов
+        rnd = random.randint(0, 100)
+        grown = mod.BASE_POP_GROWN  # TODO тестовый рост был в 50% без модификаторов
 
         # TODO тут только положительный рост, как сделать отрицательный?
         # self.population += 1 if grown > rnd else 0
@@ -204,8 +212,8 @@ class Settlement:
                                             f"В {self.name_rus} население выросло на 1.")
 
     def growth_pop_migration(self):
-        rnd = random.randint(0, 10)
-        grown = 5  # TODO тестовый рост в 50% без модификаторов
+        rnd = random.randint(0, 100)
+        grown = mod.BASE_POP_MIGRATE  # TODO тестовый рост был 50% без модификаторов
 
         # TODO тут только положительный рост, как сделать отрицательный?
         # self.population += 1 if grown > rnd else 0

@@ -125,6 +125,9 @@ div.content {
 }
 
 .logs {
+    overflow: scroll; /* Добавляем полосы прокрутки */
+    max-height: 400px; /* Высота блока */
+    padding: 5px; /* Поля вокруг текста */
     width: 95%;
     margin-top: 160px;
     float: left;

@@ -13,7 +13,7 @@ class Buildings:
         }
         # Количество построек в поселении
         self.buildings_list = {
-            'Рыбацкая_пристань': 1,
+            'Рыбацкая_пристань': 0,
             'Огород': 0,
             'Пастбище(овцы)': 0,
             'Лесорубка': 0,
@@ -83,20 +83,22 @@ class Buildings:
         print(f"Рассчитываем производство в {settlement}")
         # Пища
         settlement.food = 0
+        # TODO Конкретно типы еды пока не производим, до полной доработки общего рынка.
         # Рыбацкая пристань
-        # +2 еда +2 рыба и -1 дерево(типо на лодки)
+        # +2 еда +2 рыба и -1 дерево(на лодки)
         settlement.food += settlement.buildings_list["Рыбацкая_пристань"] * 4
-        settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Рыбацкая_пристань"] * 4
+        settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Рыбацкая_пристань"] * 0  # 4
         settlement.goods.resources_list["Дерево"] -= settlement.buildings_list["Рыбацкая_пристань"] * 1
         # Огород
         settlement.food += settlement.buildings_list["Огород"] * 1
-        settlement.goods.resources_list["Овощи"] += settlement.buildings_list["Огород"] * 1
+        settlement.goods.resources_list["Овощи"] += settlement.buildings_list["Огород"] * 0  # 1
 
         # Лесорубки
         # +2 дерево
         settlement.goods.resources_list["Дерево"] += settlement.buildings_list["Лесорубка"] * 2
 
-        # Угодье. +2 меха
+        # Угодье. +1 мясо +2 меха
+        settlement.goods.resources_list["Мясо"] += settlement.buildings_list["Угодье"] * 0  # 1
         settlement.goods.resources_list["Меха"] += settlement.buildings_list["Угодье"] * 2
 
         # Длинный дом. -1 меха

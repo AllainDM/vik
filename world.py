@@ -4,6 +4,7 @@ import json     # Вместо pickle пробуем сохранять в json
 # Что-то связанное с рандомом.
 # Используется для перетасовки игроков каждую итерацию обработки хода.
 from random import sample
+import random
 
 from dynasty import Dynasty
 from settlement import Settlement
@@ -184,6 +185,16 @@ class FirstWorld:
         # row_id нужен для сохранения файла
         self.settlements_dict[row_id] = name_eng
         # TODO нужно что-то куда-то добавлять еще?
+        # Добавим новому поселению стартовую рандомную постройку
+        rnd = random.randint(1, 4)
+        if rnd == 1:
+            self.settlements[name_eng].buildings_list["Рыбацкая_пристань"] += 1
+        elif rnd == 2:
+            self.settlements[name_eng].buildings_list["Огород"] += 1
+        elif rnd == 3:
+            self.settlements[name_eng].buildings_list["Угодье"] += 1
+        elif rnd == 4:
+            self.settlements[name_eng].buildings_list["Лесорубка"] += 1
         # Обновим различные данные для поселения
         self.settlements[name_eng].update_var()
         # Сохраним в файл
