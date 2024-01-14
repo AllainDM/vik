@@ -8,6 +8,7 @@ import random
 
 from dynasty import Dynasty
 from settlement import Settlement
+from province import Province
 from cities import cities
 from buildings import buildings
 # from events import events
@@ -27,9 +28,6 @@ class FirstWorld:
         self.year = 800     # Стартовый год
         self.turn = 1       # Стартовый ход
 
-        # Каждому новому игроку выдается провинция и в ней несколько поселений
-        self.provinces = 0  # Количество провинций(для записи ид провинции)
-
         # Определение победителя
         self.need_win_points_for_win = 8  # Количество баллов для победы
         self.winners = []       # Список победителей, может быть не один
@@ -43,6 +41,11 @@ class FirstWorld:
         self.dynasty_list = []  # Список стран, для перебора при обсчете хода
         self.player_list = []   # Список ид игроков, он же ид династии
         self.max_players = max_players  # Максимальное количество игроков
+
+        # Провинция, создается перед поселением
+        self.provinces = {}  # Тут экземпляр класса
+        self.provinces_list = []  # Тут просто список названий
+        self.provinces_dict = {}  # Словарь, где значением ид, для перебора при "восстановлении"
 
         # Сюда сохраняется поселение при создании
         self.settlements = {}  # Тут экземпляр класса
@@ -63,8 +66,6 @@ class FirstWorld:
             "year": self.year,
             "turn": self.turn,
 
-            "provinces": self.provinces,
-
             # Определение победителя
             "need_win_points_for_win": self.need_win_points_for_win,
             "winners": self.winners,
@@ -72,14 +73,19 @@ class FirstWorld:
             "game_the_end": self.game_the_end,
 
             # Игроки
-            # "dynasty": self.dynasty,  # TODO объект с экземплярами класса, в сохранении не нуждается
+            # "dynasty": self.dynasty,  # объект с экземплярами класса, в сохранении не нуждается
             "dynasty_dict": self.dynasty_dict,
             "dynasty_list": self.dynasty_list,
             "player_list": self.player_list,
             "max_players": self.max_players,
 
+            # Провинции
+            # "provinces": self.provinces,  # объект с экземплярами класса, в сохранении не нуждается
+            "provinces_list": self.provinces_list,
+            "provinces_dict": self.provinces_dict,
+
             # Управляемые поселения
-            # "settlements": self.settlements,  # TODO объект с экземплярами класса, в сохранении не нуждается
+            # "settlements": self.settlements,  # объект с экземплярами класса, в сохранении не нуждается
             "settlements_list": self.settlements_list,
             "settlements_dict": self.settlements_dict,
 
@@ -172,12 +178,19 @@ class FirstWorld:
         # Сохранение династии в файл
         self.dynasty[name_eng].save_to_file()
 
+    # Создаем провинцию перед созданием поселения
+    def create_province(self, game_id, row_id, name_rus, name_eng):
+        self.provinces[name_eng] = Province(self, game_id, row_id, name_rus, name_eng)
+
+        return self  # Вернем ссылку для создания поселений
+
     # TODO Создать поселение игрока
     # TODO доделать
-    def create_settlement(self, game_id, row_id, ruler, name_rus, name_eng, player=False):
+    def create_settlement(self, game_id, province, row_id, ruler, name_rus, name_eng, player=False):
         # Объект с экземпляром класса английское название. Список поселений с русским название
         # TODO Можно ли сделать тоже на русском?
-        self.settlements[name_eng] = Settlement(self, game_id, row_id, ruler, name_rus, name_eng)
+        print(f"row_id {row_id}")
+        self.settlements[name_eng] = Settlement(self, game_id, province, row_id, ruler, name_rus, name_eng, player)
         # Для перебора при обработке хода
         # Старое: Список поселений, для перебора при обсчете хода
         self.settlements_list.append(name_eng)
@@ -213,6 +226,12 @@ class FirstWorld:
         self.settlements[name_eng] = Settlement(self, game_id)
         self.settlements[name_eng].load_from_file(game_id, settlement_id)
         print(f"Восстановлено поселение: {self.settlements[name_eng].name_eng}")
+
+    # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
+    def restore_province(self, game_id, province_id, name_eng):  #
+        self.provinces[name_eng] = Province(self, game_id)
+        self.provinces[name_eng].load_from_file(game_id, province_id)
+        print(f"Восстановлена провинция: {self.provinces[name_eng].name_eng}")
 
 
 def check_readiness(game_id):  # Проверить все ли страны отправили ход

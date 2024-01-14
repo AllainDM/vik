@@ -16,6 +16,7 @@ import mod
 import world
 from FDataBase import FDataBase
 from world import FirstWorld
+from province import Province
 from UserLogin import UserLogin
 from cities import Cities
 from goods import Goods
@@ -82,6 +83,16 @@ settlements_names_rus = manual_settlements_names_rus + auto_settlements_names_ru
 manual_settlements_names_eng = ["Hedeby", "Aalborg", "Aarhus", "Ribe", "Esbjerg"]
 auto_settlements_names_eng = [f"Settlement {s}" for s in range(1000)]
 settlements_names_eng = manual_settlements_names_eng + auto_settlements_names_eng
+
+# Временный глобальный список провинций, будет использоваться для быстрого создания партии
+# Так же создадим запас названий для других провинций с простыми названиями
+manual_provinces_names_rus = ["Хедебюгия", "Ольборгия", "Орхусия", "Рибения", "Эсбьергия", ]
+auto_provinces_names_rus = [f"Provinces {s}" for s in range(100)]
+provinces_names_rus = manual_provinces_names_rus + auto_provinces_names_rus
+
+manual_provinces_names_eng = ["Hedebys", "Aalborgs", "Aarhuss", "Ribes", "Esbjergs"]
+auto_provinces_names_eng = [f"Provinces {s}" for s in range(100)]
+provinces_names_eng = manual_provinces_names_eng + auto_provinces_names_eng
 
 
 def get_db():
@@ -433,20 +444,27 @@ def create_game(setting):  # Получаем только список игро
     # Создадим экземпляр игры, а так же поселения и династии для первого игрока.
     this_game = FirstWorld(last_game_row_id, date_now, setting[0]["maxPlayers"])
 
+    # Создадим провинцию для первых поселений
+    new_province_id = 0
+    new_province = this_game.create_province(last_game_row_id, new_province_id,
+                                             provinces_names_rus[0], provinces_names_eng[0])
+
     # Имя поселения временно первое из списка.
     # Запишем в БД, получим row_id, его используем при сохранении поселения в файл.
     # last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
     #                                               settlements_names_rus[0], setting[1]["playerId"])
-    # Ид поселение теперь берется по количеству поселений из списка в конктретно этой игре
+    # Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре
+    # В данной функции нет смысла вычислять ид, он всегда 0
     real_settlement_id = len(this_game.settlements_list)
     print(f"Реальный ид поселения {real_settlement_id}")
     # id игры
     # id поселения(получаем выше из бд)
+    # ссылка на провинцию
     # id игрока владельца
     # имя поселения на английском
     # имя поселения на русском
     # игрок на поселении
-    this_game.create_settlement(last_game_row_id, real_settlement_id, setting[1]["playerId"],
+    this_game.create_settlement(last_game_row_id, new_province, real_settlement_id, setting[1]["playerId"],
                                 settlements_names_rus[0], settlements_names_eng[0], player=True)
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
@@ -462,7 +480,7 @@ def create_game(setting):  # Получаем только список игро
         #                                               f"settlements_{last_settlement_row_id + 1}", 0)
         last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{real_settlement_id}",
                                                       f"settlements_{real_settlement_id}", 0)
-        this_game.create_settlement(last_game_row_id, real_settlement_id, 0,
+        this_game.create_settlement(last_game_row_id, new_province, real_settlement_id, 0,
                                     f"settlements_{real_settlement_id}",
                                     f"settlements_{real_settlement_id}", player=False)
         print(f"Создано поселение с ид: {real_settlement_id}")
@@ -472,15 +490,6 @@ def create_game(setting):  # Получаем только список игро
     print("Игра создана")
     print(this_game.dynasty_list)
     return f"Game create {setting[1]}"
-
-    # # Создадим города
-    # # TODO создании поселений из Торговца, оставим тут, возможно придется создавать ИИ поселения так же
-    # # this_game.create_settlement("Карфаген", "Карфаген")
-    # # this_game.create_settlement("Сиракузы", "Сиракузы")
-    # # this_game.create_settlement("Афины", "Афины")
-    # # this_game.create_settlement("Родос", "Родос")
-    # # this_game.create_settlement("Александрия", "Александрия")
-    # # this_game.create_settlement("Тир", "Тир")
 
 
 # Присоединение к игре

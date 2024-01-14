@@ -397,10 +397,12 @@ function actualVarPlayer(res) {
     // Вывод построек в поселении
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
+        if (statusSettlement.buildingsList[key] > 0) {
             buildingsNameHtml.innerHTML +=   
             `<div>
                 ${key}: ${statusSettlement.buildingsList[key]}
             </div>`;
+        }
     }
     // Вывод доступных для покупки товаров
     availableGoodsBuyNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Доступно к покупке</div>`;

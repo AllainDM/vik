@@ -13,16 +13,18 @@ wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хо
 
 
 class Settlement:
-    def __init__(self, game, game_id, row_id=0, ruler=0, name_rus="default_name", name_eng="default_name", population=1,
-                 gold=50):
+    def __init__(self, game, game_id, province, row_id=0, ruler=0,
+                 name_rus="default_name", name_eng="default_name",
+                 player=False, population=1, gold=50):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
         # self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
         self.ruler = ruler  # Игрок управляющий поселением, id игрока
+        self.player = player  # Игрок или ИИ
         self.name_rus = name_rus
         self.name_eng = name_eng
-        self.province = 0  # Принадлежность к провинции(соседние поселения)
+        self.province = province  # Принадлежность к провинции(соседние поселения). Тут ссылка
 
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?
@@ -94,6 +96,10 @@ class Settlement:
         # Баланс еды
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
 
+    # Рассчитаем доступные для торговли товары
+    def calc_available_goods(self):
+        ...
+
     def calc_turn(self):
         self.food = 0  # Обнулим запас еды. Производство не накапливается
         # Рассчитаем уровень благосостояния.
@@ -128,6 +134,7 @@ class Settlement:
         # TODO временно отменим продажу и покупку еды
         self.gold += self.balance_food * self.goods.resources_price["Еда"]
         if self.balance_food < 0:
+            # if self.player:  # TODO Лог только для поселений игроков
             self.result_events_text.append(f"Население купило {self.balance_food*-1} еды.")
             self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
                                                      f"Население купило {self.balance_food*-1} еды.")
@@ -135,6 +142,7 @@ class Settlement:
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
                                             f"В {self.name_rus} купило {self.balance_food*-1} еды.")
         elif self.balance_food > 0:
+            # if self.player:  # TODO Лог только для поселений игроков
             self.result_events_text.append(f"Население продало {self.balance_food} еды.")
             self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
                                                      f"Население продало {self.balance_food} еды.")
@@ -290,7 +298,13 @@ class Settlement:
             "result_events_text": self.result_events_text,
             "result_events_text_all_turns": self.result_events_text_all_turns,
         }
-        # Пишем в pickle.
+        print(f"self.game_id {self.game_id}")
+        print(f"self.row_id {self.row_id}")
+        print(f"self.ruler {self.ruler}")
+        print(f"self.name_rus {self.name_rus}")
+        print(f"self.name_eng {self.name_eng}")
+        # print(f"game_id {game_id}")
+
         # Тут нужно отловить ошибку отсутствия файла
         try:
             with open(f"games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking", 'w') as f:
@@ -298,6 +312,9 @@ class Settlement:
         except FileNotFoundError:
             print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking' не найден")
             return ""
+        # except TypeError:
+        #     print(f"Файл 'games/{self.game_id}/gameID_{self.game_id}_settlementID_{self.row_id}.viking' не сохранен")
+        #     return ""
 
     def load_from_file(self, game_id, row_id):
         # Тут нужно отловить ошибку отсутствия файла
