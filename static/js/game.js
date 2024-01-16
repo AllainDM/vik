@@ -129,8 +129,8 @@ function updateVar() {
     // Первое меню
     // document.getElementById('province-name').innerText = statusGame.settlementName; 
     // Золото
-    // document.getElementById('gold').innerHTML = `Казна: ` + statusGame.gold;  // 'Золото: ' + 
-    // document.getElementById('gold').innerHTML = `<img class="icon" src="/static/image/icon/money.png"> ` + statusGame.gold;  // 'Золото: ' + 
+    document.getElementById('player-gold').innerHTML = `Казна: ` + statusGame.gold;  // 'Золото: ' + 
+    // document.getElementById('player-gold').innerHTML = `<img class="icon" src="/static/image/icon/money.png"> ` + statusGame.gold;  // 'Золото: ' + 
     // Очки действий. Покрасим в красный цвет в случае ухода в минус
     const showBodyPoints = document.getElementById('body-points');
     // showBodyPoints.forEach((item, id) => {
