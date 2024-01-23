@@ -24,7 +24,9 @@ class Settlement:
         self.player = player  # Игрок или ИИ
         self.name_rus = name_rus
         self.name_eng = name_eng
-        self.province = province  # Принадлежность к провинции(соседние поселения). Тут ссылка
+
+        # Тут ссылка на экземпляр класса провинции
+        self.province = province  # Принадлежность к провинции(соседние поселения).
 
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?

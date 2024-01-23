@@ -13,6 +13,8 @@ class Province:
         self.name_rus = name_rus
         self.name_eng = name_eng
 
+        self.list_settlements = []  # Список поселений в провинции для восстановления
+
         # Доступные товары. Экспортируем актуальный список из заранее созданного экземпляра класса.
         self.available_goods = available_province_goods.resources_list
 
@@ -23,6 +25,8 @@ class Province:
 
             "name_rus": self.name_rus,
             "name_eng": self.name_eng,
+
+            "list_settlements": self.list_settlements,
 
             # "available_goods": self.available_goods,
 
@@ -49,5 +53,7 @@ class Province:
 
         self.name_rus = data["name_rus"]
         self.name_eng = data["name_eng"]
+
+        self.list_settlements = data["list_settlements"]
 
         # self.available_goods = data["available_goods"]

@@ -423,6 +423,8 @@ def create_new_game():
 
 
 def create_game(setting):  # Получаем только список игроков
+    # TODO Писать больше таких вот описаний функций
+    """Новый функционал создания партии"""
     # !!!!!!!!!!!!! Новый функционал создания партии
     # TODO удалить старый код после проверки
     date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
@@ -464,8 +466,10 @@ def create_game(setting):  # Получаем только список игро
     # имя поселения на английском
     # имя поселения на русском
     # игрок на поселении
+    list_settlements_in_province = []  # Список поселений в провинции
     this_game.create_settlement(last_game_row_id, new_province, real_settlement_id, setting[1]["playerId"],
                                 settlements_names_rus[0], settlements_names_eng[0], player=True)
+    list_settlements_in_province.append(settlements_names_eng[0])
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
                              setting[1]["nameEng"], setting[1]["nameRus"], real_settlement_id, 100)
@@ -484,6 +488,15 @@ def create_game(setting):  # Получаем только список игро
                                     f"settlements_{real_settlement_id}",
                                     f"settlements_{real_settlement_id}", player=False)
         print(f"Создано поселение с ид: {real_settlement_id}")
+        # Добавим в список поселений, необходимо для восстановлений
+        list_settlements_in_province.append(f"settlements_{real_settlement_id}")
+    # Сохраним список поселений в экземпляре класса провинции
+    print(f"Список добавляемых поселений в провинцию: {list_settlements_in_province}")
+    new_province.list_settlements = list_settlements_in_province
+    print(f"Список добавляемых поселений в провинцию: {new_province.list_settlements}")
+    print(new_province)
+    print(new_province.name_eng)
+    new_province.save_to_file()
 
     this_game.save_to_file()
 
@@ -493,13 +506,14 @@ def create_game(setting):  # Получаем только список игро
 
 
 # Присоединение к игре
+# TODO доделать под новый функционал провинций
 def add_dynasty(game_id, player):
     print("Добавление нового игрока.")
     game = FirstWorld(game_id)  # Восстановим саму игру.
     game.load_from_file(game_id)  # Запустим метод считающий данные из файла.
     # Добавим запись о поселении для игрока в БД заодно получив его row_id для сохранения.
     # TODO нужно переработать выбор названия поселения
-    # Ид поселение теперь берется по количеству поселений из списка в конктретно этой игре
+    # Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре
     real_settlement_id = len(game.settlements_list)
     print(f"Реальный ид поселения {real_settlement_id}")
     last_settlement_row_id = dbase.add_settlement(game_id=game_id, name_eng=settlements_names_eng[0],

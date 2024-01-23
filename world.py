@@ -131,7 +131,7 @@ class FirstWorld:
         self.year = data["year"]
         self.turn = data["turn"]
 
-        self.provinces = data["provinces"]
+        # self.provinces = data["provinces"]  # Не нужен
 
         # Определение победителя
         # Список победителей и статус игры, при окончании победитель повторно не определяется
@@ -180,9 +180,15 @@ class FirstWorld:
 
     # Создаем провинцию перед созданием поселения
     def create_province(self, game_id, row_id, name_rus, name_eng):
+        """Создание класса провинции.
+        Класс .... дописать описание"""
         self.provinces[name_eng] = Province(self, game_id, row_id, name_rus, name_eng)
+        # Сохраним в словарь. Ключ ид провинции. Значение название на английском.
+        self.provinces_dict[row_id] = name_eng
+        # Сохраним в файл
+        # self.provinces[name_eng].save_to_file()
 
-        return self  # Вернем ссылку для создания поселений
+        return self.provinces[name_eng]  # Вернем ссылку для создания поселений
 
     # TODO Создать поселение игрока
     # TODO доделать
@@ -222,16 +228,19 @@ class FirstWorld:
         print(f"Восстановлена династия: {self.dynasty[dynasty_name].name_eng}")
 
     # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
+    def restore_province(self, game_id, province_id, name_eng):  #
+        """Восстановление провинции перед обработкой хода.
+        Должна возвращать ссылку на себя для дальнейшего восстановления поселений"""
+        self.provinces[name_eng] = Province(self, game_id)
+        self.provinces[name_eng].load_from_file(game_id, province_id)
+        print(f"Восстановлена провинция: {self.provinces[name_eng].name_eng}")
+        return self
+
+    # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
     def restore_settlement(self, game_id, settlement_id, name_eng):  #
         self.settlements[name_eng] = Settlement(self, game_id)
         self.settlements[name_eng].load_from_file(game_id, settlement_id)
         print(f"Восстановлено поселение: {self.settlements[name_eng].name_eng}")
-
-    # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
-    def restore_province(self, game_id, province_id, name_eng):  #
-        self.provinces[name_eng] = Province(self, game_id)
-        self.provinces[name_eng].load_from_file(game_id, province_id)
-        print(f"Восстановлена провинция: {self.provinces[name_eng].name_eng}")
 
 
 def check_readiness(game_id):  # Проверить все ли страны отправили ход
@@ -264,6 +273,10 @@ def calculate_turn(game_id):
     # Где ид игрока = ид династии. Это не row_id, а общий ид для удобства восстановления.
     for k, v in game.dynasty_dict.items():
         game.restore_dynasty(game_id=game_id, player_id=k, dynasty_name=v)
+
+    # Восстановим провинции.
+    for k, v in game.provinces_dict.items():
+        game.restore_province(game_id=game_id)
 
     # Восстановим поселения.
     for k, v in game.settlements_dict.items():
