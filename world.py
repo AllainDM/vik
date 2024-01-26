@@ -43,7 +43,7 @@ class FirstWorld:
         self.max_players = max_players  # Максимальное количество игроков
 
         # Провинция, создается перед поселением
-        self.provinces = {}  # Тут экземпляр класса
+        self.provinces = {}  # Тут экземпляр класса. Может экземплярЫ?
         self.provinces_list = []  # Тут просто список названий
         self.provinces_dict = {}  # Словарь, где значением ид, для перебора при "восстановлении"
 
@@ -147,6 +147,11 @@ class FirstWorld:
         self.player_list = data["player_list"]
         self.max_players = data["max_players"]
 
+        # Провинции
+        # "provinces": self.provinces,  # объект с экземплярами класса, в сохранении не нуждается
+        self.provinces_list = data["provinces_list"]
+        self.provinces_dict = data["provinces_dict"]
+
         # Управляемые поселения
         # self.settlements = data["settlements"]
         self.settlements_list = data["settlements_list"]
@@ -234,13 +239,15 @@ class FirstWorld:
         self.provinces[name_eng] = Province(self, game_id)
         self.provinces[name_eng].load_from_file(game_id, province_id)
         print(f"Восстановлена провинция: {self.provinces[name_eng].name_eng}")
-        return self
+        # Восстановим поселения сразу из списка в провинции
+        # Внутри класса провинции
+        self.provinces[name_eng].restore_settlements()
 
     # game_id и player_id необходим для поиска файла при загрузке данных, больше ничего не требуется
-    def restore_settlement(self, game_id, settlement_id, name_eng):  #
-        self.settlements[name_eng] = Settlement(self, game_id)
-        self.settlements[name_eng].load_from_file(game_id, settlement_id)
-        print(f"Восстановлено поселение: {self.settlements[name_eng].name_eng}")
+    # def restore_settlement(self, game_id, settlement_id, name_eng):  #
+    #     self.settlements[name_eng] = Settlement(self, game_id)
+    #     self.settlements[name_eng].load_from_file(game_id, settlement_id)
+    #     print(f"Восстановлено поселение: {self.settlements[name_eng].name_eng}")
 
 
 def check_readiness(game_id):  # Проверить все ли страны отправили ход
@@ -271,16 +278,21 @@ def calculate_turn(game_id):
     # Восстановим династии.
     # Перебираем словарь с династиями. Где нам для восстановления понадобится и имя и ид.
     # Где ид игрока = ид династии. Это не row_id, а общий ид для удобства восстановления.
+    print('Восстанавливаем династии. Класс world.')
+    print(game.dynasty_dict)
     for k, v in game.dynasty_dict.items():
         game.restore_dynasty(game_id=game_id, player_id=k, dynasty_name=v)
 
     # Восстановим провинции.
+    print('Восстанавливаем провинции. Класс world.')
+    print(game.provinces_dict)
     for k, v in game.provinces_dict.items():
-        game.restore_province(game_id=game_id)
+        game.restore_province(game_id=game_id, province_id=k, name_eng=v)
 
     # Восстановим поселения.
-    for k, v in game.settlements_dict.items():
-        game.restore_settlement(game_id=game_id, settlement_id=k, name_eng=v)
+    # Сейчас восстановление происходит из класса провинции по своему списку
+    # for k, v in game.settlements_dict.items():
+    #     game.restore_settlement(game_id=game_id, settlement_id=k, name_eng=v)
 
     # Очистим логи у стран.
     for dyns in game.dynasty:

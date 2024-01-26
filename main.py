@@ -466,10 +466,12 @@ def create_game(setting):  # Получаем только список игро
     # имя поселения на английском
     # имя поселения на русском
     # игрок на поселении
-    list_settlements_in_province = []  # Список поселений в провинции
+    list_settlements_in_province = {}  # Список поселений в провинции
     this_game.create_settlement(last_game_row_id, new_province, real_settlement_id, setting[1]["playerId"],
                                 settlements_names_rus[0], settlements_names_eng[0], player=True)
-    list_settlements_in_province.append(settlements_names_eng[0])
+    # list_settlements_in_province.append(settlements_names_eng[0])
+    # Был список названий, создаем словарь. Ключ ид, значение название
+    list_settlements_in_province[real_settlement_id] = settlements_names_eng[0]
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
                              setting[1]["nameEng"], setting[1]["nameRus"], real_settlement_id, 100)
@@ -489,11 +491,13 @@ def create_game(setting):  # Получаем только список игро
                                     f"settlements_{real_settlement_id}", player=False)
         print(f"Создано поселение с ид: {real_settlement_id}")
         # Добавим в список поселений, необходимо для восстановлений
-        list_settlements_in_province.append(f"settlements_{real_settlement_id}")
+        # list_settlements_in_province.append(f"settlements_{real_settlement_id}")
+        # Был список названий, создаем словарь. Ключ ид, значение название
+        list_settlements_in_province[real_settlement_id] = f"settlements_{real_settlement_id}"
     # Сохраним список поселений в экземпляре класса провинции
     print(f"Список добавляемых поселений в провинцию: {list_settlements_in_province}")
-    new_province.list_settlements = list_settlements_in_province
-    print(f"Список добавляемых поселений в провинцию: {new_province.list_settlements}")
+    new_province.dict_settlements = list_settlements_in_province  # Словарь
+    print(f"Список добавляемых поселений в провинцию: {new_province.dict_settlements}")
     print(new_province)
     print(new_province.name_eng)
     new_province.save_to_file()

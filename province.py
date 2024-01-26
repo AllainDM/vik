@@ -2,9 +2,11 @@
 import json
 
 from goods import available_province_goods
+from settlement import Settlement
 
 
 class Province:
+    """Создание провинции. Объединяет поселения. Тут хранится общая торговля"""
     def __init__(self, game, game_id, row_id=0, name_rus="default_name", name_eng="default_name"):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
@@ -13,10 +15,21 @@ class Province:
         self.name_rus = name_rus
         self.name_eng = name_eng
 
-        self.list_settlements = []  # Список поселений в провинции для восстановления
+        self.dict_settlements = {}  # Словарь поселений в провинции для восстановления
 
         # Доступные товары. Экспортируем актуальный список из заранее созданного экземпляра класса.
         self.available_goods = available_province_goods.resources_list
+
+    def restore_settlements(self):  # , game_id , settlement_id, name_eng
+        """Восстановление поселений из класса провинции."""
+        print("Восстановление поселений из класса провинции.")
+        # self.game.settlements[name_eng] = Settlement(province=self, game=self.game, game_id=game_id)
+        # self.game.settlements[name_eng].load_from_file(game_id, settlement_id)
+        # print(f"Восстановлено поселение: {self.game.settlements[name_eng].name_eng}")
+        for k, v in self.dict_settlements.items():
+            self.game.settlements[v] = Settlement(province=self, game=self.game, game_id=self.game_id)
+            self.game.settlements[v].load_from_file(self.game_id, k)
+            print(f"Восстановлено поселение: {self.game.settlements[v].name_eng}")
 
     def save_to_file(self):
         data = {
@@ -26,7 +39,7 @@ class Province:
             "name_rus": self.name_rus,
             "name_eng": self.name_eng,
 
-            "list_settlements": self.list_settlements,
+            "dict_settlements": self.dict_settlements,
 
             # "available_goods": self.available_goods,
 
@@ -54,6 +67,6 @@ class Province:
         self.name_rus = data["name_rus"]
         self.name_eng = data["name_eng"]
 
-        self.list_settlements = data["list_settlements"]
+        self.dict_settlements = data["dict_settlements"]
 
         # self.available_goods = data["available_goods"]
