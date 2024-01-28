@@ -190,7 +190,10 @@ class FirstWorld:
         self.provinces[name_eng] = Province(self, game_id, row_id, name_rus, name_eng)
         # Сохраним в словарь. Ключ ид провинции. Значение название на английском.
         self.provinces_dict[row_id] = name_eng
-        # Сохраним в файл
+        # Так же добавим в список. Как минимум по его длине определяется ид новой провинции.
+        self.provinces_list.append(name_eng)
+        # Сохраним в файл.
+        # Сохраним позже из класса игры, после добавления различных данных.
         # self.provinces[name_eng].save_to_file()
 
         return self.provinces[name_eng]  # Вернем ссылку для создания поселений
@@ -204,6 +207,7 @@ class FirstWorld:
         self.settlements[name_eng] = Settlement(self, game_id, province, row_id, ruler, name_rus, name_eng, player)
         # Для перебора при обработке хода
         # Старое: Список поселений, для перебора при обсчете хода
+        # Сам по себе список или словарь очень важен. Все поселения хранятся в одном списке без привязки к провинции.
         self.settlements_list.append(name_eng)
         # Сохраним в новый словарь, где ключ row_id поселения, а значение название.
         # row_id нужен для сохранения файла
