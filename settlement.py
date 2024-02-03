@@ -5,6 +5,7 @@ import random
 
 import buildings
 import mod
+# import province
 from goods import Goods
 # import pickle
 import mod as MOD
@@ -15,7 +16,7 @@ wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хо
 class Settlement:
     def __init__(self, game, game_id, province, row_id=0, ruler=0,
                  name_rus="default_name", name_eng="default_name",
-                 player=False, population=1, gold=50):
+                 player=False, population=2, gold=50):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
         # self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
@@ -54,9 +55,9 @@ class Settlement:
         self.gold_traded_for_tax = 0  # Наторговано и будет взят налог
         self.gold_traded = 0  # Наторговано всего, включая случаи когда налог не берется
         # Список доступных к покупке товаров.
-        self.available_goods_buy = {
-            "Дерево": 1
-        }
+        # Новый список из того, что больше 0
+        # TODO Возможно это не подойдет когда будет динамическое распределение товара по мере обработки хода
+        self.available_goods_buy = {k: v for k, v in self.province.available_goods.items() if v > 0}
 
         # Отдельные переменные под расчет еды
         self.food = 0  # Тестовая переменная, под хз знает что
@@ -79,7 +80,18 @@ class Settlement:
         return self.buildings.buildings_name_list
 
     def update_var(self):
+        """
+        Функция обновления счетчиков у поселения.
+        1. Считаем занятое/свободное места в поселении.
+        2. Считаем очки строительства.
+        3. Считаем производство построек.
+        4. Добавим излишки товаров на внутренний рынок
+        5. Считаем баланс еды.
+        :return:
+        """
         print(f"Обновляем данные поселения")
+
+        # 1. Считаем занятое/свободное места в поселении.
         # TODO как рассчитать размер поселения
         # Попробуем сделать перебор по экземпляру класса
         # Размер поселения и свободное место
@@ -90,12 +102,27 @@ class Settlement:
             # print(f"Постройка: {k}, размер {self.buildings.buildings_size[k]}")
             self.size += self.buildings.buildings_size[k] * self.buildings_list[k]
         # print(f"Текущий размер поселения {self.size}")
+
+        # 2. Считаем очки строительства.
         # Очки строительства. 1 к 1 за свободный размер поселения и 0.1 к 1 за используемый
         self.build_points = round(self.population - self.size + self.size * 0.2, 1)
+
+        # 3. Считаем производство построек.
         # Запустим функцию расчета товаров у построек
         # TODO проверить не считает ли чего по 2 раза
         self.buildings.prod(self)
-        # Баланс еды
+
+        # 4. Добавим излишки товаров на внутренний рынок
+        # После расчета производства построек закинем излишки на рынок
+        # TODO пока в любом случае выручка идет со всх лишних товаров
+        # TODO баг, в список добавляется наш излишек. Дописать второе условие.
+        for k, v in self.goods.resources_list.items():  # Там словарь
+            if v > 0:  # Только если что-то есть лишнее, чтобы не прибавлять минусовые товары.
+                self.province.available_goods[k] += v
+        # TODO test
+        self.available_goods_buy = self.province.available_goods
+
+        # 5. Считаем баланс еды.
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
 
     # Рассчитаем доступные для торговли товары

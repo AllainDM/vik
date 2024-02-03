@@ -18,7 +18,12 @@ class Province:
         self.dict_settlements = {}  # Словарь поселений в провинции для восстановления
 
         # Доступные товары. Экспортируем актуальный список из заранее созданного экземпляра класса.
-        self.available_goods = available_province_goods.resources_list
+        self.available_goods = available_province_goods.resources_list  # Там словарь
+        # self.available_goods = {k: v for k, v in available_province_goods.resources_list.items() if v > 0}
+
+    # Обновим рассчет доступных для торговли товаров
+    def update_trade(self):
+        self.available_goods = {k: v for k, v in self.available_goods.items() if v > 0}
 
     def restore_settlements(self):  # , game_id , settlement_id, name_eng
         """Восстановление поселений из класса провинции."""

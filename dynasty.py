@@ -65,7 +65,7 @@ class Dynasty:
             "player_id": self.player_id,
             "name_eng": self.name_eng,
             "name_rus": self.name_rus,
-            "gold": self.gold,
+            "gold": round(self.gold, 1),  # Перед записью округлим до десятых
 
             "title": self.title,
             "body_points": self.body_points,
