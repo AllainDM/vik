@@ -46,7 +46,7 @@ class Province:
 
             "dict_settlements": self.dict_settlements,
 
-            # "available_goods": self.available_goods,
+            "available_goods": self.available_goods,
 
         }
         # Тут нужно отловить ошибку отсутствия файла
@@ -74,4 +74,4 @@ class Province:
 
         self.dict_settlements = data["dict_settlements"]
 
-        # self.available_goods = data["available_goods"]
+        self.available_goods = data["available_goods"]
