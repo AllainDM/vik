@@ -216,12 +216,16 @@ class FirstWorld:
         # Добавим новому поселению стартовую рандомную постройку
         rnd = random.randint(1, 4)
         if rnd == 1:
+            # self.settlements[name_eng].buildings_list["Огород"] += 1
             self.settlements[name_eng].buildings_list["Рыбацкая_пристань"] += 1
         elif rnd == 2:
             self.settlements[name_eng].buildings_list["Огород"] += 1
         elif rnd == 3:
+            # self.settlements[name_eng].buildings_list["Огород"] += 1
             self.settlements[name_eng].buildings_list["Угодье"] += 1
         elif rnd == 4:
+            # self.settlements[name_eng].buildings_list["Огород"] += 1
+            # self.settlements[name_eng].buildings_list["Рыбацкая_пристань"] += 1
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
         # Обновим различные данные для поселения
         self.settlements[name_eng].update_var()
@@ -283,7 +287,7 @@ def calculate_turn(game_id):
 
     ?. Очистим логи для записи новых.
 
-    TODO дописать....
+    TODO дописать.... есть полная запись в тетради, можно перенести
     """
     # Изначально запускается отдельная функция определяющая готовность хода игроков
 
@@ -295,20 +299,21 @@ def calculate_turn(game_id):
     # 2. Восстановим династии(класс игрока)
     # Перебираем словарь с династиями. Где нам для восстановления понадобится и имя и ид.
     # Где ид игрока = ид династии. Это не row_id, а общий ид для удобства восстановления.
-    print('Восстанавливаем династии. Класс world.')
+    print('Восстанавливаем династии. Класс dynasty.')
     print(game.dynasty_dict)
     for k, v in game.dynasty_dict.items():
         game.restore_dynasty(game_id=game_id, player_id=k, dynasty_name=v)
 
     # 3. Восстановим провинции.
-    print('Восстанавливаем провинции. Класс world.')
+    # В функции restore_province восстанавливаются и поселения по внутреннему списку.
+    print('Восстанавливаем провинции. Класс province.')
     print(game.provinces_dict)
     for k, v in game.provinces_dict.items():
         game.restore_province(game_id=game_id, province_id=k, name_eng=v)
 
-    # 4. Обнулим торговлю в провинциях
+    # 4. Обнулим торговлю в провинциях для составления нового списка товаров, ибо не накапливаемые.
     print("Обнуление торговых складов провинций.")
-    for prov in game.provinces.values():  # Тут должны быть ссылки на провинции
+    for prov in game.provinces.values():  # Тут должны быть ссылки на провинции.
         for v in prov.available_goods.values():
             v = 0
         # for k, v in prov.available_goods.items():
@@ -353,7 +358,11 @@ def calculate_turn(game_id):
 
     # TODO пост обсчет поселения. Например баланс ресурсов, торговля и рост населения.
     # TODO нужно ли рандомить пост обсчет для поселений?
+    print(f"тттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттт")
     for settlement in game.settlements:
+        print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
+        print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
+        print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
         print(f"Обсчитываем поселение")
         print(game.settlements[settlement])
         game.settlements[settlement].calc_turn()

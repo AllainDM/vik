@@ -16,7 +16,7 @@ wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хо
 class Settlement:
     def __init__(self, game, game_id, province, row_id=0, ruler=0,
                  name_rus="default_name", name_eng="default_name",
-                 player=False, population=2, gold=50):
+                 player=False, population=3, gold=50):
         self.game = game  # Ссылка на игру
         self.game_id = game_id
         # self.row_id = row_id  # row_id возвращается при записи в БД, которая позже нигде не используется
@@ -87,6 +87,7 @@ class Settlement:
         3. Считаем производство построек.
         4. Добавим излишки товаров на внутренний рынок
         5. Считаем баланс еды.
+        6. Рассчитаем уровень благосостояния. (Так же считается из calc_turn)
         :return:
         """
         print(f"Обновляем данные поселения")
@@ -110,7 +111,13 @@ class Settlement:
         # 3. Считаем производство построек.
         # Запустим функцию расчета товаров у построек
         # TODO проверить не считает ли чего по 2 раза
+        # TODO считает два раза, отсюда и из calc_turn
+        print("update_var")
         self.buildings.prod(self)
+        print("#########################################################")
+        print("#########################################################")
+        print("#########################################################")
+        print("#########################################################")
 
         # 4. Добавим излишки товаров на внутренний рынок
         # После расчета производства построек закинем излишки на рынок
@@ -125,27 +132,48 @@ class Settlement:
         # 5. Считаем баланс еды.
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
 
-    # Рассчитаем доступные для торговли товары
-    def calc_available_goods(self):
-        ...
-
-    def calc_turn(self):
-        self.food = 0  # Обнулим запас еды. Производство не накапливается
-        # Рассчитаем уровень благосостояния.
+        # 6. Рассчитаем уровень благосостояния. (Так же считается из calc_turn)
         self.wealth = self.gold / self.population
         # if self.wealth >=
         # Посчитаем статус благосостояние, округлив деление на модификатор
         try:
             self.wealth_status = wealth_status_names[round(self.wealth / MOD.WEALTH_STATUS)]
         except IndexError:
+            # TODO нет ли тут бага с минусом
             self.wealth_status = "Отличное"
+
+    # Рассчитаем доступные для торговли товары
+    def calc_available_goods(self):
+        ...
+
+    def calc_turn(self):
+        """
+        Добавить описание функции.
+
+        :return:
+        """
+        self.food = 0  # Обнулим запас еды. Производство не накапливается
+
+        # Рассчитаем уровень благосостояния. (Так же считается из update_var)
+        self.wealth = self.gold / self.population
+        # if self.wealth >=
+        # Посчитаем статус благосостояние, округлив деление на модификатор
+        try:
+            self.wealth_status = wealth_status_names[round(self.wealth / MOD.WEALTH_STATUS)]
+        except IndexError:
+            # TODO нет ли тут бага с минусом
+            self.wealth_status = "Отличное"
+
         # TODO Необходимо выполнить проверку управляет ли игрок поселением
-        print(f"Рассчитываем производство в {self.name_rus}")
+        # print(f"Рассчитываем производство1 в {self.name_rus}")
+
+        # TODO считает два раза, отсюда и из update_var
         self.buildings.prod(self)  # Запустим функцию расчета товаров у построек
         self.balance_food = self.food - self.population  # Баланс еды: еда - население. Расчет перед ростом для торговли
         self.pop_trade()  # Расчет торговли населения.
 
     def calc_end_turn(self):
+        print(f"Функция обработки конца хода у поселения")
         # Рост/убыль населения
         self.growth_pop_natural()
         self.growth_pop_migration()
@@ -153,7 +181,6 @@ class Settlement:
         self.update_var()
 
         self.save_to_file()
-        print(f"Функция обработки конца хода у поселения")
 
     def pop_trade(self):  # Расчет торговли населения.
         # TODO нужно ввести предварительную переменную трат(доходов) для вычета налога.
@@ -187,17 +214,20 @@ class Settlement:
             print("Что у нас тут с торговлей")
             print(k, v)
             if v > 0:  # Продажа излишек
-                self.gold += v * self.goods.resources_price[k]  # Доход населения
-                self.gold_traded_for_tax += v * self.goods.resources_price[k]  # Счетчик торговли. Всегда +
+                summ = v * self.goods.resources_price[k]
+                self.gold += summ  # Доход населения
+                self.gold_traded_for_tax += summ  # Счетчик торговли. Всегда +
                 if len(list_trade_sell) > 0:
-                    list_trade_sell += f", {k}({v})"
+                    list_trade_sell += f", {k}({v}): +{summ} д."
                 else:
-                    list_trade_sell += f"{k}({v})"
+                    list_trade_sell += f"{k}({v}): +{summ} д."
             elif v < 0:  # Покупка недостатка
                 # Необходимо учитывать доступные товары для продажи в поселении
                 if k in self.available_goods_buy:  # Если такой товар вообще есть в списке доступных
+                    # TODO на самом деле может быть не доступен, просто число 0
                     print("Товар доступен для покупки.")
-                    if self.available_goods_buy[k] < v:  # Если доступно меньше чем необходимо
+                    print(self.available_goods_buy[k])
+                    if self.available_goods_buy[k] < (v * -1):  # Если доступно меньше чем необходимо
                         print("Товара для покупки меньше чем необходимо.")
                         # Вычтем по обычной цене то, что доступно
                         gold_tax = self.available_goods_buy[k] * self.goods.resources_price[k]  # Доход населения
@@ -207,32 +237,40 @@ class Settlement:
                     else:  # Иначе если доступно к покупке в необходимом количестве
                         print("Товара для покупки достаточно.")
                         # TODO Что это? Почему "доход" населения?
-                        gold_tax = self.available_goods_buy[k] * self.goods.resources_price[k]  # Доход населения
+                        gold_tax = v * self.goods.resources_price[k]  # Доход населения
                         gold_no_tax = 0
                     self.gold_traded_for_tax = gold_tax  # Счетчик торговли для налога правителю. Всегда +
                     self.gold_traded = gold_tax + gold_no_tax  # Счетчик торговли итоговый. Всегда +
-                    self.gold -= self.gold_traded  # И вычтем за покупку товара
+                    self.gold += self.gold_traded  # И вычтем за покупку товара (добавим минусовую сумму)
                     if len(list_trade_buy) > 0:
-                        list_trade_buy += f", {k}({v*-1})"
+                        list_trade_buy += f", {k}({v * -1}): {gold_no_tax} д."
                     else:
-                        list_trade_buy += f"{k}({v*-1})"
+                        list_trade_buy += f"{k}({v * -1}): {gold_no_tax} д."
+                else:  # Иначе если товара 0 к доступному.
+                    print("Оно походу сюда не попадает из-за того что список полный просто с нулями.")
+                    gold_no_tax = v * self.goods.resources_price[k] * mod.NO_AVAILABLE_GOODS
+                    self.gold += gold_no_tax  # Вычтем за покупку товара (добавим минусовую сумму)
+                    if len(list_trade_buy) > 0:
+                        list_trade_buy += f", {k}({v * -1}): {gold_no_tax} д."
+                    else:
+                        list_trade_buy += f"{k}({v * -1}): {gold_no_tax} д."
 
         # Общий лог покупки
         if len(list_trade_buy) > 0:
-            self.result_events_text.append(f"Население покупает: {list_trade_buy}.")
+            self.result_events_text.append(f"Население покупает: {list_trade_buy}")
             self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
-                                                     f"Население покупает: {list_trade_buy}.")
-            self.game.all_logs.append(f"В {self.name_rus} население покупает: {list_trade_buy}.")
+                                                     f"Население покупает: {list_trade_buy}")
+            self.game.all_logs.append(f"В {self.name_rus} население покупает: {list_trade_buy}")
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
-                                            f"В {self.name_rus} покупает: {list_trade_buy}.")
+                                            f"В {self.name_rus} покупает: {list_trade_buy}")
         # Общий лог продажи
         if len(list_trade_sell) > 0:
-            self.result_events_text.append(f"Население продает: {list_trade_sell}.")
+            self.result_events_text.append(f"Население продает: {list_trade_sell}")
             self.result_events_text_all_turns.append(f"Ход {self.game.turn}. "
-                                                     f"Население продает: {list_trade_sell}.")
-            self.game.all_logs.append(f"В {self.name_rus} население продает: {list_trade_sell}.")
+                                                     f"Население продает: {list_trade_sell}")
+            self.game.all_logs.append(f"В {self.name_rus} население продает: {list_trade_sell}")
             self.game.all_logs_party.append(f"Ход {self.game.turn}. "
-                                            f"В {self.name_rus} продает: {list_trade_sell}.")
+                                            f"В {self.name_rus} продает: {list_trade_sell}")
 
     def growth_pop_natural(self):
         rnd = random.randint(0, 100)

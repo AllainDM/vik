@@ -164,7 +164,7 @@ def index():
     return render_template('index.html', title="Main", menu=menu_auth)
 
 
-# Что это за функция??????????????
+# TODO Что это за функция??????????????
 @app.route("/create-game")
 @login_required
 def admin_create_new_game():
@@ -518,7 +518,6 @@ def create_game(setting):  # Получаем только список игро
 
 
 # Присоединение к игре.
-# TODO доделать под новый функционал провинций.
 def add_dynasty(game_id, player):
     """
     Добавление нового игрока в партию.
@@ -541,7 +540,7 @@ def add_dynasty(game_id, player):
                                         name_eng=provinces_names_eng[new_province_id])
 
     # Пункт 3. Создать поселение игроку.
-    list_settlements_in_province = {}  # Список поселений в провинции
+    list_settlements_in_province = {}  # Список поселений в провинции. Словарь?
 
     # Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре.
     real_settlement_id = len(game.settlements_list)

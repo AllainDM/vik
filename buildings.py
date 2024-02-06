@@ -80,18 +80,25 @@ class Buildings:
 
     # Производство товаров
     def prod(self, settlement):
-        print(f"Рассчитываем производство в {settlement}")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+        print(f"Рассчитываем производство2 в {settlement.name_eng}")
         # Пища
         settlement.food = 0
         # TODO Конкретно типы еды пока не производим, до полной доработки общего рынка.
         # Рыбацкая пристань
-        # +2 еда +2 рыба и -1 дерево(на лодки)
+        # +4 еда +4 рыба и -1 дерево(на лодки)
+        # TODO 0 это для теста, а так 4
         settlement.food += settlement.buildings_list["Рыбацкая_пристань"] * 4
         settlement.goods.resources_list["Рыба"] += settlement.buildings_list["Рыбацкая_пристань"] * 0  # 4
         settlement.goods.resources_list["Дерево"] -= settlement.buildings_list["Рыбацкая_пристань"] * 1
+
         # Огород
-        settlement.food += settlement.buildings_list["Огород"] * 1
-        settlement.goods.resources_list["Овощи"] += settlement.buildings_list["Огород"] * 0  # 1
+        # + 2 еды
+        # TODO 3 это для теста, а так 2
+        settlement.food += settlement.buildings_list["Огород"] * 3
+        settlement.goods.resources_list["Овощи"] += settlement.buildings_list["Огород"] * 0  # 2
 
         # Лесорубки
         # +2 дерево

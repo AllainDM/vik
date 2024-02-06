@@ -1,7 +1,7 @@
 # Класс провинции для общей торговли и прочего.
 import json
 
-from goods import available_province_goods
+from goods import available_province_goods, Goods
 from settlement import Settlement
 
 
@@ -17,11 +17,16 @@ class Province:
 
         self.dict_settlements = {}  # Словарь поселений в провинции для восстановления
 
+        # TODO тут возможно баг при создании
         # Доступные товары. Экспортируем актуальный список из заранее созданного экземпляра класса.
-        self.available_goods = available_province_goods.resources_list  # Там словарь
+        # self.available_goods = available_province_goods.resources_list  # Там словарь
         # self.available_goods = {k: v for k, v in available_province_goods.resources_list.items() if v > 0}
 
+        self.goods = Goods()
+        self.available_goods = self.goods.resources_list
+
     # Обновим рассчет доступных для торговли товаров
+    # TODO не используется?
     def update_trade(self):
         self.available_goods = {k: v for k, v in self.available_goods.items() if v > 0}
 
@@ -34,6 +39,7 @@ class Province:
         for k, v in self.dict_settlements.items():
             self.game.settlements[v] = Settlement(province=self, game=self.game, game_id=self.game_id)
             self.game.settlements[v].load_from_file(self.game_id, k)
+            # self.game.settlements[v].update_var()
             print(f"Восстановлено поселение: {self.game.settlements[v].name_eng}")
 
     def save_to_file(self):
