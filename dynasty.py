@@ -148,12 +148,18 @@ class Dynasty:
         self.end_turn_know = data["end_turn_know"]
 
     def calc_act(self):  # Подсчет одного действия для династии
+        """
+        Метод берет первое действие игрока и в зависимости от его ид запускает соответствующий метод.
+
+        :return:
+        """
         # print(f"Считаем ход для династии: {self.name}")
-        # TODO сейчас никаких действий нет, оставляю старый код
+        # TODO часть действий неактивны, не удаляю с прошлой игры
         if self.acts:
             # 1 индекс это первое по списку действие, первый элемент в списке, оно выполняется и удаляется
             # 2 индекс это индекс с ИД действия, он под индексом 1, под 0 текстовое описание. Начиная с 2 аргументы
             # Передавать ли аргументы в функцию или вытаскивать их уже в самой функции. Попробуем по разному =>
+            # Строительство в поселении
             if self.acts[0][1] == 101:
                 # self.act_build_colony(self.acts[0][2])  # Тут передадим аргумент
                 # Запустим сразу метод у класса поселение
@@ -161,18 +167,22 @@ class Dynasty:
                 self.game.settlements[self.game.settlements_dict[self.main_settlement]].act_build(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+            # TODO отключен
             elif self.acts[0][1] == 201:
                 # self.act_sell_goods(self.acts[0][2], self.acts[0][3], self.acts[0][4])  # И тут передадим аргумент
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+            # TODO отключен
             elif self.acts[0][1] == 202:  #
                 # self.act_sell_all_goods(self.acts[0][2])  # И тут передадим аргумент
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+            # Раздать деньги населению
             elif self.acts[0][1] == 301:  #
                 self.act_donate(self.acts[0][2])  # Передадим аргумент, сумму
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+            # TODO отключен
             elif self.acts[0][1] == 302:  #
                 # self.act_make_donate(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
@@ -183,7 +193,7 @@ class Dynasty:
     # Подсчет каких либо параметров после обсчета действия игроков. Обязательно выполняется после действий
     # Какие-нибудь налоги или наоборот доп доход
     # Производство товаров будет обрабатываться здесь
-    def calc_end_turn(self):
+    def calc_end_turn_dynasty(self):
         # self.() # Рассчитаем баланс товаров(производство-потребление)
         # TODO Соберем налоги с поселения.
         print("Соберем налоги с поселения.")
@@ -210,22 +220,22 @@ class Dynasty:
         print(f"Функция обработки конца хода")
 
     # !!!!!!!!!!!! TODO не рабочая функция. Оставляем для примера составления логов
-    def act_build(self, buildings_name):     # 101 id
-        # !!!!!!! На будущее нужно сделать сверку, доступна ли это постройка для игрока
-        # Два раза buildings это: 1 = экземпляр класса с постройками, 2 = список построек уже в классе
-
-        if self.gold >= self.game.buildings_price[buildings_name]:
-            self.buildings_list[buildings_name] += 1  # Добавим постройку Династии
-            self.game.buildings_list[buildings_name] += 1  # И добавим к общему количеству в стране
-            self.gold -= self.game.buildings_price[buildings_name]
-
-            self.result_logs_text.append(f"Вы построили {buildings_name}")
-            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы построили {buildings_name}")
-            self.game.all_logs.append(f"{self.name_rus} построили {buildings_name}")
-            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
-                                            f"{self.name_rus} построили {buildings_name}")
-        else:
-            self.result_logs_text.append(f"Вы НЕ построили {buildings_name}, не хватило денег.")
+    # def act_build(self, buildings_name):     # 101 id
+    #     # !!!!!!! На будущее нужно сделать сверку, доступна ли это постройка для игрока
+    #     # Два раза buildings это: 1 = экземпляр класса с постройками, 2 = список построек уже в классе
+    #
+    #     if self.gold >= self.game.buildings_price[buildings_name]:
+    #         self.buildings_list[buildings_name] += 1  # Добавим постройку Династии
+    #         self.game.buildings_list[buildings_name] += 1  # И добавим к общему количеству в стране
+    #         self.gold -= self.game.buildings_price[buildings_name]
+    #
+    #         self.result_logs_text.append(f"Вы построили {buildings_name}")
+    #         self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы построили {buildings_name}")
+    #         self.game.all_logs.append(f"{self.name_rus} построили {buildings_name}")
+    #         self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+    #                                         f"{self.name_rus} построили {buildings_name}")
+    #     else:
+    #         self.result_logs_text.append(f"Вы НЕ построили {buildings_name}, не хватило денег.")
 
     def act_donate(self, summ):     # 301 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
         self.gold = int(self.gold)

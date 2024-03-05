@@ -371,15 +371,15 @@ def calculate_turn(game_id):
         print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
         print(f"Обсчитываем поселение")
         print(game.settlements[settlement])
-        game.settlements[settlement].calc_turn()
-        game.settlements[settlement].calc_end_turn()
+        game.settlements[settlement].calc_turn_settlement()
+        game.settlements[settlement].calc_end_turn_settlement()
 
     # 8. Пост обсчёт игроков.
     # Пост обсчет хода для игрока. Не зависящие от его действий, по типу +1 к возрасту персонажей.
     # TODO нужно ли рандомить пост обсчет для игроков?
     for dynasty_name in game.dynasty:
         print(f"Раньше это запускалось два раза, а сейчас? dynasty_name {dynasty_name}")
-        game.dynasty[dynasty_name].calc_end_turn()
+        game.dynasty[dynasty_name].calc_end_turn_dynasty()
 
     # 9. Определение победителей.
     # Запустим определение победителя

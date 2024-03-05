@@ -146,7 +146,7 @@ class Settlement:
     def calc_available_goods(self):
         ...
 
-    def calc_turn(self):
+    def calc_turn_settlement(self):
         """
         Добавить описание функции.
 
@@ -172,7 +172,7 @@ class Settlement:
         self.balance_food = self.food - self.population  # Баланс еды: еда - население. Расчет перед ростом для торговли
         self.pop_trade()  # Расчет торговли населения.
 
-    def calc_end_turn(self):
+    def calc_end_turn_settlement(self):
         print(f"Функция обработки конца хода у поселения")
         # Рост/убыль населения
         self.growth_pop_natural()
