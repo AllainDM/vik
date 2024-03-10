@@ -22,13 +22,15 @@ class Province:
         # self.available_goods = available_province_goods.resources_list  # Там словарь
         # self.available_goods = {k: v for k, v in available_province_goods.resources_list.items() if v > 0}
 
+        # Создадим экземпляр класса товаров, список будет использоваться для внутренней торговли
         self.goods = Goods()
-        self.available_goods = self.goods.resources_list
+        self.province_goods_for_trade = self.goods.resources_list
 
     # Обновим рассчет доступных для торговли товаров
     # TODO не используется?
     def update_trade(self):
-        self.available_goods = {k: v for k, v in self.available_goods.items() if v > 0}
+        self.province_goods_for_trade = \
+            {k: v for k, v in self.province_goods_for_trade.items() if v > 0}
 
     def restore_settlements(self):  # , game_id , settlement_id, name_eng
         """Восстановление поселений из класса провинции."""
@@ -52,7 +54,7 @@ class Province:
 
             "dict_settlements": self.dict_settlements,
 
-            "available_goods": self.available_goods,
+            "province_goods_for_trade": self.province_goods_for_trade,
 
         }
         # Тут нужно отловить ошибку отсутствия файла
@@ -80,4 +82,4 @@ class Province:
 
         self.dict_settlements = data["dict_settlements"]
 
-        self.available_goods = data["available_goods"]
+        self.province_goods_for_trade = data["province_goods_for_trade"]

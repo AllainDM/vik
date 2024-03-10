@@ -78,12 +78,21 @@ class Buildings:
 
         # TODO тут будет новые словари с потреблениями и производством ресурсов
 
-    # Производство товаров
+    # Производство товаров5
     def prod(self, settlement):
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
         print(f"Рассчитываем производство2 в {settlement.name_eng}")
+        # TODO !!!! Возможно надо обнулить перед обсчетом
+        # Обнуление текущего склада, для правки бага с двойным обсчетом
+        for k, v in settlement.goods.resources_list.items():
+            # print(f"{k} было1: {v}")
+            # print(f"{k} было2: {settlement.goods.resources_list[k]}")
+            settlement.goods.resources_list[k] = 0
+            # settlement.goods.resources_list[k]
+            # print(f"{k} стало1: {v}")
+            # print(f"{k} стало2: {settlement.goods.resources_list[k]}")
         # Пища
         settlement.food = 0
         # TODO Конкретно типы еды пока не производим, до полной доработки общего рынка.
@@ -110,6 +119,10 @@ class Buildings:
 
         # Длинный дом. -1 меха
         settlement.goods.resources_list["Меха"] -= settlement.buildings_list["Длинный_дом"] * 1
+
+        # Сверка торговли
+        for k, v in settlement.goods.resources_list.items():
+            print(f"Итог рассчета производства {k}: {v}")
 
     # TODO методы из Торговца, пока оставим тут
     # def cost(self, build):

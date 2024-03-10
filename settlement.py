@@ -57,7 +57,7 @@ class Settlement:
         # Список доступных к покупке товаров.
         # Новый список из того, что больше 0
         # TODO Возможно это не подойдет когда будет динамическое распределение товара по мере обработки хода
-        self.available_goods_buy = {k: v for k, v in self.province.available_goods.items() if v > 0}
+        self.available_goods_buy = {k: v for k, v in self.province.province_goods_for_trade.items() if v > 0}
 
         # Отдельные переменные под расчет еды
         self.food = 0  # Тестовая переменная, под хз знает что
@@ -115,19 +115,23 @@ class Settlement:
         print("update_var")
         self.buildings.prod(self)
         print("#########################################################")
-        print("#########################################################")
+        print(f"###  update_var  для {self.name_rus}   #################")
         print("#########################################################")
         print("#########################################################")
 
         # 4. Добавим излишки товаров на внутренний рынок
+        # Доступные нам товары запишем до добавления наших товаров на рынок
+        self.available_goods_buy = self.province.province_goods_for_trade
+
         # После расчета производства построек закинем излишки на рынок
         # TODO пока в любом случае выручка идет со всх лишних товаров
         # TODO баг, в список добавляется наш излишек. Дописать второе условие.
         for k, v in self.goods.resources_list.items():  # Там словарь
             if v > 0:  # Только если что-то есть лишнее, чтобы не прибавлять минусовые товары.
-                self.province.available_goods[k] += v
-        # TODO test
-        self.available_goods_buy = self.province.available_goods
+                print(f"Добавление {k}: {v}.")
+                print(f"Было {self.province.province_goods_for_trade[k]}")
+                self.province.province_goods_for_trade[k] += v
+                print(f"Стало {self.province.province_goods_for_trade[k]}")
 
         # 5. Считаем баланс еды.
         self.balance_food = self.food - self.population  # Баланс еды: еда - население

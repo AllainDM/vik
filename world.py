@@ -358,9 +358,11 @@ def calculate_turn(game_id):
     # 4. Обнулим торговлю в провинциях для составления нового списка товаров, ибо не накапливаемые.
     print("Обнуление торговых складов провинций.")
     for prov in game.provinces.values():  # Тут должны быть ссылки на провинции.
-        for v in prov.available_goods.values():
+        for v in prov.province_goods_for_trade.values():
+            print(f"Было: {v}")
             v = 0
-        # for k, v in prov.available_goods.items():
+            print(f"Стало: {v}")
+        # for k, v in prov.province_goods_for_trade.items():
         #     v = 0
 
     # 5. Очистим логи для записи новых.
