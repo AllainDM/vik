@@ -124,6 +124,12 @@ div.content {
 .container {
 	width: 1024px;
 }
+
+.container-logs {
+	width: 1024px;
+    margin-top: 0px;
+}
+
 .container-act-logs{
     width: 30%;
     float: left;
@@ -251,6 +257,7 @@ div.content {
 .map-block {
     width: 63%;
     height: 280px;
+    /* margin-top: 200px; */
     margin-left: 5px;
     float: left;
 
@@ -347,7 +354,7 @@ div.content {
 .stats {
     height: 0px;
     font-size: 15pt;
-    margin-top: 0px;
+    margin-left: 5px;
 
 }
 .stats1 {
@@ -367,6 +374,32 @@ div.content {
 
     font-size: 12px;
     line-height: 3;
+}
+/* .table {
+    background: #657d88;
+    color: white;
+    padding: 0px 0px 0px 0px;
+    border-width: 1px;
+    border-color: white;
+    text-align: center;
+} */
+.table {
+	width: 100%;
+	margin-bottom: 20px;
+	border: 1px solid #dddddd;
+	border-collapse: collapse; 
+}
+
+.table th {
+	/* font-weight: bold; */
+	padding: 5px;
+	background: #efefef;
+	border: 1px solid #dddddd;
+}
+
+.table td {
+	border: 1px solid #dddddd;
+	padding: 5px;
 }
 
 /* Покрасим текст через класс */

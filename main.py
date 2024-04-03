@@ -669,6 +669,7 @@ def req_status_all_player():
     return jsonify(return_data)
 
 
+# Запрос всех параметров нашего игрока
 @app.route("/req_status_game_player", methods=["GET"])  # Запрос параметров страны игрока
 @login_required
 def req_status_game_player():

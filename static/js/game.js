@@ -110,6 +110,27 @@ document.getElementById('players-button').addEventListener('click', () => {
 });
 
 
+// Первичная загрузка шапки таблицы с провинциями
+// function tableStart() {
+//     document.getElementById(`tab-province`).innerHTML = `
+//     <table class="table" id="table-province">        
+//         <thead>    
+//             <tr class="table">
+//                 <th class="th" id='th-loc' style="width: 200px">Локация</th>
+//                 <th class="th" id='th-pop' style="width: 70px">Нас.</th>
+//                 <th class="th" id='th-wealth style="width: 70px"'>Благ.</th>
+//                 <th class="th" id='th-food' style="width: 70px">Еда произв.</th>
+//                 <th class="th" id='th-food-balace' style="width: 70px">Еда баланс</th>
+//                 <th class="th" id='th-dom' style="width: 70px">Строй</th>
+
+//                 <th class="th" id='th-buildings' style="width: 300px">Постройки</th>
+//             </tr>
+//         </thead>
+//     </table>`;
+// }
+// // Отображаем таблички под разные статусы
+// tableStart();
+
 // Модальное окно
 // Получить модальное окно
 const modal = document.getElementById("my-modal");
@@ -933,7 +954,7 @@ function req_status_all_player() {
                 const response = JSON.parse(request.response);
                 console.log(response)
                 displayStatisticsOfAllPlayers(response);
-                displayStatisticsOfAllPlayersOnBoard(response);
+                // displayStatisticsOfAllPlayersOnBoard(response);
             };
         } else {
             console.log("Ответ от сервера не получен");
@@ -945,6 +966,7 @@ function req_status_all_player() {
     request.send();
 };
 
+// Убрал, ибо похоже это с прошлой версии отображение всех в шапке, пока не используется, но надо бы перенести в левую часть экрана
 // И такая же функция для отображения в шапке
 function req_status_all_player_head() {
     console.log(statusGame.game_id)
