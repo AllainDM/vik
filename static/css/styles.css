@@ -152,7 +152,7 @@ div.content {
     max-height: 400px; /* Высота блока */
     padding: 5px; /* Поля вокруг текста */
     width: 95%;
-    margin-top: 160px;
+    /* margin-top: 160px; */
     float: left;
     font-size: 16px;
     vertical-align:top;  
@@ -174,7 +174,7 @@ div.content {
 }
 .dashboard{
     margin-top: 0px;
-    height: 280px;
+    min-height: 200px;
 }
 .standart-window {
     margin-top: 10px;
@@ -256,7 +256,7 @@ div.content {
 }
 .map-block {
     width: 63%;
-    height: 280px;
+    /* min-height: 80px; */
     /* margin-top: 200px; */
     margin-left: 5px;
     float: left;

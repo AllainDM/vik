@@ -191,11 +191,10 @@ function updateVar() {
         i.innerText = statusSettlement.settlementName;
     })
     document.getElementById("build-points").innerText = `Очки строительства: ${statusSettlement.buildPoints}`
-    document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
-    // document.getElementById("population-gold").innerText = statusSettlement.populationGold;
-    document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
-    document.getElementById("food").innerText = statusSettlement.food;
-    document.getElementById("balance-food").innerText = statusSettlement.balanceFood;
+    // document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
+    // document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
+    // document.getElementById("food").innerText = statusSettlement.food;
+    // document.getElementById("balance-food").innerText = statusSettlement.balanceFood;
 
     // Вкладка торговли
     // Тут отображена доступность покупки и продажы товаров.
@@ -373,14 +372,17 @@ function actualVarPlayer(res) {
     //  Запись не выполненных действий, массив обновляется на беке при выполнении и остаток возвращается на фронт
     statusGame.acts = res[0].acts    
     statusGame.endTurnKnow = res[0].end_turn_know;
-    // statusGame.actsText = res.acts_text
+
     // Логи игрока
-    statusGame.logsText = [...res[0].result_logs_text, ...res[1].result_events_text]
-    statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, ...res[1].result_events_text_all_turns]
-    // console.log("tyt")
-    // console.log(typeof(statusGame.logsText))
+    // statusGame.logsText = [...res[0].result_logs_text, ...res[1].result_events_text]
+    // statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, ...res[1].result_events_text_all_turns]
+    
+    // statusGame.logsText = [...res[0].result_logs_text, ...res[1]["result_events_text"]]
+    statusGame.logsText = [...res[0].result_logs_text, "Внимание, логи приходят не все."]
+    statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, "Внимание, логи приходят не все."]
+    
     console.log(statusGame.logsText)
-    // console.log(typeof(statusGame.logsTextAllTurns))
+
     // Логи поселения. Или события, то, что напрямую не зависит от игрока.
     // statusGame.logsText = res[1].result_events_text
     // statusGame.logsTextAllTurns += res[1].result_events_text_all_turns
@@ -392,22 +394,24 @@ function actualVarPlayer(res) {
     console.log(statusGame)
 
     // Поселение
-    statusSettlement.buildingsList = res[1].buildings_list;
-    statusSettlement.settlementName = res[1].name_rus;
-    statusSettlement.population = res[1].population;
-    statusSettlement.populationGold = res[1].gold;
-    statusSettlement.wealthStatus = res[1].wealth_status;
-    statusSettlement.food = res[1].food;
-    statusSettlement.balanceFood = res[1].balance_food;
-    statusSettlement.buildPoints = res[1].build_points;
+    // !!!!!!!!!!! Отключаем, делаем под несколько поселений
+    // statusSettlement.buildingsList = res[1].buildings_list;
+    // statusSettlement.settlementName = res[1].name_rus;
+    // statusSettlement.population = res[1].population;
+    // statusSettlement.populationGold = res[1].gold;
+    // statusSettlement.wealthStatus = res[1].wealth_status;
+    // statusSettlement.food = res[1].food;
+    // statusSettlement.balanceFood = res[1].balance_food;
+    // statusSettlement.buildPoints = res[1].build_points;
 
     // Доступность торговли
     statusSettlement.availableGoodsBuy = res[1].available_goods_buy;
 
-    statusBuildings[0] = res[1].available_buildings;
-    statusBuildings[1] = res[1].buildings_cost;
-    statusBuildings[2] = res[1].buildings_icon_name;
-    statusBuildings[3] = res[1].buildings_description;
+    // !!!!!!!!!!! Отключаем, делаем под несколько поселений
+    // statusBuildings[0] = res[1].available_buildings;
+    // statusBuildings[1] = res[1].buildings_cost;
+    // statusBuildings[2] = res[1].buildings_icon_name;
+    // statusBuildings[3] = res[1].buildings_description;
     console.log("Инфа о строительстве")     
     console.log(statusBuildings)   
     console.log(statusBuildings[0])   
@@ -449,8 +453,9 @@ function actualVarPlayer(res) {
     // } else {
     //     buildingsNameHtml.innerHTML += `<div>Ничего нет</div>`;
     // }
-    console.log(`Список построек1:? ${res[1].buildings_list[2]}`);
-    console.log(`Список построек2:? ${statusSettlement.buildingsList["Гавань1"]}`);
+    
+    // console.log(`Список построек1:? ${res[1].buildings_list[2]}`);
+    // console.log(`Список построек2:? ${statusSettlement.buildingsList["Гавань1"]}`);
 
     // !!!!!!!!!!!!!! Старое
     // Вывод на экран количества ресурсов и построек

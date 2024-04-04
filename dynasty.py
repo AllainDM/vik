@@ -29,7 +29,7 @@ class Dynasty:
         self.name_rus = name_rus    # Имя Династии игрока на русском
         self.gold = gold            # Казна непосредственно игрока
         self.main_settlement = str(main_settlement)  # ид "главного" поселения игрока(управляемого). Строка
-        self.our_settlements = []  # Список ид поселений под управлением игрока
+        self.our_settlements = [str(main_settlement)]  # Список ид поселений под управлением игрока
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
         self.body_points = 3        # Очки действий игрока
