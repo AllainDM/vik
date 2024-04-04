@@ -128,32 +128,36 @@ div.content {
 .container-logs {
 	width: 1024px;
     margin-top: 0px;
+    display: flex;
 }
 
 .container-act-logs{
-    width: 30%;
-    float: left;
+    /* width: 30%; */
+    width: 300px;
+    /* float: left; */
 
 }
 
 .container-local-logs{
-    width: 33%;
-    float: left;
+    /* width: 33%; */
+    width: 330px;
+    /* float: left; */
 }
 
 .container-all-logs{
-    width: 37%;
-    float: left;
+    /* width: 37%; */
+    width: 370px;
+    /* float: left; */
 }
 
 .logs {
     overflow: scroll; /* Добавляем полосы прокрутки */
-
+    margin: 3px;
     max-height: 400px; /* Высота блока */
     padding: 5px; /* Поля вокруг текста */
-    width: 95%;
+    /* width: 95%; */
     /* margin-top: 160px; */
-    float: left;
+    /* float: left; */
     font-size: 16px;
     vertical-align:top;  
     background: rgb(187, 183, 172);
@@ -399,6 +403,7 @@ div.content {
 
 .table td {
 	border: 1px solid #dddddd;
+	background: #efefef;
 	padding: 5px;
 }
 

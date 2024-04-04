@@ -45,6 +45,7 @@ let statusGame = {
     autoUpdate: true,  // Таймер автообновления странички
 };
 
+// Старое
 // Поселение
 let statusSettlement = {
     buildingsList: [],  // Список построек
@@ -56,6 +57,8 @@ let statusSettlement = {
     balanceFood: 0, // Баланс еды
     buildPoints: 0,  // Очки строительства
 }
+// Новое
+let statusSettlements = []
 
 // Постройки для отображения при строительстве
 // Тут список обьектов.
@@ -412,13 +415,73 @@ function actualVarPlayer(res) {
     // statusBuildings[1] = res[1].buildings_cost;
     // statusBuildings[2] = res[1].buildings_icon_name;
     // statusBuildings[3] = res[1].buildings_description;
-    console.log("Инфа о строительстве")     
-    console.log(statusBuildings)   
-    console.log(statusBuildings[0])   
-    console.log(statusBuildings[1])
-    console.log(statusBuildings[2])
-    console.log(statusBuildings[3])
+    // console.log("Инфа о строительстве")     
+    // console.log(statusBuildings)   
+    // console.log(statusBuildings[0])   
+    // console.log(statusBuildings[1])
+    // console.log(statusBuildings[2])
+    // console.log(statusBuildings[3])
 
+    // Новый вывод инфы сразу о всех наших локациях
+    // С бека мы получаем массив, нужен цикл для переноса инфы
+    console.log("!!!!!!!!! ДО")
+    console.log(statusSettlements);
+    statusSettlements = []
+    console.log("!!!!!!!!! ПОСЛЕ")
+    console.log(statusSettlements);
+    console.log("Вывод поселений.")
+    for (i=0; i<res[1].length; i++) {
+        console.log(res[1][i]);
+        statusSettlements.push(res[1][i])
+    }
+    console.log(statusSettlements);
+
+    // <th class="th" id='th-loc' style="min-width: 200px">Локация</th>
+    // <th class="th" id='th-pop' style="min-width: 70px">Нас.</th>
+    // <th class="th" id='th-wealth style="min-width: 70px"'>Благ.</th>
+    // <th class="th" id='th-food' style="min-width: 70px">Еда произв.</th>
+    // <th class="th" id='th-food-balace' style="min-width: 70px">Еда баланс</th>
+    // <th class="th" id='th-dom' style="min-width: 70px">Строй</th>
+
+    // <th class="th" id='th-buildings' style="min-width: 300px">Постройки</th>
+
+    tab = document.getElementById('table-province');
+    res[1].forEach((item, num) => {
+        // Преобразуем некоторые значения при необходимости
+        let buildings = []
+        
+        console.log("Выводим иконки построек.");
+        console.log(item["buildings_list"].length);
+        console.log(item["buildings_list"]);
+        // for(i=0; i<item["buildings_list"].length; i++) {
+        //     console.log("Выводим иконки построек.");
+        // }
+        for (let key in item["buildings_list"]) {
+            if (item["buildings_list"][key]>0) {
+                buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
+                console.log(`key ${key}`);
+            }
+        }
+        tab.insertAdjacentHTML("beforeend", 
+            `<tr class="table">
+                <td id='th-loc'>${item["name_rus"]}</th>
+                <td id='th-pop'>${item["population"]}</th>
+                <td id='th-wealth_status'>${item["wealth_status"]}</th>
+                <td id='th-food'>${item["food"]}</th>
+                <td id='th-food-balace'>${item["balance_food"]}</th>
+                <td id='th-dom'>${item["build_points"]}</th>
+
+                <td id='th-buildings'>${buildings}</th>
+            </tr>`
+        )
+    });
+
+    // <td id='th-buildings'>${item["buildings"]}</th>
+    // <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
+            
+    
+
+    // Старый вариант для одного поселения
     // Вывод построек в поселении
     buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
     for (let key in statusSettlement.buildingsList) {
@@ -453,7 +516,7 @@ function actualVarPlayer(res) {
     // } else {
     //     buildingsNameHtml.innerHTML += `<div>Ничего нет</div>`;
     // }
-    
+
     // console.log(`Список построек1:? ${res[1].buildings_list[2]}`);
     // console.log(`Список построек2:? ${statusSettlement.buildingsList["Гавань1"]}`);
 
