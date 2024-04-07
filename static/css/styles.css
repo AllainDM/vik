@@ -407,6 +407,16 @@ div.content {
 	padding: 5px;
 }
 
+#table-province {
+    /* height: 20px; */
+    max-height: 35px;
+    font-size: 12px;
+}
+
+/* .table-location {
+    height: 70%;
+} */
+
 /* Покрасим текст через класс */
 .set-red-font {
     background-color: red;

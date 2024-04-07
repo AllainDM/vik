@@ -5,9 +5,10 @@ const chatText = document.getElementById('chat-text');
 const sendButton = document.getElementById('chat-send-text');
 const inputText = document.getElementById('chat-input-text');
 
-sendButton.addEventListener("click", () => {
-    postMessage();
-});
+// Отключим пока не используется, чтобы браузер не выдавал ошибку.
+// sendButton.addEventListener("click", () => {
+//     postMessage();
+// });
 
 function postMessage() {
     const request = new XMLHttpRequest();

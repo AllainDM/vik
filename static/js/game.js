@@ -431,7 +431,7 @@ function actualVarPlayer(res) {
     console.log(statusSettlements);
     console.log("Вывод поселений.")
     for (i=0; i<res[1].length; i++) {
-        console.log(res[1][i]);
+        // console.log(res[1][i]);
         statusSettlements.push(res[1][i])
     }
     console.log(statusSettlements);
@@ -450,20 +450,21 @@ function actualVarPlayer(res) {
         // Преобразуем некоторые значения при необходимости
         let buildings = []
         
-        console.log("Выводим иконки построек.");
-        console.log(item["buildings_list"].length);
-        console.log(item["buildings_list"]);
+        // console.log("Выводим иконки построек.");
+        // console.log(item["buildings_list"].length);
+        // console.log(item["buildings_list"]);
+        console.log(item);
         // for(i=0; i<item["buildings_list"].length; i++) {
         //     console.log("Выводим иконки построек.");
         // }
         for (let key in item["buildings_list"]) {
             if (item["buildings_list"][key]>0) {
                 buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
-                console.log(`key ${key}`);
+                // console.log(`key ${key}`);
             }
         }
         tab.insertAdjacentHTML("beforeend", 
-            `<tr class="table">
+            `<tr class="table table-location">
                 <td id='th-loc'>${item["name_rus"]}</th>
                 <td id='th-pop'>${item["population"]}</th>
                 <td id='th-wealth_status'>${item["wealth_status"]}</th>
@@ -472,9 +473,18 @@ function actualVarPlayer(res) {
                 <td id='th-dom'>${item["build_points"]}</th>
 
                 <td id='th-buildings'>${buildings}</th>
+                <td id='th-action'><button id="btn-act-${item["row_id"]}">Строительство</button></th>
             </tr>`
-        )
+        );
+        document.getElementById(`btn-act-${item["row_id"]}`).addEventListener(('click'), () => {
+            console.log(`Нажата кнопка строительства у провинции с ид: ${item["row_id"]}`);
+            menuNewBuilding(item);
+        });
+        
     });
+
+    // Навесим события для новых кнопок строитесльтва по поселениям
+
 
     // <td id='th-buildings'>${item["buildings"]}</th>
     // <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
@@ -703,6 +713,13 @@ function logAllResultStart() {       //Функция запуска лога и
 // Строительство 
 // Модалка для строительства
 document.getElementById('menu-new-building').addEventListener('click', () => {
+    menuNewBuilding();
+});
+
+
+
+// Новая фукнция для строительства при управлении несолькими локациями.
+function menuNewBuilding(settlement) {
     hiddenAllMenu();  // Скроем все меню
     // chooseList.innerHTML = `<span>Пока что здесь пусто</span>`;  // Добавим подсказку
     // Старый функционал
@@ -724,17 +741,19 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     //     content.innerHTML += `${item} ${id}`
     // });
     // for (i = 0; i <= statusBuildings[0].length; i++) {
-    console.table(`Доступные постройки ${statusBuildings}`)
-    console.log(`Доступные постройки0 ${statusBuildings[0]}`)
-    console.log(`Доступные постройки1 ${statusBuildings[1]}`)
-    statusBuildings[0].forEach((build, num) => {
-        console.log(`Доступная постройка ${build}`)
-        let cost = statusBuildings[1][build];
-        let description = statusBuildings[3][build];
+    console.table(`Поселение ${settlement["name_rus"]}`)
+    console.log(`Доступные постройки0 ${settlement["available_buildings"]}`)
+    // console.log(`Доступные постройки1 ${statusBuildings[1]}`)
+    settlement["available_buildings"].forEach((build, num) => {
+        console.log(`Доступная постройка ${build}`);
+        let cost = settlement["buildings_cost"][build];
+        console.log(`Ее стоимость: ${cost}`);
+        let description = settlement["buildings_description"][build];
+        console.log(`Описание: ${description}`);
         content.innerHTML += `
         <div class="wrapper" style="border: solid; margin-top: 5px;">
             <div>
-                <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
+                <img src="../static/image/buildings/${settlement["buildings_icon_name"][build]}" alt="Картинки нет, сорян" width = 50px> 
             </div>
             <button onclick = build111('${build}')>Построить</button>
             <div> 
@@ -779,8 +798,7 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
     //         chooseList.innerHTML = '';  // Чистим(скрываем) список
     //     });
     // });
-
-});
+}
 
 // Вызываем эту фукнцию из создаваемой кнопки в html
 function build111(buildings_name){
