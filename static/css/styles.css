@@ -390,20 +390,20 @@ div.content {
 .table {
 	width: 100%;
 	margin-bottom: 20px;
-	border: 1px solid #dddddd;
+	border: 1px solid #978b8b;
 	border-collapse: collapse; 
 }
 
 .table th {
 	/* font-weight: bold; */
 	padding: 5px;
-	background: #efefef;
+	background: #8f8989;
 	border: 1px solid #dddddd;
 }
 
 .table td {
 	border: 1px solid #dddddd;
-	background: #efefef;
+	background: #8f8989;
 	padding: 5px;
 }
 

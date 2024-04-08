@@ -737,47 +737,46 @@ function menuNewBuilding(settlement) {
         <div style="font-size: 20px">
             <div>Строительство</div>
     `;
-    // statusBuildings[0].forEach((item, id) => {
-    //     content.innerHTML += `${item} ${id}`
-    // });
-    // for (i = 0; i <= statusBuildings[0].length; i++) {
+
     console.table(`Поселение ${settlement["name_rus"]}`)
     console.log(`Доступные постройки0 ${settlement["available_buildings"]}`)
     // console.log(`Доступные постройки1 ${statusBuildings[1]}`)
     settlement["available_buildings"].forEach((build, num) => {
-        console.log(`Доступная постройка ${build}`);
+        // console.log(`Доступная постройка ${build}`);
         let cost = settlement["buildings_cost"][build];
-        console.log(`Ее стоимость: ${cost}`);
+        // console.log(`Ее стоимость: ${cost}`);
         let description = settlement["buildings_description"][build];
-        console.log(`Описание: ${description}`);
-        content.innerHTML += `
-        <div class="wrapper" style="border: solid; margin-top: 5px;">
-            <div>
-                <img src="../static/image/buildings/${settlement["buildings_icon_name"][build]}" alt="Картинки нет, сорян" width = 50px> 
-            </div>
-            <button onclick = build111('${build}')>Построить</button>
-            <div> 
-                <div>${build}.</div> 
-                <div>Стоимость: ${cost}.</div> 
-                <div>${description}</div> 
-            </div>
-        </div>
-        `
-        // Описание: 
-    })
-    // for (let build in statusBuildings[0]) {
-        
+        // console.log(`Описание: ${description}`);
+        // console.log(`Ид поселения: ${settlement["row_id"]}`);
+        let id = String(settlement["row_id"])
+        content.insertAdjacentHTML('beforeend', `
+            <div class="wrapper" style="border: solid; margin-top: 5px;">
+                <div>
+                    <img src="../static/image/buildings/${settlement["buildings_icon_name"][build]}" alt="Картинки нет, сорян" width = 50px> 
+                </div>
+                <button id='build1-${num}'>Построить</button>
+                <div> 
+                    <div>${build}.</div> 
+                    <div>Стоимость: ${cost}.</div> 
+                    <div>${description}</div> 
+                </div>
+            </div>`
+        )
 
-        // <div style="font-size: 20px">${build}</div>
-        // <div style="font-size: 15px">Стоимость: ${cost}</div>  onclick = build111(${build})
-    
-    content.innerHTML += `
+        document.getElementById(`build1-${num}`).addEventListener(('click'), () => {
+            console.log("Вешаем событие постройки.")
+            build111(build, id);
+        });
+    })
+
+    content.insertAdjacentHTML('beforeend', `
             <div style="font-size: 20px">
                 <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
-            </div>
-        </div>
-    `;
+            </div>`
+    )
+
     
+
     console.log("Модалка открыта");
     // Нарисуем кнопку отмены(выхода)
     // chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-choose-exit">Отмена</button>`;
@@ -800,12 +799,11 @@ function menuNewBuilding(settlement) {
     // });
 }
 
+
 // Вызываем эту фукнцию из создаваемой кнопки в html
-function build111(buildings_name){
-    console.log(`Строим: ${buildings_name}.`);
-    statusGame.acts.push([
-        `Строим: ${buildings_name}`, 101, buildings_name
-    ]);    
+function build111(build, settl_id){
+    console.log(`Строим: ${build}.`);
+    statusGame.acts.push([`Строим: ${build}`, 101, build, settl_id]) 
     postAct(statusGame.game_id);
     logStart();
     closeModal();

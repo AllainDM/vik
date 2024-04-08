@@ -176,7 +176,8 @@ class Dynasty:
                 # self.act_build_colony(self.acts[0][2])  # Тут передадим аргумент
                 # Запустим сразу метод у класса поселение
                 print(f"Вызываем функцию строительства {self.acts[0][2]}")
-                self.game.settlements[self.game.settlements_dict[self.main_settlement]].act_build(self.acts[0][2])
+                print(f"Тест, проверяем аргументы. Название: {self.acts[0][2]}. Ид поселения: {self.acts[0][3]}")
+                self.game.settlements[self.game.settlements_dict[self.acts[0][3]]].act_build(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             # TODO отключен
