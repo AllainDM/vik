@@ -24,15 +24,19 @@ let statusGame = {
 
     // Игрок
     dynastyName: "Страна не загрузилась",
+    playerId: 0,
     gold: 0,            // Золото игрока
     title: 0,           // Титул игрока, пока числом, будет строкой, типо "Ярл"
     bodyPoints: 0,      // Очки действия для игрока
 
+    // Управление поселениями
+    ourSettlements: [],
 
     // Игроки
     dynastyList: [],
     curNumPlayers: 0,
     maxPlayers: 12,
+
     // Победа и победители
     winPoints: 0,
     wpForWin: 0,
@@ -339,6 +343,7 @@ function actualVar(res) {
 
     // Имя игрока и инфа о партии
     statusGame.user_name = res.user_name;
+    statusGame.playerId = res.player_id;
     statusGame.game_id = res.game_id;
     statusGame.date_create = res.date_create;
     statusGame.curNumPlayers = res.dynasty_list.length  // Текущим количеством игроков выведем длинну списка стран
@@ -364,7 +369,10 @@ function actualVarPlayer(res) {
     console.log(statusGame)
     statusGame.winPoints = res[0].win_points
     statusGame.dynastyName = res[0].name_rus
+    statusGame.playerId = res[0].player_id
     statusGame.gold = res[0].gold
+
+    statusGame.ourSettlements = res[0].our_settlements
 
     statusGame.title = res[0].title
     statusGame.bodyPoints = res[0].body_points
@@ -445,7 +453,24 @@ function actualVarPlayer(res) {
 
     // <th class="th" id='th-buildings' style="min-width: 300px">Постройки</th>
 
-    tab = document.getElementById('table-province');
+    let tab = document.getElementById('table-province');
+    tab.innerHTML = `            
+        <thead>    
+            <tr class="table">
+                <th class="th" id='th-loc' style="min-width: 100px">Локация</th>
+                <th class="th" id='th-relation' style="min-width: 60px">Отнош.</th>
+                <th class="th" id='th-pop' style="min-width: 40px">Нас.</th>
+                <th class="th" id='th-wealth_status style="min-width: 80px"'>Благ.</th>
+                <th class="th" id='th-food' style="min-width: 40px">Еда произв.</th>
+                <th class="th" id='th-food-balace' style="min-width: 40px">Еда баланс</th>
+                <th class="th" id='th-dom' style="min-width: 50px">Строй</th>
+
+                <th class="th" id='th-buildings' style="min-width: 400px; ">Постройки</th>
+                <th class="th" id='th-action' style="min-width: 100px; ">Действие</th>
+            </tr>
+        </thead>`
+    
+    
     res[1].forEach((item, num) => {
         // Преобразуем некоторые значения при необходимости
         let buildings = []
@@ -459,13 +484,25 @@ function actualVarPlayer(res) {
         // }
         for (let key in item["buildings_list"]) {
             if (item["buildings_list"][key]>0) {
-                buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
+                buildings.unshift(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
                 // console.log(`key ${key}`);
             }
+        }
+        // Выясним отношение поселения
+        let relation = ''
+        console.log("Выясняем отношения.")
+        console.log(statusGame.playerId)
+        if (statusGame.playerId == item["ruler"]) {
+            relation = 'Дом'
+        } else if (item["row_id"] in statusGame.ourSettlements) {
+            relation = 'Наш'
+        } else {
+            relation = 'Нейтрал.'
         }
         tab.insertAdjacentHTML("beforeend", 
             `<tr class="table table-location">
                 <td id='th-loc'>${item["name_rus"]}</th>
+                <td id='th-relation'>${relation}</th>
                 <td id='th-pop'>${item["population"]}</th>
                 <td id='th-wealth_status'>${item["wealth_status"]}</th>
                 <td id='th-food'>${item["food"]}</th>
@@ -650,8 +687,9 @@ function postAct(gameId) {
 
     request.addEventListener('load', () => {
         console.log("Автообновление");
-        requestStatus();
-        requestStatusPlayer();
+        console.log("Фукнции requestStatus и requestStatusPlayer отключены.");
+        // requestStatus();
+        // requestStatusPlayer();
     });
 };
 
@@ -707,7 +745,6 @@ function logAllResultStart() {       //Функция запуска лога и
     }); 
 }
 
-
 // Запись действий игрока
 
 // Строительство 
@@ -717,20 +754,10 @@ document.getElementById('menu-new-building').addEventListener('click', () => {
 });
 
 
-
 // Новая фукнция для строительства при управлении несолькими локациями.
 function menuNewBuilding(settlement) {
     hiddenAllMenu();  // Скроем все меню
     // chooseList.innerHTML = `<span>Пока что здесь пусто</span>`;  // Добавим подсказку
-    // Старый функционал
-    // chooseList.innerHTML = `<span>Выберите постройку:</span>`;  // Добавим подсказку
-    // statusGame.colonyListForBuild.forEach((item, id) => {
-    //     // if (id > 0) {
-    //         chooseList.innerHTML += `<button class="menu-buttons-choose custom-btn btn-15">${item} Стоимость: ${statusGame.colonyPrice[item]}</button>`;
-    //         console.log(item);
-    //     // };        
-    // });
-
     modal.style.display = "block";
     let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
     content.innerHTML = `
@@ -762,41 +789,17 @@ function menuNewBuilding(settlement) {
                 </div>
             </div>`
         )
-
         document.getElementById(`build1-${num}`).addEventListener(('click'), () => {
             console.log("Вешаем событие постройки.")
             build111(build, id);
         });
     })
-
     content.insertAdjacentHTML('beforeend', `
             <div style="font-size: 20px">
                 <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
             </div>`
     )
-
-    
-
     console.log("Модалка открыта");
-    // Нарисуем кнопку отмены(выхода)
-    // chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-choose-exit">Отмена</button>`;
-    // document.getElementById('menu-choose-exit').addEventListener('click', () => { chooseList.innerHTML = ''; exitToMainMenuButtons(); });
-
-    // Старый функционал
-    // Определяем позицию кнопки и "создаем" соответсвующий приказ
-    // document.querySelectorAll(".menu-buttons-choose").forEach((btn, i) => {
-    //     btn.addEventListener('click', () => {
-    //         statusGame.acts.push([
-    //             `Строим: ${statusGame.colonyListForBuild[i-1]}`, 101, statusGame.colonyListForBuild[i-1]
-    //         ]);         
-    //         // 101 это главный ид действия. i индекс постройки в списке построек в беке. Ну и текст описание действия
-    //         postAct(statusGame.game_id);
-    //         logStart();
-    //         console.log(statusGame.acts);
-    //         exitToMainMenuButtons();    // Скрываем меню
-    //         chooseList.innerHTML = '';  // Чистим(скрываем) список
-    //     });
-    // });
 }
 
 

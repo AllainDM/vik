@@ -27,6 +27,8 @@ new_check.py
         game.restore_dynasty(game_id, game.player_list[dynasty_player_id], dynasty_name)
 
 
+Общие заметки
+- Правитель поселения = ид самого игрока
 
 
 !!!!!!!!!!!!!!!!!!!!

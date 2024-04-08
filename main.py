@@ -498,9 +498,12 @@ def create_game(setting):  # Получаем только список игро
     # list_settlements_in_province.append(settlements_names_eng[0])
     # Был список названий, создаем словарь. Ключ ид, значение название
     list_settlements_in_province[real_settlement_id] = manual_settlements_names_eng[0]
+    # Так же добавим в список
+    new_province.list_settlements.append(manual_settlements_names_eng[0])
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
-                             setting[1]["nameEng"], setting[1]["nameRus"], real_settlement_id, 100)
+                             setting[1]["nameEng"], setting[1]["nameRus"],
+                             real_settlement_id, new_province_id, 100)
 
     # 7. Создание ИИ поселений.
     # Создадим еще поселения в провинции игрока
@@ -525,6 +528,8 @@ def create_game(setting):  # Получаем только список игро
         # Создаем словарь, ключ ид, значение название.
         # TODO В данный момент все ИИ поселения имею базовое название + ид
         list_settlements_in_province[real_settlement_id] = f"settlements_{real_settlement_id}"
+        # Так же добавим в список
+        new_province.list_settlements.append(f"settlements_{real_settlement_id}")
 
     # 8. Сохранение списка провинций и самого файла провинции.
     # Сохраним список поселений в экземпляре класса провинции.
@@ -578,6 +583,8 @@ def add_dynasty(game_id, player):
 
     # Добавляем в словарь. Ключ ид, значение название.
     list_settlements_in_province[real_settlement_id] = manual_settlements_names_eng[new_province_id]
+    # Так же добавим в список
+    new_province.list_settlements.append(manual_settlements_names_eng[new_province_id])
 
     # Старый код добавления поселения в БД. Не удалять.
     # Добавим запись о поселении для игрока в БД заодно получив его row_id для сохранения.
@@ -588,7 +595,8 @@ def add_dynasty(game_id, player):
     # Последний аргумент количество золота, у него есть дефолтное значение.
     game.create_dynasty(game_id, player_id=player[0],
                         name_eng=player[6], name_rus=player[6],
-                        main_settlement=real_settlement_id)
+                        main_settlement=real_settlement_id,
+                        province_id=new_province_id)
 
     # Пункт 5. Создать остальные поселения в новой провинции.
     for sett in range(mod.SETT_IN_PROVINCE):
@@ -606,9 +614,12 @@ def add_dynasty(game_id, player):
         print(f"Создано поселение с ид: {real_settlement_id}")
         # Добавляем в словарь. Ключ ид, значение название.
         list_settlements_in_province[real_settlement_id] = settlements_names_eng[real_settlement_id]
+        # Добавим так же и в список поселений в записи провинции
+        new_province.list_settlements.append(settlements_names_eng[real_settlement_id])
 
     # Обновим словарь с поселениями в классе провинции.
     new_province.dict_settlements = list_settlements_in_province  # Словарь
+
     # Сохраним новые данные
     new_province.save_to_file()
     game.save_to_file()
@@ -681,15 +692,32 @@ def req_status_game_player():
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
             data_dynasty = json.load(f)
             print(f"1Информация о династии {data_dynasty}")
-        # Запрашиваем все поселения под контролем игрока
-        # Необходимо получить список из файла игрока открытого выше
-        list_settlements = data_dynasty["our_settlements"]
-        # Сделаем перебор списка, открывая по очереди все файлы с необходимым ид поселений.
-        data_settlements = []
-        for i in list_settlements:
-            with open(f"games/{game_id}/gameID_{game_id}_settlementID_{i}.viking", 'r') as f:
-                data_settlement = json.load(f)
-                data_settlements.append(data_settlement)
+        # Вариант с выводом всех поселений нашей провинции
+        # list_settlements =
+        # Определим нашу провинцию, она хранится в записи династии
+        with open(f"games/{game_id}/gameID_{game_id}_provinceID_{data_dynasty['main_province']}.viking", 'r') as f:
+            data_province = json.load(f)
+            print(f'Выведем инфу о нашей провинции: {data_province}')
+            dict_settlements = data_province["dict_settlements"]
+            print(f'Выведем инфу о нашей провинции: {dict_settlements}')
+            data_settlements = []
+            for i in dict_settlements:
+                with open(f"games/{game_id}/gameID_{game_id}_settlementID_{i}.viking", 'r') as f:
+                    data_settlement = json.load(f)
+                    data_settlements.append(data_settlement)
+
+        # # Вариант с выводом только поселений игрока
+        # # Запрашиваем все поселения под контролем игрока
+        # # Необходимо получить список из файла игрока открытого выше
+        # list_settlements = data_dynasty["our_settlements"]
+        # # Сделаем перебор списка, открывая по очереди все файлы с необходимым ид поселений.
+        # data_settlements = []
+        # for i in list_settlements:
+        #     with open(f"games/{game_id}/gameID_{game_id}_settlementID_{i}.viking", 'r') as f:
+        #         data_settlement = json.load(f)
+        #         data_settlements.append(data_settlement)
+
+        # Первый(старый) вариант
         # Возьмем из файла ид управляемого поселения
         # ruler_settlement_id = data_dynasty["main_settlement"]
         # if ruler_settlement_id != 0:
@@ -697,15 +725,16 @@ def req_status_game_player():
         #     with open(f"games/{game_id}/gameID_{game_id}_settlementID_{ruler_settlement_id}.viking", 'r') as f:
         #         data_settlement = json.load(f)
         #         print(f"2Информация о поселении {data_settlement}")
+
         # TODO реализовать на фронте вариант при котором у игрока нет поселения
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
-        else:  # Если у игрока нет поселения
-            data_settlement = []
+        # else:  # Если у игрока нет поселения
+        #     data_settlement = []
         all_data = [data_dynasty, data_settlements]
         print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:
-        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден")
+        print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден 1")
         return ""
 
 

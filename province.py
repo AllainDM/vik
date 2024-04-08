@@ -16,6 +16,7 @@ class Province:
         self.name_eng = name_eng
 
         self.dict_settlements = {}  # Словарь поселений в провинции для восстановления
+        self.list_settlements = []  # Список поселений в провинции для разного
 
         # TODO тут возможно баг при создании
         # Доступные товары. Экспортируем актуальный список из заранее созданного экземпляра класса.
@@ -53,6 +54,7 @@ class Province:
             "name_eng": self.name_eng,
 
             "dict_settlements": self.dict_settlements,
+            "list_settlements": self.list_settlements,
 
             "province_goods_for_trade": self.province_goods_for_trade,
 
@@ -81,5 +83,6 @@ class Province:
         self.name_eng = data["name_eng"]
 
         self.dict_settlements = data["dict_settlements"]
+        self.list_settlements = data["list_settlements"]
 
         self.province_goods_for_trade = data["province_goods_for_trade"]

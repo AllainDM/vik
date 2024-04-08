@@ -164,10 +164,12 @@ class FirstWorld:
 
         # TODO Проверим на ошибку чтение только что записанных данных?????????
 
-    def create_dynasty(self, row_id, player_id, name_eng, name_rus, main_settlement, gold=1000):
+    def create_dynasty(self, row_id, player_id, name_eng, name_rus, main_settlement, province_id, gold=1000):
         # При создании династии передаем название, но можно передавать ид
-        self.dynasty[name_eng] = Dynasty(self, row_id=row_id, player_id=player_id, name_eng=name_eng,
-                                         name_rus=name_rus, main_settlement=main_settlement, gold=gold)
+        self.dynasty[name_eng] = Dynasty(self, row_id=row_id, player_id=player_id,
+                                         name_eng=name_eng, name_rus=name_rus,
+                                         main_settlement=main_settlement, province_id=province_id,
+                                         gold=gold)
         # Для перебора при обработке хода
         # Старое: Список династий, для перебора при обсчете хода
         self.dynasty_list.append(name_eng)

@@ -64,11 +64,12 @@ exitButtons.forEach((i) => {
     });
 });
 
-document.getElementById('menu-build').addEventListener('click', () => {
-    hiddenAllMenu();
-    document.getElementById("main-menu-buttons").setAttribute('style','display:none');
-    document.getElementById("menu-buttons-build").setAttribute('style','visibility:visible');
-});
+// Отключено в всязи с переносом управления в строчках провинций
+// document.getElementById('menu-build').addEventListener('click', () => {
+//     hiddenAllMenu();
+//     document.getElementById("main-menu-buttons").setAttribute('style','display:none');
+//     document.getElementById("menu-buttons-build").setAttribute('style','visibility:visible');
+// });
 
 // document.getElementById('menu-trade').addEventListener('click', () => {
 //     hiddenAllMenu();

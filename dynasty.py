@@ -21,7 +21,8 @@ rediska = redis.StrictRedis(
 
 
 class Dynasty:
-    def __init__(self, game, row_id, player_id=0, name_eng="default_name", name_rus="Страна", main_settlement=0, gold=0):
+    def __init__(self, game, row_id, player_id=0, name_eng="default_name", name_rus="Страна",
+                 main_settlement=0, province_id=0, gold=0):
         self.row_id = row_id
         # self.row_id = player_id  # Для id династии присвоим id игрока
         self.player_id = player_id  # id игрока
@@ -29,18 +30,21 @@ class Dynasty:
         self.name_rus = name_rus    # Имя Династии игрока на русском
         self.gold = gold            # Казна непосредственно игрока
         self.main_settlement = str(main_settlement)  # ид "главного" поселения игрока(управляемого). Строка
+        # Высчитаем ид родной провинции, для передачи данных на фронтенд.
+        # TODO пока просто передадим при создании экземпляра класса.
+        self.main_province = province_id
         # self.our_settlements = [str(main_settlement)]  # Список ид поселений под управлением игрока
         self.our_settlements = [str(main_settlement),
                                 str(main_settlement+1),
                                 str(main_settlement+2),
                                 str(main_settlement+3),
                                 str(main_settlement+4),
-                                str(main_settlement+5),
-                                str(main_settlement+6),
-                                str(main_settlement+7),
-                                str(main_settlement+8),
-                                str(main_settlement+9),
-                                str(main_settlement+10),
+                                # str(main_settlement+5),
+                                # str(main_settlement+6),
+                                # str(main_settlement+7),
+                                # str(main_settlement+8),
+                                # str(main_settlement+9),
+                                # str(main_settlement+10),
                                 ]  # Список ид поселений под управлением игрока
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
@@ -84,6 +88,7 @@ class Dynasty:
             "authority": self.authority,
 
             "main_settlement": self.main_settlement,
+            "main_province": self.main_province,
             "our_settlements": self.our_settlements,
 
             "win_points": self.win_points,
@@ -143,6 +148,7 @@ class Dynasty:
         self.authority = data["authority"]
 
         self.main_settlement = data["main_settlement"]
+        self.main_province = data["main_province"]
         self.our_settlements = data["our_settlements"]
 
         self.win_points = data["win_points"]
@@ -158,6 +164,12 @@ class Dynasty:
 
         self.end_turn = data["end_turn"]
         self.end_turn_know = data["end_turn_know"]
+
+    # Возможно для передачи данных на фронтенд можно использовать отдельную функцию
+    # Из плюсов возможность собрать более полный данные
+    # Из минусов необходимость восстановления классов
+    def return_var_to_front(self):
+        ...
 
     def calc_act(self):  # Подсчет одного действия для династии
         """
