@@ -466,7 +466,7 @@ function actualVarPlayer(res) {
                 <th class="th" id='th-dom' style="min-width: 50px">Строй</th>
 
                 <th class="th" id='th-buildings' style="min-width: 400px; ">Постройки</th>
-                <th class="th" id='th-action' style="min-width: 100px; ">Действие</th>
+                <th class="th" id='th-action' style="min-width: 70px; ">Действие</th>
             </tr>
         </thead>`
     
@@ -484,8 +484,11 @@ function actualVarPlayer(res) {
         // }
         for (let key in item["buildings_list"]) {
             if (item["buildings_list"][key]>0) {
-                buildings.unshift(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
-                // console.log(`key ${key}`);
+                console.log("Выводим иконки построек.");
+                console.log(`key ${key}`);
+                for (i = 1; i <= item["buildings_list"][key]; i++) {
+                    buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
+                }// console.log(`key ${key}`);
             }
         }
         // Выясним отношение поселения
@@ -510,11 +513,11 @@ function actualVarPlayer(res) {
                 <td id='th-dom'>${item["build_points"]}</th>
 
                 <td id='th-buildings'>${buildings}</th>
-                <td id='th-action'><button id="btn-act-${item["row_id"]}">Строительство</button></th>
+                <td id='th-action'><button id="btn-act-${item["row_id"]}">Выбрать</button></th>
             </tr>`
         );
         document.getElementById(`btn-act-${item["row_id"]}`).addEventListener(('click'), () => {
-            console.log(`Нажата кнопка строительства у провинции с ид: ${item["row_id"]}`);
+            console.log(`Нажата кнопка выбора действия у провинции с ид: ${item["row_id"]}`);
             menuNewBuilding(item);
         });
         
