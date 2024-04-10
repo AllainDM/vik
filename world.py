@@ -11,6 +11,7 @@ from settlement import Settlement
 from province import Province
 from cities import cities
 from buildings import buildings
+import names
 # from events import events
 from FDataBase import FDataBase
 
@@ -209,8 +210,9 @@ class FirstWorld:
         2. Добавление имени поселение в список, для будущих обсчетов.
         3. Сохранение имени поселения в словарь, для навигации при обсчете хода.
         4. Создание стартовой рандомной постройки.
-        5. Обновление данных о поселении. TODO ??????
-        6. Сохранение поселения в файл.
+        5. Создание стартовой армии.
+        6. Обновление данных о поселении. TODO ??????
+        7. Сохранение поселения в файл.
         :param game_id:
         :param province:
         :param row_id:
@@ -257,11 +259,20 @@ class FirstWorld:
             # self.settlements[name_eng].buildings_list["Рыбацкая_пристань"] += 1
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
 
-        # 5. Обновление данных о поселении. TODO ??????
+        # 5. Создание стартовой армии.
+        units = []
+        # Добавим 20 солдат ближнего боя
+        for u in range(20):
+            rnd_units_name = random.randint(0, len(names.male_names_list)-1)
+            units.append([5, 2, 3, 3, 1, 0, 1, 1, 3, 3, 3, names.male_names_list[rnd_units_name]])
+            # units.append([5, 2, 3, 3, 1, 0, 1, 1, 3, 3, 3, "вася"])
+        self.settlements[name_eng].units = units
+
+        # 6. Обновление данных о поселении. TODO ??????
         # Обновим различные данные для поселения
         self.settlements[name_eng].update_var()
 
-        # 6. Сохранение поселения в файл.
+        # 7. Сохранение поселения в файл.
         # Сохраним в файл
         self.settlements[name_eng].save_to_file()
 

@@ -62,7 +62,11 @@ let statusSettlement = {
     buildPoints: 0,  // Очки строительства
 }
 // Новое
+// Список всех поселений со всей информацией в разных форматах
 let statusSettlements = []
+let statusSettlementsNames = {}
+let statusSettlementsNamesRus = {}
+let statusSettlementsId = {}
 
 // Постройки для отображения при строительстве
 // Тут список обьектов.
@@ -362,6 +366,8 @@ const goodsNameHtml = document.querySelector(".stats-resources");
 const buildingsNameHtml = document.querySelector(".stats-buildings");
 const availableGoodsBuyNameHtml = document.querySelector(".stats-trade-buy");
 const availableGoodsSellNameHtml = document.querySelector(".stats-trade-sell");
+const armyNameHtml = document.querySelector(".stats-army");
+const unitsNameHtml = document.querySelector(".stats-units");
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
@@ -432,17 +438,24 @@ function actualVarPlayer(res) {
 
     // Новый вывод инфы сразу о всех наших локациях
     // С бека мы получаем массив, нужен цикл для переноса инфы
-    console.log("!!!!!!!!! ДО")
-    console.log(statusSettlements);
+    // console.log("!!!!!!!!! ДО")
+    // console.log(statusSettlements);
     statusSettlements = []
-    console.log("!!!!!!!!! ПОСЛЕ")
-    console.log(statusSettlements);
+    // console.log("!!!!!!!!! ПОСЛЕ")
+    // console.log(statusSettlements);
     console.log("Вывод поселений.")
     for (i=0; i<res[1].length; i++) {
         // console.log(res[1][i]);
         statusSettlements.push(res[1][i])
+        statusSettlementsNames[res[1][i]["name_eng"]] = res[1][i]
+        statusSettlementsNamesRus[res[1][i]["name_rus"]] = res[1][i]
+        statusSettlementsId[res[1][i]["row_id"]] = res[1][i]
+        // console.log(res[1][i]["name_eng"])
     }
     console.log(statusSettlements);
+    console.log(statusSettlementsNames);
+    console.log(statusSettlementsNamesRus);
+    console.log(statusSettlementsId);
 
     // <th class="th" id='th-loc' style="min-width: 200px">Локация</th>
     // <th class="th" id='th-pop' style="min-width: 70px">Нас.</th>
@@ -497,6 +510,19 @@ function actualVarPlayer(res) {
         console.log(statusGame.playerId)
         if (statusGame.playerId == item["ruler"]) {
             relation = 'Дом'
+            // Вывод юнитов в домашнем поселении
+            // for (let key in statusSettlementsNames) {
+            //     if (statusSettlementsNames[key]["units"].length > 0) {
+            //         // for (i=0;0<statusSettlementsNames[key]["units"].length;i++) {
+            //         for (i=0;0<10;i++) {
+            //             // unitsNameHtml.insertAdjacentHTML('beforeend', 
+            //             // `<div>
+            //             //     ${statusSettlementsNames[key]["units"][i]}
+            //             // </div>`)
+            //             console.log("Рисуем юнита")
+            //         }
+            //     }
+            // }
         } else if (item["row_id"] in statusGame.ourSettlements) {
             relation = 'Наш'
         } else {

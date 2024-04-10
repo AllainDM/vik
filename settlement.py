@@ -78,6 +78,7 @@ class Settlement:
         self.hire_archer_limit = 0
 
         self.units = []
+        self.manpower = 0
 
         # Логи поселения. Или события, то, что напрямую не зависит от игрока.
         # self.acts = []  # Список действий Это для Династии
@@ -375,6 +376,7 @@ class Settlement:
             "hire_archer_limit": self.hire_archer_limit,
 
             "units": self.units,
+            "manpower": self.manpower,
 
             # Строительство, сохранение построек для строительства
             "available_buildings": self.available_buildings,
@@ -442,6 +444,7 @@ class Settlement:
         self.hire_archer_limit = data["hire_archer_limit"]
 
         self.units = data["units"]
+        self.manpower = data["manpower"]
 
         # Строительство, сохранение построек
         self.available_buildings = data["available_buildings"]
