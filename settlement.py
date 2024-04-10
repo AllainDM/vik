@@ -9,6 +9,7 @@ import mod
 from goods import Goods
 # import pickle
 import mod as MOD
+import names
 
 wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хорошее", "Отличное"]
 
@@ -68,6 +69,15 @@ class Settlement:
 
         # Строительство
         self.build_points = 0
+
+        # Войска. Лимиты наймов.
+        # TODO необходимо пересчитывать при обсчете,
+        #  но возможно будет какое-то базовое значение, которое нельзя при этом обнулять
+        self.hire_heavy_inf_limit = 0
+        self.hire_light_inf_limit = 0
+        self.hire_archer_limit = 0
+
+        self.units = []
 
         # Логи поселения. Или события, то, что напрямую не зависит от игрока.
         # self.acts = []  # Список действий Это для Династии
@@ -359,6 +369,13 @@ class Settlement:
             # Строительство
             "build_points": self.build_points,
 
+            # Войска. Лимиты наймов.
+            "hire_heavy_inf_limit": self.hire_heavy_inf_limit,
+            "hire_light_inf_limit": self.hire_light_inf_limit,
+            "hire_archer_limit": self.hire_archer_limit,
+
+            "units": self.units,
+
             # Строительство, сохранение построек для строительства
             "available_buildings": self.available_buildings,
             "buildings_cost": self.buildings_cost,
@@ -416,7 +433,15 @@ class Settlement:
         # Торговля
         self.available_goods_buy = data["available_goods_buy"]
 
+        # Строительство
         self.build_points = data["build_points"]
+
+        # Войска. Лимиты наймов.
+        self.hire_heavy_inf_limit = data["hire_heavy_inf_limit"]
+        self.hire_light_inf_limit = data["hire_light_inf_limit"]
+        self.hire_archer_limit = data["hire_archer_limit"]
+
+        self.units = data["units"]
 
         # Строительство, сохранение построек
         self.available_buildings = data["available_buildings"]
