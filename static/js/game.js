@@ -8,6 +8,7 @@ console.log('Стрипт странички игры успешно загру�
 const chooseList = document.querySelector('.choose-list');
 
 // Отображаемые в интерфейсе параметры, одновляются при запросе на сервер
+// Старое, можно попробовать переходить на новый словарь, который просто копирует весь ответ сервера.
 let statusGame = {
     year: 800,
     turn: 1,
@@ -49,6 +50,21 @@ let statusGame = {
     autoUpdate: true,  // Таймер автообновления странички
 };
 
+// Отображаемые в интерфейсе параметры, одновляются при запросе на сервер
+// Новое
+// Общая инфа о партии
+let statusGameDictInfo = {
+
+}
+// Инфа об игроке
+let statusGameDictPlayer = {
+
+}
+// Инфа о поселениях
+let statusGameDictSettlements = {
+
+}
+
 // Старое
 // Поселение
 let statusSettlement = {
@@ -82,42 +98,56 @@ document.getElementById('party-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("party-window").setAttribute('style','visibility:visible;');
     document.getElementById("party-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 // Поселение
 document.getElementById('settlement-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("settlement-window").setAttribute('style','visibility:visible');
     document.getElementById("settlement-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 // Торговля
 document.getElementById('trade-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("trade-window").setAttribute('style','visibility:visible');
     document.getElementById("trade-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 // Карта
 document.getElementById('map-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("map-window").setAttribute('style','visibility:visible');
     document.getElementById("map-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 // Династия
 document.getElementById('dynasty-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("dynasty-window").setAttribute('style','visibility:visible');
     document.getElementById("dynasty-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 // Армия
 document.getElementById('army-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("army-window").setAttribute('style','visibility:visible');
     document.getElementById("army-button").setAttribute('style','color:red; cursor: pointer;');
+    // Дополнительно скроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'display: none');
 });
 // Игроки
 document.getElementById('players-button').addEventListener('click', () => {
     hiddenAllWindows();
     document.getElementById("players-window").setAttribute('style','visibility:visible');
     document.getElementById("players-button").setAttribute('style','color:red; cursor: pointer;');
+    // Откроем меню провинций
+    document.getElementById("table-province").setAttribute('style', 'visibility: visible');
 });
 
 
@@ -222,6 +252,7 @@ function updateVar() {
 
 
 };
+
 
 updateVar();
 
@@ -332,6 +363,12 @@ function showTimer() {
 
 // Обновим общие параметры
 function actualVar(res) {
+    // Новое, копирование всего сразу в один словарь
+    statusGameDictInfo = res
+    console.log('Проверка записи всех параметров в новый словарь statusGameDictInfo');
+    console.log(statusGameDictInfo)
+
+    // Старое
     statusGame.winners = res.winners;
 
     // Год и ход
@@ -371,6 +408,14 @@ const unitsNameHtml = document.querySelector(".stats-units");
 
 // Обновим параметры управляемой "страной"
 function actualVarPlayer(res) {
+    // Новое, копирование всего сразу в один словарь
+    statusGameDictPlayer = res[0]
+    console.log('Проверка записи всех параметров в новый словарь statusGameDictPlayer');
+    console.log(statusGameDictPlayer)
+    statusGameDictSettlements = res[1]
+    console.log('Проверка записи всех параметров в новый словарь statusGameDictSettlements');
+    console.log(statusGameDictSettlements)
+
     console.log("statusGame old")
     console.log(statusGame)
     statusGame.winPoints = res[0].win_points
@@ -438,33 +483,18 @@ function actualVarPlayer(res) {
 
     // Новый вывод инфы сразу о всех наших локациях
     // С бека мы получаем массив, нужен цикл для переноса инфы
-    // console.log("!!!!!!!!! ДО")
-    // console.log(statusSettlements);
     statusSettlements = []
-    // console.log("!!!!!!!!! ПОСЛЕ")
-    // console.log(statusSettlements);
     console.log("Вывод поселений.")
     for (i=0; i<res[1].length; i++) {
-        // console.log(res[1][i]);
         statusSettlements.push(res[1][i])
         statusSettlementsNames[res[1][i]["name_eng"]] = res[1][i]
         statusSettlementsNamesRus[res[1][i]["name_rus"]] = res[1][i]
         statusSettlementsId[res[1][i]["row_id"]] = res[1][i]
-        // console.log(res[1][i]["name_eng"])
     }
     console.log(statusSettlements);
     console.log(statusSettlementsNames);
     console.log(statusSettlementsNamesRus);
     console.log(statusSettlementsId);
-
-    // <th class="th" id='th-loc' style="min-width: 200px">Локация</th>
-    // <th class="th" id='th-pop' style="min-width: 70px">Нас.</th>
-    // <th class="th" id='th-wealth style="min-width: 70px"'>Благ.</th>
-    // <th class="th" id='th-food' style="min-width: 70px">Еда произв.</th>
-    // <th class="th" id='th-food-balace' style="min-width: 70px">Еда баланс</th>
-    // <th class="th" id='th-dom' style="min-width: 70px">Строй</th>
-
-    // <th class="th" id='th-buildings' style="min-width: 300px">Постройки</th>
 
     let tab = document.getElementById('table-province');
     tab.innerHTML = `            
@@ -487,18 +517,11 @@ function actualVarPlayer(res) {
     res[1].forEach((item, num) => {
         // Преобразуем некоторые значения при необходимости
         let buildings = []
-        
-        // console.log("Выводим иконки построек.");
-        // console.log(item["buildings_list"].length);
-        // console.log(item["buildings_list"]);
-        console.log(item);
-        // for(i=0; i<item["buildings_list"].length; i++) {
-        //     console.log("Выводим иконки построек.");
-        // }
+
         for (let key in item["buildings_list"]) {
             if (item["buildings_list"][key]>0) {
-                console.log("Выводим иконки построек.");
-                console.log(`key ${key}`);
+                // console.log("Выводим иконки построек.");
+                // console.log(`key ${key}`);
                 for (i = 1; i <= item["buildings_list"][key]; i++) {
                     buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
                 }// console.log(`key ${key}`);
@@ -506,23 +529,10 @@ function actualVarPlayer(res) {
         }
         // Выясним отношение поселения
         let relation = ''
-        console.log("Выясняем отношения.")
-        console.log(statusGame.playerId)
+        // console.log("Выясняем отношения.")
+        // console.log(statusGame.playerId)
         if (statusGame.playerId == item["ruler"]) {
             relation = 'Дом'
-            // Вывод юнитов в домашнем поселении
-            // for (let key in statusSettlementsNames) {
-            //     if (statusSettlementsNames[key]["units"].length > 0) {
-            //         // for (i=0;0<statusSettlementsNames[key]["units"].length;i++) {
-            //         for (i=0;0<10;i++) {
-            //             // unitsNameHtml.insertAdjacentHTML('beforeend', 
-            //             // `<div>
-            //             //     ${statusSettlementsNames[key]["units"][i]}
-            //             // </div>`)
-            //             console.log("Рисуем юнита")
-            //         }
-            //     }
-            // }
         } else if (item["row_id"] in statusGame.ourSettlements) {
             relation = 'Наш'
         } else {
@@ -548,14 +558,6 @@ function actualVarPlayer(res) {
         });
         
     });
-
-    // Навесим события для новых кнопок строитесльтва по поселениям
-
-
-    // <td id='th-buildings'>${item["buildings"]}</th>
-    // <img src="../static/image/buildings/${statusBuildings[2][build]}" alt="Картинки нет, сорян" width = 50px> 
-            
-    
 
     // Старый вариант для одного поселения
     // Вывод построек в поселении
@@ -616,10 +618,12 @@ function actualVarPlayer(res) {
 
 
     updateVar();
+    showUnits();  // Сделать таблицу с юнитами
     logStart();
     logResultStart();
     logAllResultStart();
 }
+
 
 // Отмена приказов
 document.getElementById('cancel-all-acts').addEventListener('click', () => {
@@ -776,6 +780,80 @@ function logAllResultStart() {       //Функция запуска лога и
 
 // Запись действий игрока
 
+// Меню армии
+document.getElementById('create-army').addEventListener('click', () => {
+    createArmy();
+});
+
+function createArmy() {
+    modal.style.display = "block";
+    let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
+    content.innerHTML = `
+        <div style="font-size: 20px">
+            <div>Формирование армии</div>
+    `;
+    // Выясним отношение поселения для определения чьи юниты =)
+    console.log("Выясняем отношения.")
+        // console.log(statusGameDictSettlements[key]["ruler"])
+        // console.log(statusGameDictPlayer["row_id"])
+};
+
+function showUnits() {
+    let unitsTab = document.getElementById('table-units');
+    unitsTab.innerHTML = `            
+        <thead>    
+            <tr class="table-units">
+                <th class="th" id='th-unit-name' style="min-width: 120px;">Расположение</th>
+
+                <th class="th" id='th-hp' style="width: 40px;">HP</th>
+                <th class="th" id='th-endurance' style="width: 40px;">Выносл.</th>
+
+                <th class="th" id='th-strength' style="width: 40px;">Сила</th>
+                <th class="th" id='th-agility' style="width: 40px;">Ловкость</th>
+
+                <th class="th" id='th-armor' style="width: 40px;">Броня</th>
+                <th class="th" id='th-shield' style="width: 40px;">Щит</th>
+
+                <th class="th" id='th-melee_skill' style="width: 40px;">Бл. бой</th>
+                <th class="th" id='th-melee_weapon' style="width: 40px;">Оружие</th>
+                <th class="th" id='th-ranged_skill' style="width: 40px;">Дал. бой</th>
+                <th class="th" id='th-ranged_weapon' style="width: 40px;">Лук</th>
+                <th class="th" id='th-experience' style="width: 40px;">Опыт</th>
+            </tr>
+        </thead>`
+    console.log("Собираем юниты");
+    for (key in statusGameDictSettlements)   {
+        // console.log(key);
+        console.log("Ищем юниты");
+        console.log(statusGameDictSettlements[key]["row_id"])
+        console.log(statusGameDictPlayer["our_settlements"]);
+        if (statusGameDictSettlements[key]["row_id"] in statusGameDictPlayer["our_settlements"]) {
+            
+            console.log("Найдены юниты");
+            console.log("##########################################");
+            // console.log(key);
+
+            // unitsTab.insertAdjacentHTML("beforeend", 
+            //     `<tr class="table table-units">
+            //         <td id='th-unit-name'>${item["name_rus"]}</th>
+            //         <td id='th-hp'>${item["name_rus"]}</th>
+                    
+            //     </tr>`
+            // );
+            
+            // console.log("Ищем юниты")
+            // console.log(statusGameDictSettlements[key]["units"][0]["agility"])
+            // console.log(statusGameDictSettlements[key])
+        } else {
+            console.log("Какого-то хуя юниты не найдены.")
+        }
+
+
+    } 
+
+};
+
+
 // Строительство 
 // Модалка для строительства
 document.getElementById('menu-new-building').addEventListener('click', () => {
@@ -824,8 +902,9 @@ function menuNewBuilding(settlement) {
         });
     })
     content.insertAdjacentHTML('beforeend', `
-            <div style="font-size: 20px">
-                <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
+                <div style="font-size: 20px">
+                    <button onclick = closeModal() style="font-size: 25px; margin-top: 20px">Отмена</button>
+                </div>
             </div>`
     )
     console.log("Модалка открыта");

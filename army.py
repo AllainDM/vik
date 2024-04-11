@@ -15,6 +15,22 @@ class Army:
 
         self.units = []  # Список с юнитами
 
+        self.mid_param = []  # Среднее значение по юнитам для вывода на фронтенд.
+
+    def calc_mid(self):
+        # TODO возможно первым элементов в списке units будет какая-то общая инфа
+        # Так же в самом юните последний элемент это имя
+        # Если есть хоть один юнит(или 2 если первый элемент не общая инфа)
+        if self.units[1]:
+            # Перебор по количеству параметров
+            for p in range(len(self.units[1])-1):  # -1 это не считая последний элемент(имя)
+                parameter = 0
+                for unit in self.units:
+                    parameter += unit[p]
+                    parameter = parameter/len(self.units)
+                self.mid_param.append(parameter)
+            print(f"Средние параметры армии {self.mid_param}")
+
     def save_to_file(self):
         data = {
             "row_id": self.row_id,

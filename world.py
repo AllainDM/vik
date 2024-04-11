@@ -260,13 +260,21 @@ class FirstWorld:
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
 
         # 5. Создание стартовой армии.
-        units = []
+        units = [{"Расположение": "Дом",
+                  "hp_max": 0, "hp_cur": 0, "endurance_max": 0, "endurance_cur": 0,
+                  "strength": 0, "agility": 0, "armor": 0, "shield": 0,
+                  "melee_skill": 0, "melee_weapon": 0, "ranged_skill": 0, "ranged_weapon": 0,
+                  "experience": 0, }]
         # Добавим 20 солдат ближнего боя
         for u in range(20):
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
-            units.append([5, 2, 3, 3, 1, 0, 1, 1, 3, 3, 3, names.male_names_list[rnd_units_name]])
-            # units.append([5, 2, 3, 3, 1, 0, 1, 1, 3, 3, 3, "вася"])
-        self.settlements[name_eng].units = units
+            new_unit = {"hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
+                        "strength": 3, "agility": 3, "armor": 1, "shield": 1,
+                        "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
+                        "experience": 0, "name": names.male_names_list[rnd_units_name] }
+            units.append(new_unit)
+        self.settlements[name_eng].units = [units]
+        self.settlements[name_eng].calc_mid()
 
         # 6. Обновление данных о поселении. TODO ??????
         # Обновим различные данные для поселения

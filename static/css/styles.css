@@ -413,6 +413,12 @@ div.content {
     font-size: 12px;
 }
 
+#table-units {
+    /* height: 20px; */
+    max-height: 35px;
+    font-size: 9px;
+}
+
 /* .table-location {
     height: 70%;
 } */

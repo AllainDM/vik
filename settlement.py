@@ -85,6 +85,26 @@ class Settlement:
         self.result_events_text = []  # Список с текстом событий за прошедший ход
         self.result_events_text_all_turns = []  # Список с текстом событий за всю игру
 
+    # Рассчитать средние параметры для одной патчи юнитов.
+    def calc_mid(self):
+        # 0 элемент должен хранить общую инфу и средние параметры
+        if self.units:  # Проверка на наличие юнитов в принципе.
+            print("Тестим подсчет средних параметров.")
+            for units in self.units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
+                for unit in units:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
+                    for k, v in unit.items():
+                        try:
+                            # TODO тут ошибка, так же складывается название месторасположения
+                            units[0][k] += v
+                        except (TypeError, KeyError):
+                            ...
+                for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
+                    try:
+                        units[0][k] = units[0][k]/(len(units)-1)
+                    except (TypeError, KeyError):
+                        ...
+                print(units)
+
     # Определить доступные для строительства постройки
     def available_buildings(self):
         # Временно возвращаем весь список
