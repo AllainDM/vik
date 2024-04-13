@@ -203,7 +203,7 @@ class FirstWorld:
 
     # TODO Создать поселение игрока
     # TODO доделать
-    def create_settlement(self, game_id, province, row_id, ruler, name_rus, name_eng, player=False):
+    def create_settlement(self, dbase, game_id, province, row_id, ruler, name_rus, name_eng, player=False):
         """
         Функция создания поселения.\n
         1. Создание экземпляра класса, сохраняется в словарь с ключом названием поселения.
@@ -213,6 +213,7 @@ class FirstWorld:
         5. Создание стартовой армии.
         6. Обновление данных о поселении. TODO ??????
         7. Сохранение поселения в файл.
+        :param dbase:
         :param game_id:
         :param province:
         :param row_id:
@@ -268,10 +269,16 @@ class FirstWorld:
         # Добавим 20 солдат ближнего боя
         for u in range(20):
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
+            # id_for_new_unit = f"{row_id}{u}"
+            # id_for_new_unit = int(id_for_new_unit)
             new_unit = {"hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
                         "strength": 3, "agility": 3, "armor": 1, "shield": 1,
                         "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
-                        "experience": 0, "name": names.male_names_list[rnd_units_name] }
+                        "experience": 0, "name": names.male_names_list[rnd_units_name]}
+            # Далее добавил в бд, вычислив е ид
+            id_for_new_unit = dbase.add_unit(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "name1")
+            print(f"id нового юнита {id_for_new_unit}")
+            new_unit["id"] = id_for_new_unit
             units.append(new_unit)
         self.settlements[name_eng].units = [units]
         self.settlements[name_eng].calc_mid()

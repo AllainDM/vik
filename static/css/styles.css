@@ -410,15 +410,32 @@ div.content {
 #table-province {
     /* height: 20px; */
     max-height: 35px;
-    font-size: 12px;
+    font-size: 14px;
 }
 
-#table-units {
+/* Для самой таблица с юнитами */
+.table-units {
     /* height: 20px; */
-    max-height: 35px;
-    font-size: 9px;
+    /* max-height: 135px; */
+    font-size: 14px;
 }
 
+/* Для отдельных строчек с юнитами */
+.units {
+    /* height: 20px; */
+    /* max-height: 35px; */
+    font-size: 14px;
+}
+
+.rotate-text {
+    transform-origin: top-right;
+    transform: rotate(-90deg);
+}
+
+.rotate-sm-90 {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
 /* .table-location {
     height: 70%;
 } */

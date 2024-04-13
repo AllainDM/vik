@@ -454,7 +454,9 @@ def create_game(setting):  # Получаем только список игро
     # Номер хода, Стартовый год, ид первого игрока, тек. количество игроков, макс. количество игроков
     # setting можно посмотреть в функции выше
     last_game_row_id = dbase.add_game(1, 800, [setting[1]["playerId"]], 1, setting[0]["maxPlayers"])
-
+    # print("Тестим добавление в игру юнита.")
+    # # id_for_new_unit = dbase.add_unit(1, "name1")
+    # print("Конец теста.")
     # 3. Создание папок для сохранения файлов игры.
     # Создадим папки игры для сохранений
     if not os.path.exists(f"games"):
@@ -491,7 +493,7 @@ def create_game(setting):  # Получаем только список игро
     # имя поселения на русском
     # игрок на поселении
     list_settlements_in_province = {}  # Список поселений в провинции
-    this_game.create_settlement(last_game_row_id, new_province, real_settlement_id,
+    this_game.create_settlement(dbase, last_game_row_id, new_province, real_settlement_id,
                                 setting[1]["playerId"],
                                 manual_settlements_names_rus[0],
                                 manual_settlements_names_eng[0], player=True)
@@ -519,7 +521,7 @@ def create_game(setting):  # Получаем только список игро
         # TODO отключаю добавление в БД, пока не используется
         # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{real_settlement_id}",
         #                                              f"settlements_{real_settlement_id}", 0)
-        this_game.create_settlement(last_game_row_id, new_province, real_settlement_id, 0,
+        this_game.create_settlement(dbase, last_game_row_id, new_province, real_settlement_id, 0,
                                     f"settlements_{real_settlement_id}",
                                     f"settlements_{real_settlement_id}", player=False)
         print(f"Создано поселение с ид: {real_settlement_id}")
@@ -575,7 +577,7 @@ def add_dynasty(game_id, player):
     real_settlement_id = len(game.settlements_list)
     print(f"Реальный ид поселения {real_settlement_id}")
     # Имя поселения берем из прописного списка индексом по ид провинции.
-    game.create_settlement(game_id=game_id, province=new_province,
+    game.create_settlement(dbase, game_id=game_id, province=new_province,
                            row_id=real_settlement_id, ruler=player[0],
                            name_rus=manual_settlements_names_rus[new_province_id],
                            name_eng=manual_settlements_names_eng[new_province_id],
@@ -606,7 +608,7 @@ def add_dynasty(game_id, player):
         # Старый код добавления поселения в БД. Не удалять.
         # last_settlement_row_id = dbase.add_settlement(game_id, f"settlements_{real_settlement_id}",
         #                                               f"settlements_{real_settlement_id}", 0)
-        game.create_settlement(game_id=game_id, province=new_province,
+        game.create_settlement(dbase, game_id=game_id, province=new_province,
                                row_id=real_settlement_id, ruler=0,
                                name_rus=f"settlements_{real_settlement_id}",
                                name_eng=f"settlements_{real_settlement_id}",

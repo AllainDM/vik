@@ -797,29 +797,31 @@ function createArmy() {
         // console.log(statusGameDictSettlements[key]["ruler"])
         // console.log(statusGameDictPlayer["row_id"])
 };
+        
 
 function showUnits() {
     let unitsTab = document.getElementById('table-units');
     unitsTab.innerHTML = `            
         <thead>    
             <tr class="table-units">
-                <th class="th" id='th-unit-name' style="min-width: 120px;">Расположение</th>
+                <th class="th"><span"> Расположение</span> </th>
 
-                <th class="th" id='th-value' style="width: 40px;">Кол-во.</th>
-                <th class="th" id='th-hp' style="width: 40px;">HP</th>
-                <th class="th" id='th-endurance' style="width: 40px;">Выносл.</th>
+                <th class="th"><span class="rotate-sm-90"> Кол-во.</span></th>
+                <th class="th"><span class="rotate-sm-90"> HP</span></th>
+                <th class="th"><span class="rotate-sm-90"> Выносл.</span></th>
 
-                <th class="th" id='th-strength' style="width: 40px;">Сила</th>
-                <th class="th" id='th-agility' style="width: 40px;">Ловкость</th>
+                <th class="th"><span class="rotate-sm-90"> Сила</span></th>
+                <th class="th"><span class="rotate-sm-90"> Ловкость</span></th>
 
-                <th class="th" id='th-armor' style="width: 40px;">Броня</th>
-                <th class="th" id='th-shield' style="width: 40px;">Щит</th>
+                <th class="th"><span class="rotate-sm-90"> Броня</span></th>
+                <th class="th"><span class="rotate-sm-90"> Щит</span></th>
 
-                <th class="th" id='th-melee_skill' style="width: 40px;">Бл. бой</th>
-                <th class="th" id='th-melee_weapon' style="width: 40px;">Оружие</th>
-                <th class="th" id='th-ranged_skill' style="width: 40px;">Дал. бой</th>
-                <th class="th" id='th-ranged_weapon' style="width: 40px;">Лук</th>
-                <th class="th" id='th-experience' style="width: 40px;">Опыт</th>
+                <th class="th"><span class="rotate-sm-90"> Бл. бой</span></th>
+                <th class="th"><span class="rotate-sm-90"> Оружие</span></th>
+                <th class="th"><span class="rotate-sm-90"> Дал. бой</span></th>
+                <th class="th"><span class="rotate-sm-90"> Лук</span></th>
+                <th class="th"><span class="rotate-sm-90"> Опыт</span></th>
+                <th class="th">Имя</th>
             </tr>
         </thead>`
     console.log("Собираем юниты");
@@ -836,20 +838,20 @@ function showUnits() {
                 // <td id='th-unit-name'>${statusGameDictSettlements[i]["units"][0][0]["Расположение"]}</th>
 
                 unitsTab.insertAdjacentHTML("beforeend", 
-                    `<tr class="table table-units">
-                        <td id='th-unit-name'>${statusGameDictSettlements[i]["name_rus"]}</th>
-                        <td id='th-unit-value'>${statusGameDictSettlements[i]["units"][0].length-1}</th>
-                        <td id='th-unit-hp'>${statusGameDictSettlements[i]["units"][0][0]["hp_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["hp_max"]}</th>
-                        <td id='th-unit-endurance'>${statusGameDictSettlements[i]["units"][0][0]["endurance_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["endurance_max"]}</th>
-                        <td id='th-unit-strength'>${statusGameDictSettlements[i]["units"][0][0]["strength"]}</th>
-                        <td id='th-unit-agility'>${statusGameDictSettlements[i]["units"][0][0]["agility"]}</th>
-                        <td id='th-unit-armor'>${statusGameDictSettlements[i]["units"][0][0]["armor"]}</th>
-                        <td id='th-unit-shield'>${statusGameDictSettlements[i]["units"][0][0]["shield"]}</th>
-                        <td id='th-unit-melee_skill'>${statusGameDictSettlements[i]["units"][0][0]["melee_skill"]}</th>
-                        <td id='th-unit-melee_weapon'>${statusGameDictSettlements[i]["units"][0][0]["melee_weapon"]}</th>
-                        <td id='th-unit-ranged_skill'>${statusGameDictSettlements[i]["units"][0][0]["ranged_skill"]}</th>
-                        <td id='th-unit-ranged_weapon'>${statusGameDictSettlements[i]["units"][0][0]["ranged_weapon"]}</th>
-                        <td id='th-unit-experience'>${statusGameDictSettlements[i]["units"][0][0]["experience"]}</th>
+                    `<tr class="table units">
+                        <td>${statusGameDictSettlements[i]["name_rus"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0].length-1}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["hp_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["hp_max"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["endurance_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["endurance_max"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["strength"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["agility"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["armor"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["shield"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["melee_skill"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["melee_weapon"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_skill"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_weapon"]}</th>
+                        <td>${statusGameDictSettlements[i]["units"][0][0]["experience"]}</th>
                         
                         
                     </tr>`
@@ -857,43 +859,9 @@ function showUnits() {
                 break;
             } else {
                 console.log("Какого-то хуя юниты не найдены.");
-                // console.log("##########################################");
             }
-
         }
-        // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     }
-    // for (key in statusGameDictSettlements)   {
-    //     // console.log(key);
-    //     console.log("Ищем юниты");
-    //     console.log(statusGameDictSettlements[key]["row_id"])
-    //     console.log(statusGameDictPlayer["our_settlements"]);
-    //     if (statusGameDictSettlements[key]["row_id"] in statusGameDictPlayer["our_settlements"]) {
-            
-    //         console.log("Найдены юниты");
-    //         console.log("##########################################");
-    //         // console.log(key);
-
-    //         // unitsTab.insertAdjacentHTML("beforeend", 
-    //         //     `<tr class="table table-units">
-    //         //         <td id='th-unit-name'>${item["name_rus"]}</th>
-    //         //         <td id='th-hp'>${item["name_rus"]}</th>
-                    
-    //         //     </tr>`
-    //         // );
-            
-    //         // console.log("Ищем юниты")
-    //         // console.log(statusGameDictSettlements[key]["units"][0]["agility"])
-    //         // console.log(statusGameDictSettlements[key])
-    //     } else {
-    //         console.log("Какого-то хуя юниты не найдены.")
-    //     }
-
-
-    // } 
-
 };
 
 

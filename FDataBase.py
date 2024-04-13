@@ -93,6 +93,31 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
+    def add_unit(self, game_id, hp_max, hp_cur, endurance_max, endurance_cur,
+                 strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
+                 experience, name):
+        try:
+            self.__cur.execute("INSERT INTO units (game_id, hp_max, hp_cur, endurance_max, endurance_cur, "
+                               "strength, agility, armor, shield, "
+                               "melee_skill, melee_weapon, ranged_skill, ranged_weapon, "
+                               "experience, name) "
+                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                               "RETURNING row_id",
+                               (game_id, hp_max, hp_cur, endurance_max, endurance_cur,
+                                strength, agility, armor, shield,
+                                melee_skill, melee_weapon, ranged_skill, ranged_weapon,
+                                experience, name))
+            # Вернем ид записи
+            row_id = self.__cur.fetchone()[0]
+            self.__db.commit()
+            # print(f"Новый юнит добавился? game_id:{game_id}....")
+            return row_id
+        except Exception as _ex:
+            print("Ошибка добавления данных в БД 4 add_unit", _ex)
+            return False
+        # Если все норм, то запрос возвращает ид записи, выше
+        # return True
+
     def add_player(self, game_id, player_id):  # "Удаление" игры на самом деле просто делает ее не активной
         # Возможно будет смысл сделать и кнопку полного удаления
         # Просто возникла сложность при создании новой игры, если ни одной не создано
