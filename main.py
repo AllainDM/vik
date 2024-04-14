@@ -540,6 +540,13 @@ def create_game(setting):  # Получаем только список игро
     print(f"Список добавляемых поселений в провинцию: {new_province.dict_settlements}")
     new_province.save_to_file()
 
+    # Посчитаем стартовых юнитов по поселениям.
+    # Необходимо распеделить юнитов группами по игрокам
+    print(f"При создании игры, после создания всех поселений запускаем функцию поиска юнитов.")
+    for i in this_game.dynasty:
+        this_game.dynasty[i].search_our_units()
+        this_game.dynasty[i].save_to_file()
+
     # 9. Сохранение игры в файл.
     this_game.save_to_file()
 
@@ -602,9 +609,9 @@ def add_dynasty(game_id, player):
 
     # Пункт 5. Создать остальные поселения в новой провинции.
     for sett in range(mod.SETT_IN_PROVINCE):
-        print("############################################")
+        # print("############################################")
         real_settlement_id = len(game.settlements_list)
-        print(f"Ид нового ИИ поселения {real_settlement_id}")
+        # print(f"Ид нового ИИ поселения {real_settlement_id}")
         # Старый код добавления поселения в БД. Не удалять.
         # last_settlement_row_id = dbase.add_settlement(game_id, f"settlements_{real_settlement_id}",
         #                                               f"settlements_{real_settlement_id}", 0)

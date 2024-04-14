@@ -93,6 +93,35 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
+    def add_group_units(self, game_id, location_id, location_name, name,
+                        hp_max, hp_cur, endurance_max, endurance_cur,
+                        strength, agility, armor, shield,
+                        melee_skill, melee_weapon, ranged_skill, ranged_weapon,
+                        experience):
+        try:
+            self.__cur.execute("INSERT INTO group_units (game_id, location_id, location_name, name,"
+                               "hp_max, hp_cur, endurance_max, endurance_cur, "
+                               "strength, agility, armor, shield, "
+                               "melee_skill, melee_weapon, ranged_skill, ranged_weapon, "
+                               "experience) "
+                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                               "RETURNING row_id",
+                               (game_id, location_id, location_name, name,
+                                hp_max, hp_cur, endurance_max, endurance_cur,
+                                strength, agility, armor, shield,
+                                melee_skill, melee_weapon, ranged_skill, ranged_weapon,
+                                experience))
+            # Вернем ид записи
+            row_id = self.__cur.fetchone()[0]
+            self.__db.commit()
+            # print(f"Новый юнит добавился? game_id:{game_id}....")
+            return row_id
+        except Exception as _ex:
+            print("Ошибка добавления данных в БД 5 add_group_units", _ex)
+            return False
+        # Если все норм, то запрос возвращает ид записи, выше
+        # return True
+
     def add_unit(self, game_id, hp_max, hp_cur, endurance_max, endurance_cur,
                  strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                  experience, name):

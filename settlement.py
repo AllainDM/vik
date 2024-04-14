@@ -89,21 +89,37 @@ class Settlement:
     def calc_mid(self):
         # 0 элемент должен хранить общую инфу и средние параметры
         if self.units:  # Проверка на наличие юнитов в принципе.
-            print("Тестим подсчет средних параметров.")
+            print("Тестим подсчет средних параметров юниток.")
             for units in self.units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
                 for unit in units:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
                     for k, v in unit.items():
-                        try:
-                            # TODO тут ошибка, так же складывается название месторасположения
+                        # print(f"Тут ключ для сверки: {k}")
+                        if (k == "army" or k == "location_id" or k == "game_id" or
+                                k == "location_name" or k == "name" or k == "id"):
+                            continue
+                        else:
+                            # print("Складываем.")
                             units[0][k] += v
-                        except (TypeError, KeyError):
-                            ...
                 for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
-                    try:
+                    if (k == "army" or k == "location_id" or k == "game_id" or
+                            k == "location_name" or k == "name" or k == "id"):
+                        continue
+                    else:
                         units[0][k] = units[0][k]/(len(units)-1)
-                    except (TypeError, KeyError):
-                        ...
-                print(units)
+                        # print("Делим.")
+                # print(units)
+                #     for k, v in unit.items():
+                #         try:
+                #             # TODO тут ошибка, так же складывается название месторасположения
+                #             units[0][k] += v
+                #         except (TypeError, KeyError):
+                #             ...
+                # for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
+                #     try:
+                #         units[0][k] = units[0][k]/(len(units)-1)
+                #     except (TypeError, KeyError):
+                #         ...
+                # print(units)
 
     # Определить доступные для строительства постройки
     def available_buildings(self):
@@ -143,12 +159,12 @@ class Settlement:
         # Запустим функцию расчета товаров у построек
         # TODO проверить не считает ли чего по 2 раза
         # TODO считает два раза, отсюда и из calc_turn
-        print("update_var")
-        self.buildings.prod(self)
-        print("#########################################################")
-        print(f"###  update_var  для {self.name_rus}   #################")
-        print("#########################################################")
-        print("#########################################################")
+        # print("update_var")
+        # self.buildings.prod(self)
+        # print("#########################################################")
+        # print(f"###  update_var  для {self.name_rus}   #################")
+        # print("#########################################################")
+        # print("#########################################################")
 
         # 4. Добавим излишки товаров на внутренний рынок
         # Доступные нам товары запишем до добавления наших товаров на рынок
@@ -159,10 +175,10 @@ class Settlement:
         # TODO баг, в список добавляется наш излишек. Дописать второе условие.
         for k, v in self.goods.resources_list.items():  # Там словарь
             if v > 0:  # Только если что-то есть лишнее, чтобы не прибавлять минусовые товары.
-                print(f"Добавление {k}: {v}.")
-                print(f"Было {self.province.province_goods_for_trade[k]}")
+                # print(f"Добавление {k}: {v}.")
+                # print(f"Было {self.province.province_goods_for_trade[k]}")
                 self.province.province_goods_for_trade[k] += v
-                print(f"Стало {self.province.province_goods_for_trade[k]}")
+                # print(f"Стало {self.province.province_goods_for_trade[k]}")
 
         # 5. Считаем баланс еды.
         self.balance_food = self.food - self.population  # Баланс еды: еда - население
@@ -208,7 +224,7 @@ class Settlement:
         self.pop_trade()  # Расчет торговли населения.
 
     def calc_end_turn_settlement(self):
-        print(f"Функция обработки конца хода у поселения")
+        # print(f"Функция обработки конца хода у поселения")
         # Рост/убыль населения
         self.growth_pop_natural()
         self.growth_pop_migration()
@@ -246,8 +262,8 @@ class Settlement:
         list_trade_sell = ""  # Составим список чем торговли
         # Перебираем список названий товаров
         for k, v in self.goods.resources_list.items():
-            print("Что у нас тут с торговлей")
-            print(k, v)
+            # print("Что у нас тут с торговлей")
+            # print(k, v)
             if v > 0:  # Продажа излишек
                 summ = v * self.goods.resources_price[k]
                 self.gold += summ  # Доход населения
@@ -260,17 +276,17 @@ class Settlement:
                 # Необходимо учитывать доступные товары для продажи в поселении
                 if k in self.available_goods_buy:  # Если такой товар вообще есть в списке доступных
                     # TODO на самом деле может быть не доступен, просто число 0
-                    print("Товар доступен для покупки.")
-                    print(self.available_goods_buy[k])
+                    # print("Товар доступен для покупки.")
+                    # print(self.available_goods_buy[k])
                     if self.available_goods_buy[k] < (v * -1):  # Если доступно меньше чем необходимо
-                        print("Товара для покупки меньше чем необходимо.")
+                        # print("Товара для покупки меньше чем необходимо.")
                         # Вычтем по обычной цене то, что доступно
                         gold_tax = self.available_goods_buy[k] * self.goods.resources_price[k]  # Доход населения
                         # И то, что не доступно со штрафом
                         gold_no_tax = ((v - self.available_goods_buy[k]) *
                                        self.goods.resources_price[k] * mod.NO_AVAILABLE_GOODS)
                     else:  # Иначе если доступно к покупке в необходимом количестве
-                        print("Товара для покупки достаточно.")
+                        # print("Товара для покупки достаточно.")
                         # TODO Что это? Почему "доход" населения?
                         gold_tax = v * self.goods.resources_price[k]  # Доход населения
                         gold_no_tax = 0
@@ -282,7 +298,7 @@ class Settlement:
                     else:
                         list_trade_buy += f"{k}({v * -1}): {gold_no_tax} д."
                 else:  # Иначе если товара 0 к доступному.
-                    print("Оно походу сюда не попадает из-за того что список полный просто с нулями.")
+                    # print("Оно походу сюда не попадает из-за того что список полный просто с нулями.")
                     gold_no_tax = v * self.goods.resources_price[k] * mod.NO_AVAILABLE_GOODS
                     self.gold += gold_no_tax  # Вычтем за покупку товара (добавим минусовую сумму)
                     if len(list_trade_buy) > 0:
@@ -408,12 +424,6 @@ class Settlement:
             "result_events_text": self.result_events_text,
             "result_events_text_all_turns": self.result_events_text_all_turns,
         }
-        print(f"self.game_id {self.game_id}")
-        print(f"self.row_id {self.row_id}")
-        print(f"self.ruler {self.ruler}")
-        print(f"self.name_rus {self.name_rus}")
-        print(f"self.name_eng {self.name_eng}")
-        # print(f"game_id {game_id}")
 
         # Тут нужно отловить ошибку отсутствия файла
         try:

@@ -183,6 +183,9 @@ class FirstWorld:
         # print(f"Общее количество династий: {len(self.dynasty)}")
         # Список игроков в виде ид этих самых игроков
         self.player_list.append(player_id)
+        # # Функция поиска юнитов по поселениям указанным в списке принадлежащих игроку.
+        # !!! проверяет до создания всех поселений, вылазит ошибка соотвественно
+        # self.dynasty[name_eng].search_our_units()
         # Сохранение династии в файл
         self.dynasty[name_eng].save_to_file()
 
@@ -261,11 +264,13 @@ class FirstWorld:
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
 
         # 5. Создание стартовой армии.
-        units = [{"Расположение": "Дом",
+        new_group_units_id = dbase.add_group_units(game_id, row_id, name_rus, "отряд",
+                                                   4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+        units = [{"game_id": game_id, "location_id": row_id, "location_name": name_rus,
                   "hp_max": 0, "hp_cur": 0, "endurance_max": 0, "endurance_cur": 0,
                   "strength": 0, "agility": 0, "armor": 0, "shield": 0,
                   "melee_skill": 0, "melee_weapon": 0, "ranged_skill": 0, "ranged_weapon": 0,
-                  "experience": 0, }]
+                  "experience": 0, "id": new_group_units_id, "name": "отряд"}]
         # Добавим 20 солдат ближнего боя
         for u in range(20):
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
@@ -275,13 +280,32 @@ class FirstWorld:
                         "strength": 3, "agility": 3, "armor": 1, "shield": 1,
                         "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
                         "experience": 0, "name": names.male_names_list[rnd_units_name]}
-            # Далее добавил в бд, вычислив е ид
-            id_for_new_unit = dbase.add_unit(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, "name1")
-            print(f"id нового юнита {id_for_new_unit}")
+            # Далее добавил в бд, вычислив ид
+            id_for_new_unit = dbase.add_unit(game_id, 4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
+                                             names.male_names_list[rnd_units_name])
+            # print(f"id нового юнита {id_for_new_unit}")
             new_unit["id"] = id_for_new_unit
             units.append(new_unit)
         self.settlements[name_eng].units = [units]
         self.settlements[name_eng].calc_mid()
+
+        # TODO новое, теперь вносим всех юнитов в один общий файл в папке и миром.
+        # Сначала читаем файл, извлекаем список, дополняем и записываем обратно.
+        data = []  # Список с юнитами
+        try:
+            with open(f"games/{game_id}/gameID_{game_id}_units.viking", 'r') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_units.viking' не найден. Возможно еще не создан.")
+            # return ""
+        # Дополним список
+        data.append(units)
+        try:
+            with open(f"games/{game_id}/gameID_{game_id}_units.viking", 'w') as f:
+                json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))
+        except FileNotFoundError:
+            print(f"Файл 'games/{game_id}/gameID_{game_id}_units.viking' не найден")
+            return ""
 
         # 6. Обновление данных о поселении. TODO ??????
         # Обновим различные данные для поселения
@@ -435,12 +459,12 @@ def calculate_turn(game_id):
     # 7. Обсчет окончания хода поселения.
     # TODO пост обсчет поселения. Например баланс ресурсов, торговля и рост населения.
     # TODO нужно ли рандомить пост обсчет для поселений?
-    print(f"тттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттт")
+    # print(f"тттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттттт")
     for settlement in game.settlements:
-        print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
-        print(f"88888888888         Тут разделение обработки поселений              888888888888888888")
-        print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
-        print(f"Обсчитываем поселение")
+        # print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
+        # print(f"88888888888         Тут разделение обработки поселений              888888888888888888")
+        # print(f"88888888888888888888888888888888888888888888888888888888888888888888888888888888888888")
+        # print(f"Обсчитываем поселение")
         print(game.settlements[settlement])
         game.settlements[settlement].calc_turn_settlement()
         game.settlements[settlement].calc_end_turn_settlement()

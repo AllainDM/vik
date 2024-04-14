@@ -46,6 +46,7 @@ class Dynasty:
                                 # str(main_settlement+9),
                                 # str(main_settlement+10),
                                 ]  # Список ид поселений под управлением игрока
+        self.our_units = []  # Наши юниты, соберем из наших поселений.
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
         self.body_points = 3        # Очки действий игрока
@@ -90,6 +91,8 @@ class Dynasty:
             "main_settlement": self.main_settlement,
             "main_province": self.main_province,
             "our_settlements": self.our_settlements,
+
+            "our_units": self.our_units,
 
             "win_points": self.win_points,
 
@@ -151,6 +154,8 @@ class Dynasty:
         self.main_province = data["main_province"]
         self.our_settlements = data["our_settlements"]
 
+        self.our_units = data["our_units"]
+
         self.win_points = data["win_points"]
 
         # TODO убрать. Сейчас как напоминание о том, что где-то будет определяться доступные постройки
@@ -164,6 +169,21 @@ class Dynasty:
 
         self.end_turn = data["end_turn"]
         self.end_turn_know = data["end_turn_know"]
+
+    # Функция поиска наших юнитов по нашим поселениям
+    def search_our_units(self):
+        # Перебор по списку наших поселений ["units"]
+        print(self.our_settlements)
+        for i in self.our_settlements:
+            print("Ищем юнитов через новую функцию поиска через класс династии.")
+            # print(self.game.settlements)
+            # print(self.game.settlements_dict)
+            # print(self.game.settlements_dict[int(i)])
+            units = self.game.settlements[self.game.settlements_dict[int(i)]].units
+            for u in units:
+                # print(u)
+                self.our_units.append(u)
+        print(f"Наши юниты: {self.our_units}")
 
     # Возможно для передачи данных на фронтенд можно использовать отдельную функцию
     # Из плюсов возможность собрать более полный данные
@@ -210,6 +230,10 @@ class Dynasty:
             # TODO отключен
             elif self.acts[0][1] == 302:  #
                 # self.act_make_donate(self.acts[0][2])
+                print(f"""Выполнено действие {self.acts[0]}""")
+                self.acts.pop(0)
+            elif self.acts[0][1] == 401:  # Распустить юниты
+                self.act_dismiss_unit(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             else:
@@ -278,6 +302,19 @@ class Dynasty:
                                             f"{self.name_rus} раздали {summ} с. населению.")
         else:
             self.result_logs_text.append(f"Вы НЕ раздали {summ} с. населению, не хватило денег.")
+
+    def act_dismiss_unit(self, arg):     # 301 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+
+        if arg:
+
+            # Логи
+            self.result_logs_text.append(f"Вы распустили юниты.")
+            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы распустили юниты.")
+            self.game.all_logs.append(f"{self.name_rus} распустили юниты.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"{self.name_rus} распустили юниты.")
+        else:
+            self.result_logs_text.append(f"Вы НЕ распустили юниты. Хз по какой причине.")
 
     def calc_win_points(self):
         # Возьмем по 1 очку за 3000

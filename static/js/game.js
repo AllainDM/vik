@@ -365,7 +365,7 @@ function showTimer() {
 function actualVar(res) {
     // Новое, копирование всего сразу в один словарь
     statusGameDictInfo = res
-    console.log('Проверка записи всех параметров в новый словарь statusGameDictInfo');
+    console.log('!!!!!!!! statusGameDictInfo');
     console.log(statusGameDictInfo)
 
     // Старое
@@ -410,10 +410,10 @@ const unitsNameHtml = document.querySelector(".stats-units");
 function actualVarPlayer(res) {
     // Новое, копирование всего сразу в один словарь
     statusGameDictPlayer = res[0]
-    console.log('Проверка записи всех параметров в новый словарь statusGameDictPlayer');
+    console.log('!!!!!!!! statusGameDictPlayer');
     console.log(statusGameDictPlayer)
     statusGameDictSettlements = res[1]
-    console.log('Проверка записи всех параметров в новый словарь statusGameDictSettlements');
+    console.log('!!!!!!!! statusGameDictSettlements');
     console.log(statusGameDictSettlements)
 
     console.log("statusGame old")
@@ -452,8 +452,8 @@ function actualVarPlayer(res) {
     // console.log(typeof(statusGame.logsTextAllTurns))
 
 
-    console.log("statusGame new")
-    console.log(statusGame)
+    // console.log("statusGame new")
+    // console.log(statusGame)
 
     // Поселение
     // !!!!!!!!!!! Отключаем, делаем под несколько поселений
@@ -491,9 +491,14 @@ function actualVarPlayer(res) {
         statusSettlementsNamesRus[res[1][i]["name_rus"]] = res[1][i]
         statusSettlementsId[res[1][i]["row_id"]] = res[1][i]
     }
+    // console.log("Новые способы сохранения инфы.")
+    console.log("statusSettlements");
     console.log(statusSettlements);
+    console.log("statusSettlementsNames");
     console.log(statusSettlementsNames);
+    console.log("statusSettlementsNamesRus");
     console.log(statusSettlementsNamesRus);
+    console.log("statusSettlementsId");
     console.log(statusSettlementsId);
 
     let tab = document.getElementById('table-province');
@@ -618,7 +623,7 @@ function actualVarPlayer(res) {
 
 
     updateVar();
-    showUnits();  // Сделать таблицу с юнитами
+    showUnits(document.getElementById('table-units'));  // Сделать таблицу с юнитами
     logStart();
     logResultStart();
     logAllResultStart();
@@ -791,17 +796,30 @@ function createArmy() {
     content.innerHTML = `
         <div style="font-size: 20px">
             <div>Формирование армии</div>
+                <table class="table" id="table-units-modal">  
+                    
     `;
+    let content2 = document.getElementById("table-units-modal");
+    showUnits(content2);
+    content.insertAdjacentHTML('beforeend', `
+
+        </table>
+    `)
     // Выясним отношение поселения для определения чьи юниты =)
     console.log("Выясняем отношения.")
         // console.log(statusGameDictSettlements[key]["ruler"])
         // console.log(statusGameDictPlayer["row_id"])
 };
-        
+    
+// function showUnits() {
 
-function showUnits() {
-    let unitsTab = document.getElementById('table-units');
-    unitsTab.innerHTML = `            
+// }
+
+
+// Функция сбора и отображения юнитов
+function showUnits(unitsTab) {
+    // let unitsTab = document.getElementById('table-units');
+    unitsTab.insertAdjacentHTML('beforeend', `            
         <thead>    
             <tr class="table-units">
                 <th class="th"><span"> Расположение</span> </th>
@@ -822,47 +840,114 @@ function showUnits() {
                 <th class="th"><span class="rotate-sm-90"> Лук</span></th>
                 <th class="th"><span class="rotate-sm-90"> Опыт</span></th>
                 <th class="th">Имя</th>
+                <th class="th"></th>
             </tr>
-        </thead>`
+        </thead>`)
     console.log("Собираем юниты");
-    for (i=0;i<statusGameDictSettlements.length;i++) {
-        console.log("Ищем юниты");
-        // console.log(statusGameDictSettlements[i]["row_id"]);
-        // console.log(statusGameDictPlayer["our_settlements"]);
+    console.log(statusGameDictPlayer["our_units"])
+    for (i=0;i<statusGameDictPlayer["our_units"].length;i++) {
+        console.log(statusGameDictPlayer["our_units"][i])
+        unitsTab.insertAdjacentHTML("beforeend", 
+            `<tr class="table units">
+                <td>${statusGameDictPlayer["our_units"][i][0]["location_name"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i].length-1}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["hp_cur"]}/${statusGameDictPlayer["our_units"][i][0]["hp_max"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["endurance_cur"]}/${statusGameDictPlayer["our_units"][i][0]["endurance_max"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["strength"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["agility"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["armor"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["shield"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["melee_skill"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["melee_weapon"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["ranged_skill"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["ranged_weapon"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["experience"]}</th>
+                <td>${statusGameDictPlayer["our_units"][i][0]["name"]}</th>
+                
+                <td><label for="cheсked-unit-${statusGameDictPlayer["our_units"][i][0]["id"]}">Выбрать
+                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayer["our_units"][i][0]["id"]}" type="checkbox">
+                </label></th>
+                                
+            </tr>`
+        );
 
-        for (ii=0;ii<statusGameDictPlayer["our_settlements"].length;ii++) {
-            if (statusGameDictSettlements[i]["row_id"] == statusGameDictPlayer["our_settlements"][ii]) {
-                // console.log("Найдены юниты");
-                // console.log("##########################################");
-                // Тут еще нужен перебор по юнитам, но пока возьмем первого
-                // <td id='th-unit-name'>${statusGameDictSettlements[i]["units"][0][0]["Расположение"]}</th>
+    }
 
-                unitsTab.insertAdjacentHTML("beforeend", 
-                    `<tr class="table units">
-                        <td>${statusGameDictSettlements[i]["name_rus"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0].length-1}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["hp_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["hp_max"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["endurance_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["endurance_max"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["strength"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["agility"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["armor"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["shield"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["melee_skill"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["melee_weapon"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_skill"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_weapon"]}</th>
-                        <td>${statusGameDictSettlements[i]["units"][0][0]["experience"]}</th>
-                        
-                        
-                    </tr>`
-                );
-                break;
-            } else {
-                console.log("Какого-то хуя юниты не найдены.");
+    // Кнопка подтвердить для изменений с юнитаи
+    document.getElementById('apply-changes-units').addEventListener('click', () => {
+        const checkBoxs = document.querySelectorAll('.cheсked-unit');
+        // console.log(checkBoxs);
+        let ckeckedUnits = []  // Список для сохранание ид выбранных юнитов.
+        for (c=0;c<checkBoxs.length;c++) { 
+            if (checkBoxs[c].checked) {
+                ckeckedUnits.push(checkBoxs[c].id.slice(13))
+                // console.log("Выбрано");
+                // console.log(checkBoxs[c].id.slice(13));
+
             }
         }
-    }
+        console.log(`Выбранные юниты: ${ckeckedUnits}`)
+        dismissUnits(ckeckedUnits)
+        // console.log(checkBoxs);
+        // console.log(checkBoxs[0]);
+        // console.log(checkBoxs[0].id.slice(13));
+
+    });
+
+
+function dismissUnits(arg) {
+    console.log("Распустить юниты.");
+    statusGame.acts.push([`Распустить юниты...`, 401, arg]); 
+    postAct(statusGame.game_id);
+    logStart();
+    // Для модалки.
+    // chooseList.innerHTML = ''; 
+    // closeModal();
+    // exitToMainMenuButtons();     
+}
+
+    // Старый код вывода инфы после сбора по провинциям
+    // for (i=0;i<statusGameDictSettlements.length;i++) {
+    //     // console.log("Ищем юниты");
+
+    //     for (ii=0;ii<statusGameDictPlayer["our_settlements"].length;ii++) {
+    //         if (statusGameDictSettlements[i]["row_id"] == statusGameDictPlayer["our_settlements"][ii]) {
+    //             // console.log("Найдены юниты");
+    //             // console.log("##########################################");
+    //             // Тут еще нужен перебор по юнитам, но пока возьмем первого
+    //             // <td id='th-unit-name'>${statusGameDictSettlements[i]["units"][0][0]["Расположение"]}</th>
+    //             // <td><input id="html" type="checkbox"></th>
+    //             unitsTab.insertAdjacentHTML("beforeend", 
+    //                 `<tr class="table units">
+    //                     <td>${statusGameDictSettlements[i]["name_rus"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0].length-1}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["hp_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["hp_max"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["endurance_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["endurance_max"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["strength"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["agility"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["armor"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["shield"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["melee_skill"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["melee_weapon"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_skill"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_weapon"]}</th>
+    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["experience"]}</th>
+    //                     <td> 1</th>  
+                        
+    //                     <td><label for="cheсked-unit-${statusGameDictSettlements[i]["units"][0][0]["id"]}">Выбрать
+    //                         <input id="cheсked-unit-${statusGameDictSettlements[i]["units"][0][0]["id"]}" type="checkbox">
+    //                     </label></th>
+                                        
+    //                 </tr>`
+    //             );
+    //             break;
+    //         // } else {
+    //         //     console.log("Какого-то хуя юниты не найдены.");
+    //         }
+    //     }
+    // }
 };
+
 
 
 // Строительство 
@@ -1175,12 +1260,11 @@ function req_status_all_player() {
 // Убрал, ибо похоже это с прошлой версии отображение всех в шапке, пока не используется, но надо бы перенести в левую часть экрана
 // И такая же функция для отображения в шапке
 function req_status_all_player_head() {
-    console.log(statusGame.game_id)
-    console.log("Запрос статистики игроков")
+    console.log(`Запрос статистики игроков. id партии ${statusGame.game_id}`)
     const request = new XMLHttpRequest();
     request.open("GET", `/req_status_all_player?gameId=${statusGame.game_id}`);
     request.addEventListener('load', () => {
-        console.log("Xmmm")
+        // console.log("Xmmm")
         if (request.status === 200) {
             if (request.response == "") {
                 console.log("К нам пришла пустая строка");
@@ -1226,7 +1310,7 @@ function displayStatisticsOfAllPlayersOnBoard(playersList) {
     const playersStatusList = document.querySelector(".players-stat");
     // Ниже старая надпись для окошка с игроками
     playersStatusList.innerHTML = `<div style="margin-top: 2px; text-align: center;"></div>`
-    console.log("Запуск функции отображения статистики игроков в шапке")
+    // console.log("Запуск функции отображения готовности игроков.");
     playersList.forEach((item, id) => {
         if (playersList[id]["end_turn"] == true) {
             // status_end_turn = "Готов"
