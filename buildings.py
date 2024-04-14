@@ -121,8 +121,8 @@ class Buildings:
         settlement.goods.resources_list["Меха"] -= settlement.buildings_list["Длинный_дом"] * 1
 
         # Сверка торговли
-        for k, v in settlement.goods.resources_list.items():
-            print(f"Итог рассчета производства {k}: {v}")
+        # for k, v in settlement.goods.resources_list.items():
+        #     print(f"Итог рассчета производства {k}: {v}")
 
     # TODO методы из Торговца, пока оставим тут
     # def cost(self, build):

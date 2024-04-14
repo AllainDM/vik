@@ -65,7 +65,7 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            print(f"Добавилось? turn:{turn} year: {year} players: {players} "
+            print(f"Добавление игры в БД. turn:{turn} year: {year} players: {players} "
                   f"date_create: {date_create}")
             return row_id
         except Exception as _ex:
@@ -122,17 +122,18 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
-    def add_unit(self, game_id, hp_max, hp_cur, endurance_max, endurance_cur,
+    def add_unit(self, game_id, units_group_id, hp_max, hp_cur, endurance_max, endurance_cur,
                  strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                  experience, name):
         try:
-            self.__cur.execute("INSERT INTO units (game_id, hp_max, hp_cur, endurance_max, endurance_cur, "
+            self.__cur.execute("INSERT INTO units (game_id, units_group_id, "
+                               "hp_max, hp_cur, endurance_max, endurance_cur, "
                                "strength, agility, armor, shield, "
                                "melee_skill, melee_weapon, ranged_skill, ranged_weapon, "
                                "experience, name) "
-                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
                                "RETURNING row_id",
-                               (game_id, hp_max, hp_cur, endurance_max, endurance_cur,
+                               (game_id, units_group_id, hp_max, hp_cur, endurance_max, endurance_cur,
                                 strength, agility, armor, shield,
                                 melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                                 experience, name))

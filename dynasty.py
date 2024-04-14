@@ -92,7 +92,7 @@ class Dynasty:
             "main_province": self.main_province,
             "our_settlements": self.our_settlements,
 
-            "our_units": self.our_units,
+            # "our_units": self.our_units,
 
             "win_points": self.win_points,
 
@@ -154,7 +154,7 @@ class Dynasty:
         self.main_province = data["main_province"]
         self.our_settlements = data["our_settlements"]
 
-        self.our_units = data["our_units"]
+        self.search_our_units()  # Это поиск наших юнитов
 
         self.win_points = data["win_points"]
 
@@ -172,18 +172,20 @@ class Dynasty:
 
     # Функция поиска наших юнитов по нашим поселениям
     def search_our_units(self):
+        self.our_units = []  # Обновим список
         # Перебор по списку наших поселений ["units"]
-        print(self.our_settlements)
+        # print(self.our_settlements)
+        print("Ищем юнитов через новую функцию поиска через класс династии.")
         for i in self.our_settlements:
-            print("Ищем юнитов через новую функцию поиска через класс династии.")
             # print(self.game.settlements)
             # print(self.game.settlements_dict)
-            # print(self.game.settlements_dict[int(i)])
-            units = self.game.settlements[self.game.settlements_dict[int(i)]].units
+            # print(self.game.settlements_dict[str(i)])
+            # print("################################")
+            units = self.game.settlements[self.game.settlements_dict[str(i)]].units
             for u in units:
                 # print(u)
                 self.our_units.append(u)
-        print(f"Наши юниты: {self.our_units}")
+        # print(f"Наши юниты: {self.our_units}")
 
     # Возможно для передачи данных на фронтенд можно использовать отдельную функцию
     # Из плюсов возможность собрать более полный данные
@@ -236,6 +238,10 @@ class Dynasty:
                 self.act_dismiss_unit(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+            elif self.acts[0][1] == 402:  # Тренировать юниты
+                self.act_train_unit(self.acts[0][2])
+                print(f"""Выполнено действие {self.acts[0]}""")
+                self.acts.pop(0)
             else:
                 print('Записей в акте нет')
 
@@ -245,12 +251,12 @@ class Dynasty:
     def calc_end_turn_dynasty(self):
         # self.() # Рассчитаем баланс товаров(производство-потребление)
         # TODO Соберем налоги с поселения.
-        print("Соберем налоги с поселения.")
-        print(self.main_settlement)
-        print(self.game.settlements_dict)
-        print(self.game.settlements_dict[self.main_settlement])
-        print(self.game.settlements)
-        print(self.game.settlements[self.game.settlements_dict[self.main_settlement]])
+        # print("Соберем налоги с поселения.")
+        # print(self.main_settlement)
+        # print(self.game.settlements_dict)
+        # print(self.game.settlements_dict[self.main_settlement])
+        # print(self.game.settlements)
+        # print(self.game.settlements[self.game.settlements_dict[self.main_settlement]])
         trade_tax = (
                 self.game.settlements[self.game.settlements_dict[self.main_settlement]].gold_traded_for_tax *
                 mod.TRADE_TAX)
@@ -315,6 +321,26 @@ class Dynasty:
                                             f"{self.name_rus} распустили юниты.")
         else:
             self.result_logs_text.append(f"Вы НЕ распустили юниты. Хз по какой причине.")
+
+    def act_train_unit(self, arg):     # 302 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+
+        if arg:
+            print("Обучение юнитов")
+            print(f"arg {arg}")
+
+            self.search_our_units()  # Найдем наших юнитов
+            print(f"self.our_units {self.our_units}")
+            for i in self.our_units:
+                print(f"i {i}")
+
+            # Логи
+            self.result_logs_text.append(f"Вы тренировали юниты.")
+            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы тренировали юниты.")
+            self.game.all_logs.append(f"{self.name_rus} тренировали юниты.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"{self.name_rus} тренировали юниты.")
+        else:
+            self.result_logs_text.append(f"Вы НЕ тренировали юниты. Хз по какой причине.")
 
     def calc_win_points(self):
         # Возьмем по 1 очку за 3000

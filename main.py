@@ -449,7 +449,7 @@ def create_game(setting):  # Получаем только список игро
     date_now = datetime.strftime(datetime.now(), "%d.%m.%Y %H:%M:%S")  # Дата: день, часы, минуты
 
     # 2. Вычисление id партии, через запрос к БД.
-    print("Добавляем игру в БД")
+    # print("Добавляем игру в БД")
     # Делаем стартовую запись в БД. В списке игроков только создавший партию
     # Номер хода, Стартовый год, ид первого игрока, тек. количество игроков, макс. количество игроков
     # setting можно посмотреть в функции выше
@@ -484,7 +484,7 @@ def create_game(setting):  # Получаем только список игро
     # Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре
     # В данной функции нет смысла вычислять ид, он всегда 0
     real_settlement_id = len(this_game.settlements_list)
-    print(f"Реальный ид поселения {real_settlement_id}")
+    # print(f"Реальный ид поселения {real_settlement_id}")
     # id игры
     # id поселения(получаем выше из бд)
     # ссылка на провинцию
@@ -514,7 +514,7 @@ def create_game(setting):  # Получаем только список игро
     for sett in range(mod.SETT_IN_PROVINCE):
         print("############################################")
         real_settlement_id = len(this_game.settlements_list)
-        print(f"Реальный ид поселения {real_settlement_id}")
+        # print(f"Реальный ид поселения {real_settlement_id}")
         # print(f"Создаем поселение с ид: {last_settlement_row_id + 1}")
         # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id + 1}",
         #                                               f"settlements_{last_settlement_row_id + 1}", 0)
@@ -700,7 +700,7 @@ def req_status_game_player():
         # Запросим династию игрока
         with open(f"games/{game_id}/gameID_{game_id}_playerID_{player}.viking", 'r') as f:
             data_dynasty = json.load(f)
-            print(f"1Информация о династии {data_dynasty}")
+            # print(f"1Информация о династии {data_dynasty}")
         # Вариант с выводом всех поселений нашей провинции
         # list_settlements =
         # Определим нашу провинцию, она хранится в записи династии
@@ -740,7 +740,7 @@ def req_status_game_player():
         # else:  # Если у игрока нет поселения
         #     data_settlement = []
         all_data = [data_dynasty, data_settlements]
-        print(f"3Информация об игроке и поселении {all_data}")
+        # print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:
         print(f"Файл 'games/{game_id}/gameID_{game_id}_playerID_{player}.viking' не найден 1")

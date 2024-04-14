@@ -88,38 +88,23 @@ class Settlement:
     # Рассчитать средние параметры для одной патчи юнитов.
     def calc_mid(self):
         # 0 элемент должен хранить общую инфу и средние параметры
+        # Список параметров для вычисления среднего значения
+        par_list = ["hp_max", "hp_cur", "endurance_max", "endurance_cur",
+                    "strength", "agility", "armor", "shield",
+                    "melee_skill", "melee_weapon", "ranged_skill", "ranged_weapon", "experience"]
         if self.units:  # Проверка на наличие юнитов в принципе.
-            print("Тестим подсчет средних параметров юниток.")
+            # print("Тестим подсчет средних параметров юнитов.")
             for units in self.units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
                 for unit in units:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
                     for k, v in unit.items():
                         # print(f"Тут ключ для сверки: {k}")
-                        if (k == "army" or k == "location_id" or k == "game_id" or
-                                k == "location_name" or k == "name" or k == "id"):
-                            continue
-                        else:
+                        if k in par_list:
                             # print("Складываем.")
                             units[0][k] += v
                 for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
-                    if (k == "army" or k == "location_id" or k == "game_id" or
-                            k == "location_name" or k == "name" or k == "id"):
-                        continue
-                    else:
-                        units[0][k] = units[0][k]/(len(units)-1)
+                    if k in par_list:
                         # print("Делим.")
-                # print(units)
-                #     for k, v in unit.items():
-                #         try:
-                #             # TODO тут ошибка, так же складывается название месторасположения
-                #             units[0][k] += v
-                #         except (TypeError, KeyError):
-                #             ...
-                # for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
-                #     try:
-                #         units[0][k] = units[0][k]/(len(units)-1)
-                #     except (TypeError, KeyError):
-                #         ...
-                # print(units)
+                        units[0][k] = units[0][k]/(len(units)-1)
 
     # Определить доступные для строительства постройки
     def available_buildings(self):
@@ -137,7 +122,7 @@ class Settlement:
         6. Рассчитаем уровень благосостояния. (Так же считается из calc_turn)
         :return:
         """
-        print(f"Обновляем данные поселения")
+        # print(f"Обновляем данные поселения")
 
         # 1. Считаем занятое/свободное места в поселении.
         # TODO как рассчитать размер поселения

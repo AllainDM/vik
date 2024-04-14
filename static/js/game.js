@@ -819,6 +819,7 @@ function createArmy() {
 // Функция сбора и отображения юнитов
 function showUnits(unitsTab) {
     // let unitsTab = document.getElementById('table-units');
+    unitsTab.innerHTML = ''
     unitsTab.insertAdjacentHTML('beforeend', `            
         <thead>    
             <tr class="table-units">
@@ -875,19 +876,35 @@ function showUnits(unitsTab) {
 
     // Кнопка подтвердить для изменений с юнитаи
     document.getElementById('apply-changes-units').addEventListener('click', () => {
+        const chooseAction = document.getElementById('unit-select-action');
+        console.log("Выбираем действие с юнитами.");
+        console.log(chooseAction.value);
         const checkBoxs = document.querySelectorAll('.cheсked-unit');
-        // console.log(checkBoxs);
         let ckeckedUnits = []  // Список для сохранание ид выбранных юнитов.
         for (c=0;c<checkBoxs.length;c++) { 
             if (checkBoxs[c].checked) {
                 ckeckedUnits.push(checkBoxs[c].id.slice(13))
-                // console.log("Выбрано");
-                // console.log(checkBoxs[c].id.slice(13));
-
             }
         }
         console.log(`Выбранные юниты: ${ckeckedUnits}`)
-        dismissUnits(ckeckedUnits)
+        let arg = ckeckedUnits  // Первый аргумент список юнитов. Остальное добавлять по необходимости.
+        if (ckeckedUnits.length > 0) {
+            if (chooseAction.value == "dismiss") {
+                console.log("dismissUnits");
+                console.log(arg);
+                dismissUnits(arg)
+            } else if (chooseAction.value == "train") {
+                console.log("trainUnits");
+                console.log(arg);
+                trainUnits(arg)
+            } else if (chooseAction.value == "create-army") {
+                console.log("createArmy");
+                console.log(arg);
+                // dismissUnits(arg)
+            }
+        } else {
+            alert("Юниты не выбраны.")
+        }
         // console.log(checkBoxs);
         // console.log(checkBoxs[0]);
         // console.log(checkBoxs[0].id.slice(13));
@@ -904,6 +921,13 @@ function dismissUnits(arg) {
     // chooseList.innerHTML = ''; 
     // closeModal();
     // exitToMainMenuButtons();     
+}
+
+function trainUnits(arg) {
+    console.log("Тренировать юниты.");
+    statusGame.acts.push([`Тренировать юниты...`, 402, arg]); 
+    postAct(statusGame.game_id);
+    logStart();
 }
 
     // Старый код вывода инфы после сбора по провинциям

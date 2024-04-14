@@ -230,7 +230,7 @@ class FirstWorld:
         # 1. Создание экземпляра класса, сохраняется в словарь с ключом названием поселения.
         # Объект с экземпляром класса английское название. Список поселений с русским название
         # TODO Можно ли сделать тоже на русском?
-        print(f"row_id {row_id}")
+        # print(f"row_id {row_id}")
         self.settlements[name_eng] = Settlement(self, game_id, province, row_id, ruler, name_rus, name_eng, player)
 
         # TODO Судя по всему не используется. Идет перебор из переменной в классе игры.
@@ -243,7 +243,7 @@ class FirstWorld:
         # 3. Сохранение имени поселения в словарь, для навигации при обсчете хода.
         # Сохраним в новый словарь, где ключ row_id поселения, а значение название.
         # row_id нужен для сохранения файла
-        self.settlements_dict[row_id] = name_eng
+        self.settlements_dict[str(row_id)] = name_eng
 
         # TODO нужно что-то куда-то добавлять еще?
 
@@ -276,12 +276,14 @@ class FirstWorld:
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
             # id_for_new_unit = f"{row_id}{u}"
             # id_for_new_unit = int(id_for_new_unit)
-            new_unit = {"hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
+            new_unit = {"game_id": game_id, "group_units_id": new_group_units_id,
+                        "hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
                         "strength": 3, "agility": 3, "armor": 1, "shield": 1,
                         "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
                         "experience": 0, "name": names.male_names_list[rnd_units_name]}
             # Далее добавил в бд, вычислив ид
-            id_for_new_unit = dbase.add_unit(game_id, 4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
+            id_for_new_unit = dbase.add_unit(game_id, new_group_units_id,
+                                             4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
                                              names.male_names_list[rnd_units_name])
             # print(f"id нового юнита {id_for_new_unit}")
             new_unit["id"] = id_for_new_unit
@@ -409,11 +411,13 @@ def calculate_turn(game_id):
 
     # 4. Обнулим торговлю в провинциях для составления нового списка товаров, ибо не накапливаемые.
     print("Обнуление торговых складов провинций.")
+    print("ВНИМАНИЕ!!!!! Возможно, тут не правильно обнуляются товары.")
+    # TODO ну как бы вот
     for prov in game.provinces.values():  # Тут должны быть ссылки на провинции.
         for v in prov.province_goods_for_trade.values():
-            print(f"Было: {v}")
+            # print(f"Было: {v}")
             v = 0
-            print(f"Стало: {v}")
+            # print(f"Стало: {v}")
         # for k, v in prov.province_goods_for_trade.items():
         #     v = 0
 
