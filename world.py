@@ -264,31 +264,50 @@ class FirstWorld:
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
 
         # 5. Создание стартовой армии.
-        new_group_units_id = dbase.add_group_units(game_id, row_id, name_rus, "отряд",
-                                                   4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
-        units = [{"game_id": game_id, "location_id": row_id, "location_name": name_rus,
-                  "hp_max": 0, "hp_cur": 0, "endurance_max": 0, "endurance_cur": 0,
-                  "strength": 0, "agility": 0, "armor": 0, "shield": 0,
-                  "melee_skill": 0, "melee_weapon": 0, "ranged_skill": 0, "ranged_weapon": 0,
-                  "experience": 0, "id": new_group_units_id, "name": "отряд"}]
+        if player:
+            new_group_units_id = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд игрока",
+                                                       4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+        else:
+            new_group_units_id = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд",
+                                                       4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+        # units = [{"game_id": game_id, "home_location_id": row_id, "location_id": row_id, "location_name": name_rus,
+        #           "hp_max": 0, "hp_cur": 0, "endurance_max": 0, "endurance_cur": 0,
+        #           "strength": 0, "agility": 0, "armor": 0, "shield": 0,
+        #           "melee_skill": 0, "melee_weapon": 0, "ranged_skill": 0, "ranged_weapon": 0,
+        #           "experience": 0, "id": new_group_units_id, "name": "Отряд"}]
         # Добавим 20 солдат ближнего боя
+        list_units = []
         for u in range(20):
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
             # id_for_new_unit = f"{row_id}{u}"
             # id_for_new_unit = int(id_for_new_unit)
-            new_unit = {"game_id": game_id, "group_units_id": new_group_units_id,
-                        "hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
-                        "strength": 3, "agility": 3, "armor": 1, "shield": 1,
-                        "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
-                        "experience": 0, "name": names.male_names_list[rnd_units_name]}
+            # new_unit = {"game_id": game_id, "group_units_id": new_group_units_id,
+            #             "hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
+            #             "strength": 3, "agility": 3, "armor": 1, "shield": 1,
+            #             "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
+            #             "experience": 0, "name": names.male_names_list[rnd_units_name]}
             # Далее добавил в бд, вычислив ид
             id_for_new_unit = dbase.add_unit(game_id, new_group_units_id,
                                              4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
                                              names.male_names_list[rnd_units_name])
+            list_units.append(id_for_new_unit)
             # print(f"id нового юнита {id_for_new_unit}")
-            new_unit["id"] = id_for_new_unit
-            units.append(new_unit)
-        self.settlements[name_eng].units = [units]
+            # new_unit["id"] = id_for_new_unit
+            # units.append(new_unit)
+        # Для теста выдадим именно игроку вторую пачку юнитов.
+        # if player:
+        #     new_group_units_id2 = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд",
+        #                                                 4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+        #     for u in range(20):
+        #         rnd_units_name = random.randint(0, len(names.male_names_list)-1)
+        #         # Далее добавил в бд, вычислив ид
+        #         id_for_new_unit = dbase.add_unit(game_id, new_group_units_id2,
+        #                                          4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
+        #                                          names.male_names_list[rnd_units_name])
+        #         list_units.append(id_for_new_unit)
+
+        # В записи поселения будем хранить только ид юнитов, сама запись будет только в БД.
+        self.settlements[name_eng].units = [list_units]
         self.settlements[name_eng].calc_mid()
 
         # TODO новое, теперь вносим всех юнитов в один общий файл в папке и миром.
@@ -301,7 +320,7 @@ class FirstWorld:
             print(f"Файл 'games/{game_id}/gameID_{game_id}_units.viking' не найден. Возможно еще не создан.")
             # return ""
         # Дополним список
-        data.append(units)
+        # data.append(units)
         try:
             with open(f"games/{game_id}/gameID_{game_id}_units.viking", 'w') as f:
                 json.dump(data, f, sort_keys=False, ensure_ascii=False, indent=4, separators=(',', ': '))

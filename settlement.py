@@ -10,6 +10,8 @@ from goods import Goods
 # import pickle
 import mod as MOD
 import names
+import maindb
+from FDataBase import FDataBase
 
 wealth_status_names = ["Ужасное", "Низкое", "Среднее", "Хорошее", "Отличное"]
 
@@ -92,19 +94,27 @@ class Settlement:
         par_list = ["hp_max", "hp_cur", "endurance_max", "endurance_cur",
                     "strength", "agility", "armor", "shield",
                     "melee_skill", "melee_weapon", "ranged_skill", "ranged_weapon", "experience"]
-        if self.units:  # Проверка на наличие юнитов в принципе.
-            # print("Тестим подсчет средних параметров юнитов.")
-            for units in self.units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
-                for unit in units:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
-                    for k, v in unit.items():
-                        # print(f"Тут ключ для сверки: {k}")
-                        if k in par_list:
-                            # print("Складываем.")
-                            units[0][k] += v
-                for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
-                    if k in par_list:
-                        # print("Делим.")
-                        units[0][k] = units[0][k]/(len(units)-1)
+
+        print(f"Из settlement.py обращаемся к FDataBase.py, аргумент ид поселения: {self.row_id}")
+        db = maindb.get_db()
+        dbase = FDataBase(db)
+        units = dbase.get_units(self.row_id)
+        print(f"Получаем юнитов с БД(settlement.py): {units}")
+        print(f"Поселение (settlement.py): {self.name_rus}")
+        # if units:  # Проверка на наличие юнитов в принципе.
+        #     # print("Тестим подсчет средних параметров юнитов.")
+        #     for u in units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
+        #         print(f"u: {u}")
+        #         for unit in u:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
+        #             for k, v in unit.items():
+        #                 print(f"Тут ключ для сверки: {k}")
+        #                 if k in par_list:
+        #                     print("Складываем.")
+        #                     units[0][k] += v
+        #         for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
+        #             if k in par_list:
+        #                 print("Делим.")
+        #                 units[0][k] = units[0][k]/(len(units)-1)
 
     # Определить доступные для строительства постройки
     def available_buildings(self):

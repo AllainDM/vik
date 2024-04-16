@@ -93,20 +93,20 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
-    def add_group_units(self, game_id, location_id, location_name, name,
+    def add_group_units(self, game_id, home_location_id, location_id, location_name, name,
                         hp_max, hp_cur, endurance_max, endurance_cur,
                         strength, agility, armor, shield,
                         melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                         experience):
         try:
-            self.__cur.execute("INSERT INTO group_units (game_id, location_id, location_name, name,"
+            self.__cur.execute("INSERT INTO group_units (game_id, home_location_id, location_id, location_name, name,"
                                "hp_max, hp_cur, endurance_max, endurance_cur, "
                                "strength, agility, armor, shield, "
                                "melee_skill, melee_weapon, ranged_skill, ranged_weapon, "
                                "experience) "
-                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+                               "VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
                                "RETURNING row_id",
-                               (game_id, location_id, location_name, name,
+                               (game_id, home_location_id, location_id, location_name, name,
                                 hp_max, hp_cur, endurance_max, endurance_cur,
                                 strength, agility, armor, shield,
                                 melee_skill, melee_weapon, ranged_skill, ranged_weapon,
@@ -114,13 +114,65 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            # print(f"Новый юнит добавился? game_id:{game_id}....")
+            print(f"Пачка юнитов добавлена. game_id:{game_id}, row_id:{row_id}, "
+                  f"home_location_id:{home_location_id}.")
             return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД 5 add_group_units", _ex)
             return False
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
+
+    # Получить пачку юнитов
+    def get_units(self, home_location_id):
+        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
+        # print(f"home_location_id {home_location_id}")
+        # print(type(home_location_id))
+        units = []  # Необходимый нам список. Где первый элемент общая инфа из отдельной таблицы.
+        try:
+            # Тут ищем пачки юнитов, которые хранят общую инфу
+            self.__cur.execute(f"SELECT * FROM group_units WHERE row_id = {home_location_id}")
+            # print(f"self.__cur.description {self.__cur.description}")
+            # print(f"self.__cur.description[0] {self.__cur.description[0]}")
+
+            # Код для получения словаря вместо кортежа
+            # columns = []
+            # for column in self.__cur.description:
+            #     columns.append(column[0].lower())
+            # units_dict = {}
+            # for row in self.__cur:
+            #     for i in range(len(row)):
+            #         units_dict[columns[i]] = row[i]
+            #         if isinstance(row[i], str):
+            #             units_dict[columns[i]] = row[i].strip()
+            # print(f"columns {columns}")
+            # print(f"units_dict {units_dict}")
+
+            res_group_units = self.__cur.fetchall()
+            print(f"res_group_units: {res_group_units}")
+            group_units = res_group_units[0][3]  # home_location_id
+            print(f"group_units: {group_units}")
+            if not res_group_units:
+                print("Group_units not found")
+                return False
+            else:
+                units.append(res_group_units[0])
+                print(f"units {units}")
+                # return res_group_units
+                try:
+                    self.__cur.execute(f"SELECT * FROM units WHERE units_group_id = {group_units}")
+                    res_all_units = self.__cur.fetchall()
+                    print(f"res_all_units: {res_all_units}")
+                    full_unit = units + res_all_units
+                    print(f"full_unit: {full_unit}")
+                    if not res_all_units:
+                        print("Res_all_units not found")
+                        return False
+                    return full_unit
+                except Exception as _ex:
+                    print("Ошибка поиска юнитов в БД 1", _ex)
+        except Exception as _ex:
+            print("Ошибка поиска юнитов в БД 2", _ex)
 
     def add_unit(self, game_id, units_group_id, hp_max, hp_cur, endurance_max, endurance_cur,
                  strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
@@ -140,7 +192,7 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            # print(f"Новый юнит добавился? game_id:{game_id}....")
+            print(f"Новый юнит добавлен. game_id:{game_id}, row_id:{row_id}, units_group_id:{units_group_id}.")
             return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД 4 add_unit", _ex)

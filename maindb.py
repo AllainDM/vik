@@ -18,6 +18,8 @@ from UserLogin import UserLogin
 # login_manager.login_message = "Необходимо авторизоваться"
 # login_manager.login_message_category = 'error'
 
+# TODO возможно этот же файл стоит подключить к основному
+
 
 def get_db():
     if not hasattr(g, 'link_db'):

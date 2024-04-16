@@ -715,26 +715,8 @@ def req_status_game_player():
                     data_settlement = json.load(f)
                     data_settlements.append(data_settlement)
 
-        # # Вариант с выводом только поселений игрока
-        # # Запрашиваем все поселения под контролем игрока
-        # # Необходимо получить список из файла игрока открытого выше
-        # list_settlements = data_dynasty["our_settlements"]
-        # # Сделаем перебор списка, открывая по очереди все файлы с необходимым ид поселений.
-        # data_settlements = []
-        # for i in list_settlements:
-        #     with open(f"games/{game_id}/gameID_{game_id}_settlementID_{i}.viking", 'r') as f:
-        #         data_settlement = json.load(f)
-        #         data_settlements.append(data_settlement)
-
-        # Первый(старый) вариант
-        # Возьмем из файла ид управляемого поселения
-        # ruler_settlement_id = data_dynasty["main_settlement"]
-        # if ruler_settlement_id != 0:
-        #     # Запросим поселение игрока
-        #     with open(f"games/{game_id}/gameID_{game_id}_settlementID_{ruler_settlement_id}.viking", 'r') as f:
-        #         data_settlement = json.load(f)
-        #         print(f"2Информация о поселении {data_settlement}")
-
+        # Юниты берем из БД. Для начала возьмем в записи игрока его поселения.
+        list_our_settlements = data_dynasty["our_settlements"]
         # TODO реализовать на фронте вариант при котором у игрока нет поселения
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
         # else:  # Если у игрока нет поселения
