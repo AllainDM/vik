@@ -477,14 +477,14 @@ def create_game(setting):  # Получаем только список игро
                                              provinces_names_rus[0], provinces_names_eng[0])
 
     # 6. Создание поселения игрока.
-    # Имя поселения временно первое из списка.
+    # TODO Имя поселения временно первое из списка.
     # Запишем в БД, получим row_id, его используем при сохранении поселения в файл.
-    # last_settlement_row_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
-    #                                               settlements_names_rus[0], setting[1]["playerId"])
-    # Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре
-    # В данной функции нет смысла вычислять ид, он всегда 0
-    real_settlement_id = len(this_game.settlements_list)
-    # print(f"Реальный ид поселения {real_settlement_id}")
+    player_settlement_id = dbase.add_settlement(last_game_row_id, settlements_names_eng[0],
+                                                settlements_names_rus[0], setting[1]["playerId"])
+    # Нет === Ид поселение теперь берется по количеству поселений из списка в конкретно этой игре
+    # Нет === В данной функции нет смысла вычислять ид, он всегда 0
+    # real_settlement_id = len(this_game.settlements_list)  # Старое
+    # print(f"Реальный ид поселения {real_settlement_id}")  # Старое
     # id игры
     # id поселения(получаем выше из бд)
     # ссылка на провинцию
@@ -493,45 +493,45 @@ def create_game(setting):  # Получаем только список игро
     # имя поселения на русском
     # игрок на поселении
     list_settlements_in_province = {}  # Список поселений в провинции
-    this_game.create_settlement(dbase, last_game_row_id, new_province, real_settlement_id,
+    this_game.create_settlement(dbase, last_game_row_id, new_province, player_settlement_id,
                                 setting[1]["playerId"],
                                 manual_settlements_names_rus[0],
                                 manual_settlements_names_eng[0], player=True)
     # list_settlements_in_province.append(settlements_names_eng[0])
     # Был список названий, создаем словарь. Ключ ид, значение название
-    list_settlements_in_province[real_settlement_id] = manual_settlements_names_eng[0]
+    list_settlements_in_province[player_settlement_id] = manual_settlements_names_eng[0]
     # Так же добавим в список
     new_province.list_settlements.append(manual_settlements_names_eng[0])
     # Так же передадим ид только что созданного поселения
     this_game.create_dynasty(last_game_row_id, setting[1]["playerId"],
                              setting[1]["nameEng"], setting[1]["nameRus"],
-                             real_settlement_id, new_province_id, 100)
+                             player_settlement_id, new_province_id, 100)
 
     # 7. Создание ИИ поселений.
     # Создадим еще поселения в провинции игрока
     # TODO выяснить верно ли присваивается ид для поселения
     # Цикл по количеству базовых поселений в провинции, сохраняется как модификатор
-    for sett in range(mod.SETT_IN_PROVINCE):
+    for sett in range(1, mod.SETT_IN_PROVINCE + 1):
         print("############################################")
-        real_settlement_id = len(this_game.settlements_list)
-        # print(f"Реальный ид поселения {real_settlement_id}")
+        # real_settlement_id = len(this_game.settlements_list)  # Старое
+        # print(f"Реальный ид поселения {real_settlement_id}")  # Старое
         # print(f"Создаем поселение с ид: {last_settlement_row_id + 1}")
         # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{last_settlement_row_id + 1}",
         #                                               f"settlements_{last_settlement_row_id + 1}", 0)
         # TODO отключаю добавление в БД, пока не используется
-        # last_settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{real_settlement_id}",
-        #                                              f"settlements_{real_settlement_id}", 0)
-        this_game.create_settlement(dbase, last_game_row_id, new_province, real_settlement_id, 0,
-                                    f"settlements_{real_settlement_id}",
-                                    f"settlements_{real_settlement_id}", player=False)
-        print(f"Создано поселение с ид: {real_settlement_id}")
+        settlement_row_id = dbase.add_settlement(last_game_row_id, f"settlements_{player_settlement_id+sett}",
+                                                 f"settlements_{player_settlement_id+sett}", 0)
+        this_game.create_settlement(dbase, last_game_row_id, new_province, settlement_row_id, 0,
+                                    f"settlements_{settlement_row_id}",
+                                    f"settlements_{settlement_row_id}", player=False)
+        print(f"Создано поселение с ид: {settlement_row_id}")
         # Добавим в список поселений, необходимо для восстановлений
         # list_settlements_in_province.append(f"settlements_{real_settlement_id}")
         # Создаем словарь, ключ ид, значение название.
         # TODO В данный момент все ИИ поселения имею базовое название + ид
-        list_settlements_in_province[real_settlement_id] = f"settlements_{real_settlement_id}"
+        list_settlements_in_province[settlement_row_id] = f"settlements_{settlement_row_id}"
         # Так же добавим в список
-        new_province.list_settlements.append(f"settlements_{real_settlement_id}")
+        new_province.list_settlements.append(f"settlements_{settlement_row_id}")
 
     # 8. Сохранение списка провинций и самого файла провинции.
     # Сохраним список поселений в экземпляре класса провинции.

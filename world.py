@@ -264,19 +264,41 @@ class FirstWorld:
             self.settlements[name_eng].buildings_list["Лесорубка"] += 1
 
         # 5. Создание стартовой армии.
+        list_units = []
+
+        # тестовое добавление 2 юнита
         if player:
-            new_group_units_id = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд игрока",
-                                                       4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
-        else:
-            new_group_units_id = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд",
-                                                       4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+            print("Игрок, добавляем доп юнита.")
+            new_group_units_id2 = dbase.add_group_units(game_id, row_id, row_id, name_rus, "доп отряд игрока",
+                                                        4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+            for u in range(20):
+                rnd_units_name = random.randint(0, len(names.male_names_list) - 1)
+                # id_for_new_unit = f"{row_id}{u}"
+                # id_for_new_unit = int(id_for_new_unit)
+                # new_unit = {"game_id": game_id, "group_units_id": new_group_units_id,
+                #             "hp_max": 4, "hp_cur": 4, "endurance_max": 3, "endurance_cur": 3,
+                #             "strength": 3, "agility": 3, "armor": 1, "shield": 1,
+                #             "melee_skill": 2, "melee_weapon": 2, "ranged_skill": 2, "ranged_weapon": 2,
+                #             "experience": 0, "name": names.male_names_list[rnd_units_name]}
+                # Далее добавил в бд, вычислив ид
+                id_for_new_unit = dbase.add_unit(game_id, new_group_units_id2,
+                                                 4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0,
+                                                 names.male_names_list[rnd_units_name])
+                list_units.append(id_for_new_unit)
+            else:
+                print("Не игрок.")
+        # конец тестового добавления второго юнита
+
         # units = [{"game_id": game_id, "home_location_id": row_id, "location_id": row_id, "location_name": name_rus,
         #           "hp_max": 0, "hp_cur": 0, "endurance_max": 0, "endurance_cur": 0,
         #           "strength": 0, "agility": 0, "armor": 0, "shield": 0,
         #           "melee_skill": 0, "melee_weapon": 0, "ranged_skill": 0, "ranged_weapon": 0,
         #           "experience": 0, "id": new_group_units_id, "name": "Отряд"}]
         # Добавим 20 солдат ближнего боя
-        list_units = []
+
+        new_group_units_id = dbase.add_group_units(game_id, row_id, row_id, name_rus, "отряд",
+                                                   4, 4, 3, 3, 3, 3, 1, 1, 2, 2, 2, 2, 0)
+
         for u in range(20):
             rnd_units_name = random.randint(0, len(names.male_names_list)-1)
             # id_for_new_unit = f"{row_id}{u}"

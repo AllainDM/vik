@@ -131,7 +131,7 @@ class FDataBase:
         units = []  # Необходимый нам список. Где первый элемент общая инфа из отдельной таблицы.
         try:
             # Тут ищем пачки юнитов, которые хранят общую инфу
-            self.__cur.execute(f"SELECT * FROM group_units WHERE row_id = {home_location_id}")
+            self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
             # print(f"self.__cur.description {self.__cur.description}")
             # print(f"self.__cur.description[0] {self.__cur.description[0]}")
 
@@ -150,12 +150,15 @@ class FDataBase:
 
             res_group_units = self.__cur.fetchall()
             print(f"res_group_units: {res_group_units}")
+            print(f"длинна1 res_group_units: {len(res_group_units)}")
+            print(f"длинна2 res_group_units: {len(res_group_units[0])}")
             group_units = res_group_units[0][3]  # home_location_id
-            print(f"group_units: {group_units}")
+            print(f"home_location_id: {group_units}")
             if not res_group_units:
                 print("Group_units not found")
                 return False
             else:
+                # for i in len(res_group_units[0]):
                 units.append(res_group_units[0])
                 print(f"units {units}")
                 # return res_group_units
@@ -192,7 +195,7 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            print(f"Новый юнит добавлен. game_id:{game_id}, row_id:{row_id}, units_group_id:{units_group_id}.")
+            # print(f"Новый юнит добавлен. game_id:{game_id}, row_id:{row_id}, units_group_id:{units_group_id}.")
             return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД 4 add_unit", _ex)
