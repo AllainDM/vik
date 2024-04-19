@@ -128,14 +128,15 @@ class FDataBase:
         print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
         # print(f"home_location_id {home_location_id}")
         # print(type(home_location_id))
-        units = []  # Необходимый нам список. Где первый элемент общая инфа из отдельной таблицы.
+        all_units = []  # Необходимый нам список.
         try:
             # Тут ищем пачки юнитов, которые хранят общую инфу
             self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
             # print(f"self.__cur.description {self.__cur.description}")
             # print(f"self.__cur.description[0] {self.__cur.description[0]}")
 
-            # Код для получения словаря вместо кортежа
+            # Код для получения словаря вместо кортежа.
+            # Остами в нетронутом виде.
             # columns = []
             # for column in self.__cur.description:
             #     columns.append(column[0].lower())
@@ -148,32 +149,62 @@ class FDataBase:
             # print(f"columns {columns}")
             # print(f"units_dict {units_dict}")
 
+            # Соберем описание колонок
+            columns_groups_units = []
+            for column in self.__cur.description:
+                columns_groups_units.append(column[0].lower())
+
             res_group_units = self.__cur.fetchall()
-            print(f"res_group_units: {res_group_units}")
-            print(f"длинна1 res_group_units: {len(res_group_units)}")
-            print(f"длинна2 res_group_units: {len(res_group_units[0])}")
-            group_units = res_group_units[0][3]  # home_location_id
-            print(f"home_location_id: {group_units}")
+            # print(f"res_group_units: {res_group_units}")
+            # print(f"длинна1 res_group_units: {len(res_group_units)}")
+
+            # Нам нужно собрать пачки юнитов, пройдемся по циклу по количеству групп юнитов
+            for ug in range(len(res_group_units)):
+                res_group_units_dict = {}
+                for i in range(len(res_group_units[ug])):
+                    res_group_units_dict[columns_groups_units[i]] = res_group_units[ug][i]
+                    if isinstance(res_group_units[ug][i], str):
+                        res_group_units_dict[columns_groups_units[i]].strip()
+                try:
+                    self.__cur.execute(f"SELECT * FROM units WHERE units_group_id = {res_group_units[ug][0]}")
+                    res_all_units = self.__cur.fetchall()
+
+                    # Соберем описание колонок
+                    columns_units = []
+                    for column in self.__cur.description:
+                        columns_units.append(column[0].lower())
+
+                    units_list = []  # Список со словарями для добавления в общий список
+                    for u in range(len(res_all_units)):
+                        units_dict = {}
+                        for i in range(len(res_all_units[u])):
+                            units_dict[columns_units[i]] = res_all_units[u][i]
+                            if isinstance(res_all_units[u][i], str):
+                                units_dict[columns_units[i]] = res_all_units[u][i].strip()
+                        units_list.append(units_dict)
+
+                    # Первый элемент общая инфа, второй список с юнитами.
+                    # group_units = [res_group_units[ug], res_all_units]
+                    group_units = [res_group_units_dict, units_list]
+                    # print(f"group_units: {group_units}")
+
+                    # Добавим собранную группу юнитов в общий список для ответа фронту.
+                    all_units.append(group_units)
+
+                    # В этом случае мы выйдет из функции не проверив остальные группы юнитов.
+                    # И поскольку в этом блоке уже есть обработка ошибок, то возвращать ничего не будем.
+                    # if not res_all_units:
+                    #     print("Res_all_units not found")
+                    #     return False
+                except Exception as _ex:
+                    print("Ошибка поиска юнитов в БД 1", _ex)
+
             if not res_group_units:
                 print("Group_units not found")
                 return False
             else:
-                # for i in len(res_group_units[0]):
-                units.append(res_group_units[0])
-                print(f"units {units}")
-                # return res_group_units
-                try:
-                    self.__cur.execute(f"SELECT * FROM units WHERE units_group_id = {group_units}")
-                    res_all_units = self.__cur.fetchall()
-                    print(f"res_all_units: {res_all_units}")
-                    full_unit = units + res_all_units
-                    print(f"full_unit: {full_unit}")
-                    if not res_all_units:
-                        print("Res_all_units not found")
-                        return False
-                    return full_unit
-                except Exception as _ex:
-                    print("Ошибка поиска юнитов в БД 1", _ex)
+                print(f"Выведем все полученные войска (FDataBase.py): {all_units}")
+                return all_units
         except Exception as _ex:
             print("Ошибка поиска юнитов в БД 2", _ex)
 
