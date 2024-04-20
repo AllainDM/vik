@@ -124,16 +124,116 @@ class FDataBase:
         # return True
 
     # Получить пачку юнитов
-    def get_units(self, home_location_id):
+    def get_units_group(self, home_location_id):
         print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
-        # print(f"home_location_id {home_location_id}")
-        # print(type(home_location_id))
+        try:
+            self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
+
+            res_group_units = self.__cur.fetchall()
+
+            if not res_group_units:
+                print("Group_units not found")
+                return False
+            else:
+                print(f"Выведем все полученные войска (FDataBase.py): {res_group_units}")
+                return res_group_units
+        except Exception as _ex:
+            print("Ошибка поиска юнитов в БД 2", _ex)
+
+    # Получить пачку юнитов
+    def get_units_group_dict(self, home_location_id):
+        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
         all_units = []  # Необходимый нам список.
         try:
+            # with self.__cur as cursor:
             # Тут ищем пачки юнитов, которые хранят общую инфу
             self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
-            # print(f"self.__cur.description {self.__cur.description}")
-            # print(f"self.__cur.description[0] {self.__cur.description[0]}")
+
+            # Соберем описание колонок
+            columns_groups_units = []
+            for column in self.__cur.description:
+                columns_groups_units.append(column[0].lower())
+
+            res_group_units = self.__cur.fetchall()
+
+            # Нам нужно собрать пачки юнитов, пройдемся по циклу по количеству групп юнитов
+            for ug in range(len(res_group_units)):
+                res_group_units_dict = {}
+                for i in range(len(res_group_units[ug])):
+                    res_group_units_dict[columns_groups_units[i]] = res_group_units[ug][i]
+                    if isinstance(res_group_units[ug][i], str):
+                        res_group_units_dict[columns_groups_units[i]].strip()
+                    all_units.append(res_group_units_dict)
+
+            if not res_group_units:
+                print("Group_units not found")
+                return False
+            else:
+                print(f"Выведем все полученные войска (FDataBase.py): {all_units}")
+                return [all_units]
+        except Exception as _ex:
+            raise Exception
+
+    # Получить пачку юнитов
+    def get_all_our_units(self, list_location_id):
+        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
+        all_units = []  # Необходимый нам список.
+        try:
+            with self.__cur as cursor:
+                # Тут ищем пачки юнитов, которые хранят общую инфу
+                cursor.execute(f"SELECT * FROM group_units WHERE home_location_id in {tuple(list_location_id)}")
+
+                # Соберем описание колонок
+                columns_groups_units = []
+                for column in cursor.description:
+                    columns_groups_units.append(column[0].lower())
+
+                res_group_units = cursor.fetchall()
+
+                # Нам нужно собрать пачки юнитов, пройдемся по циклу по количеству групп юнитов
+                for ug in range(len(res_group_units)):
+                    res_group_units_dict = {}
+                    for i in range(len(res_group_units[ug])):
+                        res_group_units_dict[columns_groups_units[i]] = res_group_units[ug][i]
+                        if isinstance(res_group_units[ug][i], str):
+                            res_group_units_dict[columns_groups_units[i]].strip()
+                    try:
+                        cursor.execute(f"SELECT * FROM units WHERE units_group_id = {res_group_units[ug][0]}")
+                        res_all_units = cursor.fetchall()
+
+                        # Соберем описание колонок
+                        columns_units = []
+                        for column in cursor.description:
+                            columns_units.append(column[0].lower())
+
+                        units_list = []  # Список со словарями для добавления в общий список
+                        for u in range(len(res_all_units)):
+                            units_dict = {}
+                            for i in range(len(res_all_units[u])):
+                                units_dict[columns_units[i]] = res_all_units[u][i]
+                                if isinstance(res_all_units[u][i], str):
+                                    units_dict[columns_units[i]] = res_all_units[u][i].strip()
+                            units_list.append(units_dict)
+
+                        # Первый элемент общая инфа, второй список с юнитами.
+                        group_units = [res_group_units_dict, units_list]
+
+                        # Добавим собранную группу юнитов в общий список для ответа фронту.
+                        all_units.append(group_units)
+
+                    except Exception as _ex:
+                        print("Ошибка поиска юнитов в БД 1", _ex)
+
+                if not res_group_units:
+                    print("Group_units not found")
+                    return False
+                else:
+                    print(f"Выведем все полученные войска (FDataBase.py): {all_units}")
+                    return all_units
+        except Exception as _ex:
+            # raise Exception
+            print("Ошибка поиска юнитов в БД 2", _ex)
+        # raise Exception
 
             # Код для получения словаря вместо кортежа.
             # Остами в нетронутом виде.
@@ -149,65 +249,55 @@ class FDataBase:
             # print(f"columns {columns}")
             # print(f"units_dict {units_dict}")
 
-            # Соберем описание колонок
-            columns_groups_units = []
-            for column in self.__cur.description:
-                columns_groups_units.append(column[0].lower())
+    def update_average_parameters_units(self, game_id, param):
+        print(f"Будем обновлять средние параметры (FDataBase)")
+        try:
+            for par in param:  # Перебор параметров для обновления
+                self.__cur.execute(f"SELECT units_group_id, avg({par}) "
+                                   f"FROM units "
+                                   f"WHERE game_id = {game_id} "
+                                   f"GROUP BY units_group_id")
+                avr_param = self.__cur.fetchall()
+                for i in avr_param:
+                    try:
+                        self.__cur.execute(f"UPDATE group_units "
+                                           f"SET {par} = {round(i[1])}"
+                                           f"WHERE row_id = {i[0]} "
+                                           f"")
+                        self.__db.commit()  # TODO Может перенести сохранение в другое место???
 
-            res_group_units = self.__cur.fetchall()
-            # print(f"res_group_units: {res_group_units}")
-            # print(f"длинна1 res_group_units: {len(res_group_units)}")
+                    except Exception as _ex:
+                        print("Ошибка высчитывания средних параметров в БД 6 calc_average_parameters_units", _ex)
 
-            # Нам нужно собрать пачки юнитов, пройдемся по циклу по количеству групп юнитов
-            for ug in range(len(res_group_units)):
-                res_group_units_dict = {}
-                for i in range(len(res_group_units[ug])):
-                    res_group_units_dict[columns_groups_units[i]] = res_group_units[ug][i]
-                    if isinstance(res_group_units[ug][i], str):
-                        res_group_units_dict[columns_groups_units[i]].strip()
-                try:
-                    self.__cur.execute(f"SELECT * FROM units WHERE units_group_id = {res_group_units[ug][0]}")
-                    res_all_units = self.__cur.fetchall()
-
-                    # Соберем описание колонок
-                    columns_units = []
-                    for column in self.__cur.description:
-                        columns_units.append(column[0].lower())
-
-                    units_list = []  # Список со словарями для добавления в общий список
-                    for u in range(len(res_all_units)):
-                        units_dict = {}
-                        for i in range(len(res_all_units[u])):
-                            units_dict[columns_units[i]] = res_all_units[u][i]
-                            if isinstance(res_all_units[u][i], str):
-                                units_dict[columns_units[i]] = res_all_units[u][i].strip()
-                        units_list.append(units_dict)
-
-                    # Первый элемент общая инфа, второй список с юнитами.
-                    # group_units = [res_group_units[ug], res_all_units]
-                    group_units = [res_group_units_dict, units_list]
-                    # print(f"group_units: {group_units}")
-
-                    # Добавим собранную группу юнитов в общий список для ответа фронту.
-                    all_units.append(group_units)
-
-                    # В этом случае мы выйдет из функции не проверив остальные группы юнитов.
-                    # И поскольку в этом блоке уже есть обработка ошибок, то возвращать ничего не будем.
-                    # if not res_all_units:
-                    #     print("Res_all_units not found")
-                    #     return False
-                except Exception as _ex:
-                    print("Ошибка поиска юнитов в БД 1", _ex)
-
-            if not res_group_units:
-                print("Group_units not found")
-                return False
-            else:
-                print(f"Выведем все полученные войска (FDataBase.py): {all_units}")
-                return all_units
         except Exception as _ex:
-            print("Ошибка поиска юнитов в БД 2", _ex)
+            print("Ошибка высчитывания средних параметров в БД 7 calc_average_parameters_units", _ex)
 
+    def calc_average_parameters_units(self, game_id, param):
+        print(f"Будем высчитывать средние параметры (FDataBase): {param}")
+        all_units = []
+        for par in param:
+            try:
+                self.__cur.execute(f"SELECT units_group_id, avg({par}) "
+                                   f"FROM units "
+                                   f"WHERE game_id = {game_id} " 
+                                   f"GROUP BY units_group_id")
+                avr_param = self.__cur.fetchall()
+                all_units.append([param, avr_param])
+                for result in avr_param:
+                    print(result)
+                print(f"Высчитываем средние параметры (FDataBase): {avr_param}")
+
+            except Exception as _ex:
+                print("Ошибка высчитывания средних параметров в БД 5 calc_average_parameters_units", _ex)
+                return False
+        print(f"Выведем все средние параметры (FDataBase.py): {all_units}")
+        # Не возвращаем, попробуем тут же и обновит данные
+        # if not all_units:
+        #     print("Group_units not found")
+        #     return False
+        # else:
+        #     print(f"Выведем все средние параметры (FDataBase.py): {all_units}")
+        #     return all_units
     def add_unit(self, game_id, units_group_id, hp_max, hp_cur, endurance_max, endurance_cur,
                  strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                  experience, name):

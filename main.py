@@ -1,3 +1,4 @@
+import sqlite3
 from datetime import datetime
 import pickle
 import json
@@ -116,17 +117,6 @@ def close_db(error):
 
 
 dbase = None
-
-"""
-Создадим глобальную переменную - game. 
-А так надо разобраться как получать такую переменную при каждой созданной игре.
-Это требуется для одновременного создания нескольких игр, пока не понятно как себя поведет движок
-"""
-
-
-# Массив с АЙДишниками игр
-# TODO удалить, если будет работать без него
-# game_arr = []
 
 
 @app.before_request
@@ -715,13 +705,17 @@ def req_status_game_player():
                     data_settlement = json.load(f)
                     data_settlements.append(data_settlement)
 
+        print(f'Запросим инфу о юнитах для отправки на фронт')
+        print(data_dynasty)
+        units = dbase.get_all_our_units(data_dynasty["our_settlements"])
+
         # Юниты берем из БД. Для начала возьмем в записи игрока его поселения.
         list_our_settlements = data_dynasty["our_settlements"]
         # TODO реализовать на фронте вариант при котором у игрока нет поселения
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
         # else:  # Если у игрока нет поселения
         #     data_settlement = []
-        all_data = [data_dynasty, data_settlements]
+        all_data = [data_dynasty, data_settlements, units]
         # print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:

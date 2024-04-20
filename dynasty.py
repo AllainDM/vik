@@ -175,16 +175,16 @@ class Dynasty:
         self.our_units = []  # Обновим список
         # Перебор по списку наших поселений ["units"]
         # print(self.our_settlements)
-        print("Ищем юнитов через новую функцию поиска через класс династии.")
-        for i in self.our_settlements:
-            # print(self.game.settlements)
-            # print(self.game.settlements_dict)
-            # print(self.game.settlements_dict[str(i)])
-            # print("################################")
-            units = self.game.settlements[self.game.settlements_dict[str(i)]].units
-            for u in units:
-                # print(u)
-                self.our_units.append(u)
+        print("НЕ!!!!!! Ищем юнитов через новую функцию поиска через класс династии.")
+        # for i in self.our_settlements:
+        #     # print(self.game.settlements)
+        #     # print(self.game.settlements_dict)
+        #     # print(self.game.settlements_dict[str(i)])
+        #     # print("################################")
+        #     units = self.game.settlements[self.game.settlements_dict[str(i)]].units
+        #     for u in units:
+        #         # print(u)
+        #         self.our_units.append(u)
         # print(f"Наши юниты: {self.our_units}")
 
     # Возможно для передачи данных на фронтенд можно использовать отдельную функцию

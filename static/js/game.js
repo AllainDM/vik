@@ -60,6 +60,10 @@ let statusGameDictInfo = {
 let statusGameDictPlayer = {
 
 }
+// Инфа об юних игрока
+let statusGameDictPlayerArmy = {
+
+}
 // Инфа о поселениях
 let statusGameDictSettlements = {
 
@@ -410,11 +414,17 @@ const unitsNameHtml = document.querySelector(".stats-units");
 function actualVarPlayer(res) {
     // Новое, копирование всего сразу в один словарь
     statusGameDictPlayer = res[0]
+    statusGameDictPlayerArmy = res[2]
+
     console.log('!!!!!!!! statusGameDictPlayer');
     console.log(statusGameDictPlayer)
+
     statusGameDictSettlements = res[1]
     console.log('!!!!!!!! statusGameDictSettlements');
     console.log(statusGameDictSettlements)
+
+    console.log('!!!!!!!! statusGameDictPlayerArmy');
+    console.log(statusGameDictPlayerArmy)
 
     console.log("statusGame old")
     console.log(statusGame)
@@ -807,8 +817,6 @@ function createArmy() {
     `)
     // Выясним отношение поселения для определения чьи юниты =)
     console.log("Выясняем отношения.")
-        // console.log(statusGameDictSettlements[key]["ruler"])
-        // console.log(statusGameDictPlayer["row_id"])
 };
     
 // function showUnits() {
@@ -846,27 +854,28 @@ function showUnits(unitsTab) {
         </thead>`)
     console.log("Собираем юниты");
     console.log(statusGameDictPlayer["our_units"])
-    for (i=0;i<statusGameDictPlayer["our_units"].length;i++) {
-        console.log(statusGameDictPlayer["our_units"][i])
+    console.log(statusGameDictPlayerArmy)
+    for (i=0;i<statusGameDictPlayerArmy.length;i++) {
+        console.log(statusGameDictPlayerArmy[i])
         unitsTab.insertAdjacentHTML("beforeend", 
             `<tr class="table units">
-                <td>${statusGameDictPlayer["our_units"][i][0]["location_name"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i].length-1}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["hp_cur"]}/${statusGameDictPlayer["our_units"][i][0]["hp_max"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["endurance_cur"]}/${statusGameDictPlayer["our_units"][i][0]["endurance_max"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["strength"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["agility"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["armor"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["shield"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["melee_skill"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["melee_weapon"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["ranged_skill"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["ranged_weapon"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["experience"]}</th>
-                <td>${statusGameDictPlayer["our_units"][i][0]["name"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["location_name"]}</th>
+                <td>${statusGameDictPlayerArmy[i][1].length}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["hp_cur"]}/${statusGameDictPlayerArmy[i][0]["hp_max"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["endurance_cur"]}/${statusGameDictPlayerArmy[i][0]["endurance_max"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["strength"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["agility"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["armor"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["shield"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["melee_skill"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["melee_weapon"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["ranged_skill"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["ranged_weapon"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["experience"]}</th>
+                <td>${statusGameDictPlayerArmy[i][0]["name"]}</th>
                 
-                <td><label for="cheсked-unit-${statusGameDictPlayer["our_units"][i][0]["id"]}">Выбрать
-                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayer["our_units"][i][0]["id"]}" type="checkbox">
+                <td><label for="cheсked-unit-${statusGameDictPlayerArmy[i][0]["id"]}">Выбрать
+                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayerArmy[i][0]["id"]}" type="checkbox">
                 </label></th>
                                 
             </tr>`

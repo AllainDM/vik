@@ -98,7 +98,7 @@ class Settlement:
         print(f"Из settlement.py обращаемся к FDataBase.py, аргумент ид поселения: {self.row_id}")
         db = maindb.get_db()
         dbase = FDataBase(db)
-        units = dbase.get_units(self.row_id)
+        units = dbase.get_units_group(self.row_id)
         print(f"Получаем юнитов с БД(settlement.py): {units}")
         print(f"Поселение (settlement.py): {self.name_rus}")
         # if units:  # Проверка на наличие юнитов в принципе.
