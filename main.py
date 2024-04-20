@@ -707,7 +707,18 @@ def req_status_game_player():
 
         print(f'Запросим инфу о юнитах для отправки на фронт')
         print(data_dynasty)
-        units = dbase.get_all_our_units(data_dynasty["our_settlements"])
+
+        # Необходимо новое подключение, ибо в 20% случаев выдает ошибку, что курсор закрыт.
+        db = maindb.get_db()
+        dbase2 = FDataBase(db)
+        units = dbase2.get_all_our_units(data_dynasty["our_settlements"])
+
+        # # TODO Внимание костыль
+        # for i in range(15):
+        #     print(f"Попытка номер: {i+1}")
+        #     units = dbase2.get_all_our_units(data_dynasty["our_settlements"])
+        #     if units:
+        #         break
 
         # Юниты берем из БД. Для начала возьмем в записи игрока его поселения.
         list_our_settlements = data_dynasty["our_settlements"]
