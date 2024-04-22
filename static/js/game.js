@@ -853,10 +853,9 @@ function showUnits(unitsTab) {
             </tr>
         </thead>`)
     console.log("Собираем юниты");
-    console.log(statusGameDictPlayer["our_units"])
     console.log(statusGameDictPlayerArmy)
     for (i=0;i<statusGameDictPlayerArmy.length;i++) {
-        console.log(statusGameDictPlayerArmy[i])
+        // console.log(statusGameDictPlayerArmy[i])
         unitsTab.insertAdjacentHTML("beforeend", 
             `<tr class="table units">
                 <td>${statusGameDictPlayerArmy[i][0]["location_name"]}</th>
@@ -874,8 +873,8 @@ function showUnits(unitsTab) {
                 <td>${statusGameDictPlayerArmy[i][0]["experience"]}</th>
                 <td>${statusGameDictPlayerArmy[i][0]["name"]}</th>
                 
-                <td><label for="cheсked-unit-${statusGameDictPlayerArmy[i][0]["id"]}">Выбрать
-                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayerArmy[i][0]["id"]}" type="checkbox">
+                <td><label for="cheсked-unit-${statusGameDictPlayerArmy[i][0]["row_id"]}">Выбрать
+                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayerArmy[i][0]["row_id"]}" type="checkbox">
                 </label></th>
                                 
             </tr>`
@@ -896,7 +895,7 @@ function showUnits(unitsTab) {
             }
         }
         console.log(`Выбранные юниты: ${ckeckedUnits}`)
-        let arg = ckeckedUnits  // Первый аргумент список юнитов. Остальное добавлять по необходимости.
+        let arg = [ckeckedUnits]  // Первый аргумент список юнитов. Остальное добавлять по необходимости.
         if (ckeckedUnits.length > 0) {
             if (chooseAction.value == "dismiss") {
                 console.log("dismissUnits");
@@ -909,7 +908,9 @@ function showUnits(unitsTab) {
             } else if (chooseAction.value == "create-army") {
                 console.log("createArmy");
                 console.log(arg);
-                // dismissUnits(arg)
+                // Если не выбрана армия к которой присоединяются юниты, передаем 0, будет создана новая
+                arg.push(0)
+                createArmy(arg)
             }
         } else {
             alert("Юниты не выбраны.")
@@ -939,46 +940,13 @@ function trainUnits(arg) {
     logStart();
 }
 
-    // Старый код вывода инфы после сбора по провинциям
-    // for (i=0;i<statusGameDictSettlements.length;i++) {
-    //     // console.log("Ищем юниты");
+function createArmy(arg) {
+    console.log("Сформировать армию.");
+    statusGame.acts.push([`Сформировать армию..`, 403, arg]); 
+    postAct(statusGame.game_id);
+    logStart();
+}
 
-    //     for (ii=0;ii<statusGameDictPlayer["our_settlements"].length;ii++) {
-    //         if (statusGameDictSettlements[i]["row_id"] == statusGameDictPlayer["our_settlements"][ii]) {
-    //             // console.log("Найдены юниты");
-    //             // console.log("##########################################");
-    //             // Тут еще нужен перебор по юнитам, но пока возьмем первого
-    //             // <td id='th-unit-name'>${statusGameDictSettlements[i]["units"][0][0]["Расположение"]}</th>
-    //             // <td><input id="html" type="checkbox"></th>
-    //             unitsTab.insertAdjacentHTML("beforeend", 
-    //                 `<tr class="table units">
-    //                     <td>${statusGameDictSettlements[i]["name_rus"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0].length-1}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["hp_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["hp_max"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["endurance_cur"]}/${statusGameDictSettlements[i]["units"][0][0]["endurance_max"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["strength"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["agility"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["armor"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["shield"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["melee_skill"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["melee_weapon"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_skill"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["ranged_weapon"]}</th>
-    //                     <td>${statusGameDictSettlements[i]["units"][0][0]["experience"]}</th>
-    //                     <td> 1</th>  
-                        
-    //                     <td><label for="cheсked-unit-${statusGameDictSettlements[i]["units"][0][0]["id"]}">Выбрать
-    //                         <input id="cheсked-unit-${statusGameDictSettlements[i]["units"][0][0]["id"]}" type="checkbox">
-    //                     </label></th>
-                                        
-    //                 </tr>`
-    //             );
-    //             break;
-    //         // } else {
-    //         //     console.log("Какого-то хуя юниты не найдены.");
-    //         }
-    //     }
-    // }
 };
 
 

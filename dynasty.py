@@ -9,6 +9,9 @@ from goods import Goods
 from buildings import Buildings
 import decision  # Импортируем решения, будет обращаться напрямую
 
+import maindb
+from FDataBase import FDataBase
+
 
 # Настройка Redis для хранения данных игроков
 rediska = redis.StrictRedis(
@@ -154,7 +157,7 @@ class Dynasty:
         self.main_province = data["main_province"]
         self.our_settlements = data["our_settlements"]
 
-        self.search_our_units()  # Это поиск наших юнитов
+        # self.search_our_units()  # Это поиск наших юнитов
 
         self.win_points = data["win_points"]
 
@@ -170,22 +173,22 @@ class Dynasty:
         self.end_turn = data["end_turn"]
         self.end_turn_know = data["end_turn_know"]
 
-    # Функция поиска наших юнитов по нашим поселениям
-    def search_our_units(self):
-        self.our_units = []  # Обновим список
-        # Перебор по списку наших поселений ["units"]
-        # print(self.our_settlements)
-        print("НЕ!!!!!! Ищем юнитов через новую функцию поиска через класс династии.")
-        # for i in self.our_settlements:
-        #     # print(self.game.settlements)
-        #     # print(self.game.settlements_dict)
-        #     # print(self.game.settlements_dict[str(i)])
-        #     # print("################################")
-        #     units = self.game.settlements[self.game.settlements_dict[str(i)]].units
-        #     for u in units:
-        #         # print(u)
-        #         self.our_units.append(u)
-        # print(f"Наши юниты: {self.our_units}")
+    # # Функция поиска наших юнитов по нашим поселениям
+    # def search_our_units(self):
+    #     self.our_units = []  # Обновим список
+    #     # Перебор по списку наших поселений ["units"]
+    #     # print(self.our_settlements)
+    #     print("НЕ!!!!!! Ищем юнитов через новую функцию поиска через класс династии.")
+    #     # for i in self.our_settlements:
+    #     #     # print(self.game.settlements)
+    #     #     # print(self.game.settlements_dict)
+    #     #     # print(self.game.settlements_dict[str(i)])
+    #     #     # print("################################")
+    #     #     units = self.game.settlements[self.game.settlements_dict[str(i)]].units
+    #     #     for u in units:
+    #     #         # print(u)
+    #     #         self.our_units.append(u)
+    #     # print(f"Наши юниты: {self.our_units}")
 
     # Возможно для передачи данных на фронтенд можно использовать отдельную функцию
     # Из плюсов возможность собрать более полный данные
@@ -240,6 +243,10 @@ class Dynasty:
                 self.acts.pop(0)
             elif self.acts[0][1] == 402:  # Тренировать юниты
                 self.act_train_unit(self.acts[0][2])
+                print(f"""Выполнено действие {self.acts[0]}""")
+                self.acts.pop(0)
+            elif self.acts[0][1] == 403:  # Сформировать армию
+                self.act_create_army(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
             else:
@@ -309,7 +316,7 @@ class Dynasty:
         else:
             self.result_logs_text.append(f"Вы НЕ раздали {summ} с. населению, не хватило денег.")
 
-    def act_dismiss_unit(self, arg):     # 301 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+    def act_dismiss_unit(self, arg):     # 401 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
 
         if arg:
 
@@ -322,25 +329,56 @@ class Dynasty:
         else:
             self.result_logs_text.append(f"Вы НЕ распустили юниты. Хз по какой причине.")
 
-    def act_train_unit(self, arg):     # 302 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
-
+    def act_train_unit(self, arg):     # 402 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+        # TODO Необходима проверка наш ли юнит.
+        # Возможно сохранять ид владельца в таблице с юнитами.
         if arg:
             print("Обучение юнитов")
             print(f"arg {arg}")
 
-            self.search_our_units()  # Найдем наших юнитов
-            print(f"self.our_units {self.our_units}")
-            for i in self.our_units:
-                print(f"i {i}")
+            db = maindb.get_db()
+            dbase402 = FDataBase(db)
+
+            # TODO Тестовая заглушка тренировать ближний бой
+            check = dbase402.update_units_in_group(self.game_id, arg, ["melee_skill"], self.our_settlements)
 
             # Логи
-            self.result_logs_text.append(f"Вы тренировали юниты.")
-            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы тренировали юниты.")
-            self.game.all_logs.append(f"{self.name_rus} тренировали юниты.")
-            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
-                                            f"{self.name_rus} тренировали юниты.")
+            if check:
+                self.result_logs_text.append(f"Вы тренировали юниты.")
+                self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы тренировали юниты.")
+                self.game.all_logs.append(f"{self.name_rus} тренировали юниты.")
+                self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                                f"{self.name_rus} тренировали юниты.")
+            else:
+                self.result_logs_text.append(f"Вы НЕ тренировали юниты. Хз по какой причине.")
         else:
-            self.result_logs_text.append(f"Вы НЕ тренировали юниты. Хз по какой причине.")
+            self.result_logs_text.append(f"Вы НЕ тренировали юниты. Не получены аргументы.")
+
+    def act_create_army(self, arg):     # 403 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+
+        if arg:
+            print("Формирование армии.")
+            print(f"arg {arg}")
+
+            db = maindb.get_db()
+            dbase403 = FDataBase(db)
+            # arg[0] это список групп юнитов, его передаем единым аргументом
+            param_names = "army"  # столбец с ид армии, к которой присваивается группа юнитов
+            # arg[1] это id армии к которой присвоим юнитов
+
+            check = dbase403.set_param_in_units_group(self.game_id, arg, param_names, 0)
+
+            # Логи
+            if check:
+                self.result_logs_text.append(f"Вы сформировали армию.")
+                self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы сформировали армию.")
+                self.game.all_logs.append(f"{self.name_rus} сформировали армию.")
+                self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                                f"{self.name_rus} сформировали армию.")
+            else:
+                self.result_logs_text.append(f"Вы НЕ распустили юниты. Хз по какой причине.")
+        else:
+            self.result_logs_text.append(f"Вы НЕ распустили юниты. Не получены аргументы.")
 
     def calc_win_points(self):
         # Возьмем по 1 очку за 3000

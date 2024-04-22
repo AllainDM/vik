@@ -93,6 +93,25 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
+    def add_army(self, game_id, name_eng="default_name", name_rus="армия", ruler=0):
+        try:
+            self.__cur.execute("INSERT INTO army (game_id, name_eng, name_rus, ruler, date_create) "
+                               "VALUES(%s, %s, %s, %s, %s) "
+                               "RETURNING row_id",
+                               (game_id, name_eng, name_rus, ruler))
+
+            # Вернем ид записи
+            row_id = self.__cur.fetchone()[0]
+
+            self.__db.commit()
+
+            print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
+            return row_id
+
+        except Exception as _ex:
+            print("Ошибка добавления данных в БД при создании армии (add_army)", _ex)
+            return False
+
     def add_group_units(self, game_id, home_location_id, location_id, location_name, name,
                         hp_max, hp_cur, endurance_max, endurance_cur,
                         strength, agility, armor, shield,
@@ -125,7 +144,7 @@ class FDataBase:
 
     # Получить пачку юнитов
     def get_units_group(self, home_location_id):
-        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
+        print("Запрос к БД в получении пачки юнитов (get_units_group) (FDataBase.py).")
         try:
             self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
 
@@ -140,43 +159,9 @@ class FDataBase:
         except Exception as _ex:
             print("Ошибка поиска юнитов в БД 2", _ex)
 
-    # Получить пачку юнитов
-    def get_units_group_dict(self, home_location_id):
-        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
-        all_units = []  # Необходимый нам список.
-        try:
-            # with self.__cur as cursor:
-            # Тут ищем пачки юнитов, которые хранят общую инфу
-            self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
-
-            # Соберем описание колонок
-            columns_groups_units = []
-            for column in self.__cur.description:
-                columns_groups_units.append(column[0].lower())
-
-            res_group_units = self.__cur.fetchall()
-
-            # Нам нужно собрать пачки юнитов, пройдемся по циклу по количеству групп юнитов
-            for ug in range(len(res_group_units)):
-                res_group_units_dict = {}
-                for i in range(len(res_group_units[ug])):
-                    res_group_units_dict[columns_groups_units[i]] = res_group_units[ug][i]
-                    if isinstance(res_group_units[ug][i], str):
-                        res_group_units_dict[columns_groups_units[i]].strip()
-                    all_units.append(res_group_units_dict)
-
-            if not res_group_units:
-                print("Group_units not found")
-                return False
-            else:
-                print(f"Выведем все полученные войска (FDataBase.py): {all_units}")
-                return [all_units]
-        except Exception as _ex:
-            raise Exception
-
-    # Получить пачку юнитов
+    # Получить всех юнитов игрока
     def get_all_our_units(self, list_location_id):
-        print("Запрос к БД в получении пачки юнитов (FDataBase.py).")
+        print("Запрос к БД в получении пачки юнитов (get_all_our_units) (FDataBase.py).")
         all_units = []  # Необходимый нам список.
         try:
             with self.__cur as cursor:
@@ -249,6 +234,7 @@ class FDataBase:
             # print(f"columns {columns}")
             # print(f"units_dict {units_dict}")
 
+    #
     def update_average_parameters_units(self, game_id, param):
         print(f"Будем обновлять средние параметры (FDataBase)")
         try:
@@ -261,7 +247,7 @@ class FDataBase:
                 for i in avr_param:
                     try:
                         self.__cur.execute(f"UPDATE group_units "
-                                           f"SET {par} = {round(i[1])}"
+                                           f"SET {par} = {round(i[1], 1)}"
                                            f"WHERE row_id = {i[0]} "
                                            f"")
                         self.__db.commit()  # TODO Может перенести сохранение в другое место???
@@ -272,25 +258,27 @@ class FDataBase:
         except Exception as _ex:
             print("Ошибка высчитывания средних параметров в БД 7 calc_average_parameters_units", _ex)
 
-    def calc_average_parameters_units(self, game_id, param):
-        print(f"Будем высчитывать средние параметры (FDataBase): {param}")
-        all_units = []
-        for par in param:
-            try:
-                self.__cur.execute(f"SELECT units_group_id, avg({par}) "
-                                   f"FROM units "
-                                   f"WHERE game_id = {game_id} " 
-                                   f"GROUP BY units_group_id")
-                avr_param = self.__cur.fetchall()
-                all_units.append([param, avr_param])
-                for result in avr_param:
-                    print(result)
-                print(f"Высчитываем средние параметры (FDataBase): {avr_param}")
-
-            except Exception as _ex:
-                print("Ошибка высчитывания средних параметров в БД 5 calc_average_parameters_units", _ex)
-                return False
-        print(f"Выведем все средние параметры (FDataBase.py): {all_units}")
+    # Не используется, вместо нее функция сразу обновляющая запись о средних параметрах
+    # Высчитать средние параметры юнитов для записи в group_units
+    # def calc_average_parameters_units(self, game_id, param):
+    #     print(f"Будем высчитывать средние параметры (FDataBase): {param}")
+    #     all_units = []
+    #     for par in param:
+    #         try:
+    #             self.__cur.execute(f"SELECT units_group_id, avg({par}) "
+    #                                f"FROM units "
+    #                                f"WHERE game_id = {game_id} "
+    #                                f"GROUP BY units_group_id")
+    #             avr_param = self.__cur.fetchall()
+    #             all_units.append([param, avr_param])
+    #             for result in avr_param:
+    #                 print(result)
+    #             print(f"Высчитываем средние параметры (FDataBase): {avr_param}")
+    #
+    #         except Exception as _ex:
+    #             print("Ошибка высчитывания средних параметров в БД 5 calc_average_parameters_units", _ex)
+    #             return False
+    #     print(f"Выведем все средние параметры (FDataBase.py): {all_units}")
         # Не возвращаем, попробуем тут же и обновит данные
         # if not all_units:
         #     print("Group_units not found")
@@ -298,6 +286,51 @@ class FDataBase:
         # else:
         #     print(f"Выведем все средние параметры (FDataBase.py): {all_units}")
         #     return all_units
+
+    # Обновление параметров в пачке юнитов. Обучение, усталость, выздоровление и т.д.
+    def update_units_in_group(self, game_id, unit_group_id, param, settlements):
+        print(f"Обновляем параметры в выбранной пачке юнитов. (FDataBase)")
+        print(f"game_id: {game_id}")
+        print(f"unit_group_id: {unit_group_id}")
+        print(f"param: {param}")
+        print(f"settlements: {settlements}")
+        try:
+            for unit in unit_group_id[0]:
+                # TODO добавить проверку на привязку к нашим поселениям
+                for par in param:
+                    self.__cur.execute(f"UPDATE units "
+                                       f"SET {par} = {par} + 1 "
+                                       f"WHERE units_group_id = {unit} and {par} < 5 ")
+            # TODO понять можно ли вычислить общее количество поднятых параметров
+            # чтобы вернуть клиенту общий итог
+            return True
+
+        except Exception as _ex:
+            print("Ошибка обновления параметров юнитов в БД 1", _ex)
+            return False
+
+    # Установить значение одного параметра в пачке юнитов. Привязка к армии
+    def set_param_in_units_group(self, game_id, arg, param_name, param_value):
+        # Аргументы.
+        # game_id не используется, нужно добавить для проверки, чтобы не обновить в другой игре по ошибке
+        # arg[0] - список с id групп юнитов. идёт от клиента.
+        # param_name param_value -  имя и значение параметра который необходимо поменять
+        print(f"Выставляем параметр в выбранной пачке юнитов. (FDataBase)")
+        print(f"game_id: {game_id}")
+        print(f"unit_group_id: {arg[0]}")
+        print(f"param_name: {param_name}")
+        print(f"param_value: {param_value}")
+        try:
+            for ug in arg[0]:  # Перебор списка с ид групп юнитов
+                self.__cur.execute(f"UPDATE group_units "
+                                   f"SET {param_name} = {param_value}"
+                                   f"WHERE row_id = {ug} ")
+            return True
+
+        except Exception as _ex:
+            print("Ошибка обновления параметров юнитов в БД 1", _ex)
+            return False
+
     def add_unit(self, game_id, units_group_id, hp_max, hp_cur, endurance_max, endurance_cur,
                  strength, agility, armor, shield, melee_skill, melee_weapon, ranged_skill, ranged_weapon,
                  experience, name):
@@ -392,7 +425,7 @@ class FDataBase:
         return False
 
     # Список игр, где еще есть места
-    def get_all_not_full_games(self):
+    def get_all_not_full_games(self, player_id):
         try:
             self.__cur.execute(f"SELECT * FROM games WHERE max_players > cur_num_players")
             res = self.__cur.fetchall()

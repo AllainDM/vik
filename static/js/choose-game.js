@@ -89,7 +89,7 @@ requestStatusForNewGame();
 
 
 function chooseNewGame(gamesList) {
-    chooseNewGameList.innerHTML = `<div>Список доступных игр(Внимание, тут также игры в которых уже участвует игрок):</div>`;  // Добавим подсказку
+    chooseNewGameList.innerHTML = `<div>Список доступных игр:</div>`;  // Добавим подсказку
     chooseNewGameList.innerHTML += `
     <table class="table-new-games" style="margin-top: 10px" border="1">
         <tr>

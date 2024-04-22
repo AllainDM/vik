@@ -238,20 +238,24 @@ def load_all_games():  # Делаю подпись html, чтоб раздели
 @app.route("/load_all_new_games")  # Посмотреть список все игр к которым можно присоединиться
 @login_required
 def load_all_new_games():  # Делаю подпись html, чтоб разделить названия функций с просто запросом страницы
-    # global game_arr
+    # Получим ид игрока, выборка должна быть где игрок не участвует
+    player_id = int(current_user.get_id())
     # Прочитаем файл со списком игр
-    game_arr = dbase.get_all_not_full_games()  # Список игр, где еще есть места
+    game_arr = dbase.get_all_not_full_games(player_id)  # Список игр, где еще есть места
     # Выше мы получили кортеж с данными страны, под 5 индексом список ИД игроков
     # Нужно перебрать список ИД игроков и вынести имена игроков
     print(f"Список новых игр: {game_arr}")
     games_list = []  # Это список игр для отправки админу game_arr,
     # players_list = []  # Это список игр для отправки админу
     for game in game_arr:
-        pls_in_game = []
-        for pl in game[5]:
-            pls_in_game.append(dbase.get_user(pl)[3])
-        game_and_players = [game, pls_in_game]
-        games_list.append(game_and_players)
+        if player_id in game[5]:  # Если игрок уже есть в партии она не выводится
+            continue
+        else:
+            pls_in_game = []
+            for pl in game[5]:
+                pls_in_game.append(dbase.get_user(pl)[3])
+            game_and_players = [game, pls_in_game]
+            games_list.append(game_and_players)
     return jsonify(games_list)
 
 
@@ -530,12 +534,13 @@ def create_game(setting):  # Получаем только список игро
     print(f"Список добавляемых поселений в провинцию: {new_province.dict_settlements}")
     new_province.save_to_file()
 
+    # Нет необходимости после полного переноса юнитов в БД.
     # Посчитаем стартовых юнитов по поселениям.
-    # Необходимо распеделить юнитов группами по игрокам
-    print(f"При создании игры, после создания всех поселений запускаем функцию поиска юнитов.")
-    for i in this_game.dynasty:
-        this_game.dynasty[i].search_our_units()
-        this_game.dynasty[i].save_to_file()
+    # Необходимо распределить юнитов группами по игрокам
+    # print(f"При создании игры, после создания всех поселений запускаем функцию поиска юнитов.")
+    # for i in this_game.dynasty:
+    #     this_game.dynasty[i].search_our_units()
+    #     this_game.dynasty[i].save_to_file()
 
     # 9. Сохранение игры в файл.
     this_game.save_to_file()
@@ -554,6 +559,7 @@ def add_dynasty(game_id, player):
     3. Создать поселение игроку.
     4. Создать Династию игроку.
     5. Создать остальные поселения в новой провинции.
+    6. Создать пустую армию.
     """
     print("Добавление нового игрока.")
     # Пункт 1. Создать экземпляр класса мир и загрузить данные из файла по id партии.
@@ -615,6 +621,8 @@ def add_dynasty(game_id, player):
         list_settlements_in_province[real_settlement_id] = settlements_names_eng[real_settlement_id]
         # Добавим так же и в список поселений в записи провинции
         new_province.list_settlements.append(settlements_names_eng[real_settlement_id])
+
+    # Пункт 6. Создание армии, пустой.
 
     # Обновим словарь с поселениями в классе провинции.
     new_province.dict_settlements = list_settlements_in_province  # Словарь
