@@ -425,7 +425,7 @@ class FDataBase:
         return False
 
     # Список игр, где еще есть места
-    def get_all_not_full_games(self, player_id):
+    def get_all_not_full_games(self):
         try:
             self.__cur.execute(f"SELECT * FROM games WHERE max_players > cur_num_players")
             res = self.__cur.fetchall()

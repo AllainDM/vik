@@ -217,38 +217,46 @@ class Dynasty:
                 self.game.settlements[self.game.settlements_dict[self.acts[0][3]]].act_build(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             # TODO отключен
             elif self.acts[0][1] == 201:
                 # self.act_sell_goods(self.acts[0][2], self.acts[0][3], self.acts[0][4])  # И тут передадим аргумент
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             # TODO отключен
             elif self.acts[0][1] == 202:  #
                 # self.act_sell_all_goods(self.acts[0][2])  # И тут передадим аргумент
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             # Раздать деньги населению
             elif self.acts[0][1] == 301:  #
                 self.act_donate(self.acts[0][2])  # Передадим аргумент, сумму
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             # TODO отключен
             elif self.acts[0][1] == 302:  #
                 # self.act_make_donate(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             elif self.acts[0][1] == 401:  # Распустить юниты
                 self.act_dismiss_unit(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             elif self.acts[0][1] == 402:  # Тренировать юниты
                 self.act_train_unit(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             elif self.acts[0][1] == 403:  # Сформировать армию
                 self.act_create_army(self.acts[0][2])
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
+
             else:
                 print('Записей в акте нет')
 

@@ -796,33 +796,9 @@ function logAllResultStart() {       //Функция запуска лога и
 // Запись действий игрока
 
 // Меню армии
-document.getElementById('create-army').addEventListener('click', () => {
-    createArmy();
-});
-
-function createArmy() {
-    modal.style.display = "block";
-    let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
-    content.innerHTML = `
-        <div style="font-size: 20px">
-            <div>Формирование армии</div>
-                <table class="table" id="table-units-modal">  
-                    
-    `;
-    let content2 = document.getElementById("table-units-modal");
-    showUnits(content2);
-    content.insertAdjacentHTML('beforeend', `
-
-        </table>
-    `)
-    // Выясним отношение поселения для определения чьи юниты =)
-    console.log("Выясняем отношения.")
-};
-    
-// function showUnits() {
-
-// }
-
+// document.getElementById('create-army').addEventListener('click', () => {
+//     createArmy();
+// });
 
 // Функция сбора и отображения юнитов
 function showUnits(unitsTab) {
@@ -921,6 +897,8 @@ function showUnits(unitsTab) {
 
     });
 
+}
+
 
 function dismissUnits(arg) {
     console.log("Распустить юниты.");
@@ -940,15 +918,119 @@ function trainUnits(arg) {
     logStart();
 }
 
+
+// function createArmy() {
+//     modal.style.display = "block";
+//     let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
+//     content.innerHTML = `
+//         <div style="font-size: 20px">
+//             <div>Формирование армии</div>
+//                 <table class="table" id="table-units-modal">  
+                    
+//     `;
+//     let content2 = document.getElementById("table-units-modal");
+//     showUnits(content2);
+//     // Выясним отношение поселения для определения чьи юниты =)
+//     console.log("Выясняем отношения.")
+// };
+
+// function createArmy(arg) {
+
+//     modal.style.display = "block";
+//     let content = document.getElementById("show-content"); 
+//     // Начало конента модального окна
+//     content.innerHTML = `
+//         <div style="font-size: 20px">
+//             <div>Формирование армии</div>
+                    
+//     `;
+//     // Пункт присвоения названии армии
+//     content.insertAdjacentHTML('beforeend', `
+//         <div>
+//             <span>Введите название армии:</span>
+//             <input id="new-army-name" value="default"></input>
+//         </div>
+//     `);
+//     // Начало выбора местораположения армии
+//     content.insertAdjacentHTML('beforeend', `
+//         <div>
+//             <span>Выберете месторасположение армии:</span>
+//             <select id="new-army-location">
+//     `)
+//     // Цикл добавления поселения для выбора стартовой локации
+//     for (i=0; i<statusGameDictPlayer["our_settlements"].length; i++) {
+//         content.insertAdjacentHTML('beforeend', `
+//             <option value="train" name="1">
+//                 Поселение с ид: ${statusGameDictPlayer["our_settlements"][i]}
+//             </option>
+//         `);
+
+//     }
+//     // // Конец выбора местораположения армии
+//     // content.insertAdjacentHTML('beforeend', `
+
+//     //         </select>
+//     //     </div>`)
+//     // // Конец контента модального окна
+//     // content.insertAdjacentHTML('beforeend', `
+//     //     </div>
+//     // `)
+//     console.log("Сформировать армию.");
+//     statusGame.acts.push([`Сформировать армию..`, 403, arg]); 
+//     // postAct(statusGame.game_id);
+//     logStart();
+// }
+
+
 function createArmy(arg) {
+
+    modal.style.display = "block";
+    let content = document.getElementById("show-content");  // 
+    // Начало конента модального окна
+    let contentHTML = ""
+    contentHTML = `
+        <div style="font-size: 20px">
+            <div>Формирование армии</div>
+                    
+    `;
+    // Пункт присвоения названии армии
+    contentHTML += `
+        <div>
+            <span>Введите название армии:</span>
+            <input id="new-army-name" value="default"></input>
+        </div>
+    `;
+    // Начало выбора местораположения армии
+    contentHTML += `
+        <div>
+            <span>Выберете месторасположение армии:</span>
+            <select id="new-army-location">
+    `;
+    // Цикл добавления поселения для выбора стартовой локации
+    for (i=0; i<statusGameDictPlayer["our_settlements"].length; i++) {
+        contentHTML += `
+            <option value="train" name="1">
+                Поселение с ид: ${statusGameDictPlayer["our_settlements"][i]}
+            </option>
+        `;
+
+    }
+    // Конец выбора местораположения армии
+    contentHTML += `
+
+            </select>
+        </div>`
+    // Конец контента модального окна
+    contentHTML += `
+        </div>
+    `
+    content.innerHTML = contentHTML
     console.log("Сформировать армию.");
     statusGame.acts.push([`Сформировать армию..`, 403, arg]); 
-    postAct(statusGame.game_id);
+    // postAct(statusGame.game_id);
     logStart();
-}
 
 };
-
 
 
 // Строительство 
