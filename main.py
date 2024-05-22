@@ -1,4 +1,4 @@
-import sqlite3
+# import sqlite3
 from datetime import datetime
 import pickle
 import json
@@ -572,6 +572,13 @@ def add_dynasty(game_id, player):
     new_province = game.create_province(game_id=game_id, row_id=new_province_id,
                                         name_rus=provinces_names_rus[new_province_id],
                                         name_eng=provinces_names_eng[new_province_id])
+
+    # Пункт х. Создание стартовой домашней армии в ново созданной провинции.
+    # add_army(self, game_id, home_location=0, name_eng="default_name", name_rus="армия", ruler=0)
+    # Пока не передаем имена
+    new_army = dbase.add_army(game_id, home_location=new_province_id, ruler=player[0])
+
+
 
     # Пункт 3. Создать поселение игроку.
     list_settlements_in_province = {}  # Список поселений в провинции. Словарь?

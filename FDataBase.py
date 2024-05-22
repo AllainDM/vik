@@ -93,12 +93,12 @@ class FDataBase:
         # Если все норм, то запрос возвращает ид записи, выше
         # return True
 
-    def add_army(self, game_id, name_eng="default_name", name_rus="армия", ruler=0):
+    def add_army(self, game_id, home_location=0, ruler=0, name_eng="default_name", name_rus="армия"):
         try:
-            self.__cur.execute("INSERT INTO army (game_id, name_eng, name_rus, ruler, date_create) "
+            self.__cur.execute("INSERT INTO army (game_id, home_location, ruler, name_eng, name_rus) "
                                "VALUES(%s, %s, %s, %s, %s) "
                                "RETURNING row_id",
-                               (game_id, name_eng, name_rus, ruler))
+                               (game_id, home_location, ruler, name_eng, name_rus))
 
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]

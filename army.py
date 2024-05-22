@@ -9,6 +9,7 @@ class Army:
         self.game_id = game_id
 
         self.ruler = player_id  # id игрока владельца(или династии?)
+        self.home_location = 0  # Домашняя провинция
         self.location = 0  # Месторасположение
 
         self.hp_max = 0

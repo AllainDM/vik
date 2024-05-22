@@ -9,6 +9,7 @@ import random
 from dynasty import Dynasty
 from settlement import Settlement
 from province import Province
+from army import Army
 from cities import cities
 from buildings import buildings
 import names
@@ -201,6 +202,15 @@ class FirstWorld:
         # Сохраним в файл.
         # Сохраним позже из класса игры, после добавления различных данных.
         # self.provinces[name_eng].save_to_file()
+
+        return self.provinces[name_eng]  # Вернем ссылку для создания поселений
+
+    # Создаем армию
+    # Стартовую в провинции или в любую можно создать данным методом?
+    def create_army(self, game_id, row_id, name_rus, name_eng):
+        """Создание армии в провинции.
+        Класс .... дописать описание"""
+        ...
 
         return self.provinces[name_eng]  # Вернем ссылку для создания поселений
 
