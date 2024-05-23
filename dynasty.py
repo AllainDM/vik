@@ -37,6 +37,7 @@ class Dynasty:
         # TODO пока просто передадим при создании экземпляра класса.
         self.main_province = province_id
         # self.our_settlements = [str(main_settlement)]  # Список ид поселений под управлением игрока
+        # TODO выдаем несколько поселений для тестов.
         self.our_settlements = [str(main_settlement),
                                 str(main_settlement+1),
                                 str(main_settlement+2),
@@ -49,7 +50,9 @@ class Dynasty:
                                 # str(main_settlement+9),
                                 # str(main_settlement+10),
                                 ]  # Список ид поселений под управлением игрока
-        self.our_units = []  # Наши юниты, соберем из наших поселений.
+        self.our_units = []  # Наши юниты, соберем из наших поселений. TODO не используется?
+        self.armies = []  # Список ид армий игрока
+
         # Уловно характеристики правителя. Пока играем без династии
         self.title = 0              # Стартовый ранг игрока
         self.body_points = 3        # Очки действий игрока
@@ -96,6 +99,7 @@ class Dynasty:
             "our_settlements": self.our_settlements,
 
             # "our_units": self.our_units,
+            "armies": self.armies,
 
             "win_points": self.win_points,
 
@@ -157,7 +161,7 @@ class Dynasty:
         self.main_province = data["main_province"]
         self.our_settlements = data["our_settlements"]
 
-        # self.search_our_units()  # Это поиск наших юнитов
+        self.armies = data["armies"]  # our_armies
 
         self.win_points = data["win_points"]
 

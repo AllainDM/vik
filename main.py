@@ -501,6 +501,15 @@ def create_game(setting):  # Получаем только список игро
                              setting[1]["nameEng"], setting[1]["nameRus"],
                              player_settlement_id, new_province_id, 100)
 
+    # Пункт х. Создание стартовой домашней армии игроку в ново созданной провинции.
+    # add_army(self, game_id, home_location=0, name_eng="default_name", name_rus="армия", ruler=0)
+    # Создадим название по названию провинции.
+    army_name = f"Army of {manual_settlements_names_eng[new_province_id]}"
+    new_army = dbase.add_army(last_game_row_id, home_location=new_province_id, ruler=setting[1]["playerId"],
+                              name_eng=army_name, name_rus=army_name)
+    this_game.create_army(last_game_row_id, row_id=new_army, home_location=new_province_id,
+                          ruler=setting[1]["playerId"], name_eng=army_name, name_rus=army_name)
+
     # 7. Создание ИИ поселений.
     # Создадим еще поселения в провинции игрока
     # TODO выяснить верно ли присваивается ид для поселения
@@ -558,6 +567,7 @@ def add_dynasty(game_id, player):
     2. Создать новую провинцию под игрока.
     3. Создать поселение игроку.
     4. Создать Династию игроку.
+    х. Создать армию игроку.
     5. Создать остальные поселения в новой провинции.
     6. Создать пустую армию.
     """
@@ -572,13 +582,6 @@ def add_dynasty(game_id, player):
     new_province = game.create_province(game_id=game_id, row_id=new_province_id,
                                         name_rus=provinces_names_rus[new_province_id],
                                         name_eng=provinces_names_eng[new_province_id])
-
-    # Пункт х. Создание стартовой домашней армии в ново созданной провинции.
-    # add_army(self, game_id, home_location=0, name_eng="default_name", name_rus="армия", ruler=0)
-    # Пока не передаем имена
-    new_army = dbase.add_army(game_id, home_location=new_province_id, ruler=player[0])
-
-
 
     # Пункт 3. Создать поселение игроку.
     list_settlements_in_province = {}  # Список поселений в провинции. Словарь?
@@ -609,6 +612,15 @@ def add_dynasty(game_id, player):
                         name_eng=player[6], name_rus=player[6],
                         main_settlement=real_settlement_id,
                         province_id=new_province_id)
+
+    # Пункт х. Создание стартовой домашней армии игроку в ново созданной провинции.
+    # add_army(self, game_id, home_location=0, name_eng="default_name", name_rus="армия", ruler=0)
+    # Создадим название по названию провинции.
+    army_name = f"Army of {manual_settlements_names_eng[new_province_id]}"
+    new_army = dbase.add_army(game_id, home_location=new_province_id, ruler=player[0],
+                              name_eng=army_name, name_rus=army_name)
+    game.create_army(game_id, row_id=new_army, home_location=new_province_id, ruler=player[0],
+                     name_eng=army_name, name_rus=army_name)
 
     # Пункт 5. Создать остальные поселения в новой провинции.
     for sett in range(mod.SETT_IN_PROVINCE):

@@ -54,6 +54,11 @@ class FirstWorld:
         self.settlements_list = []  # Тут просто список названий
         self.settlements_dict = {}  # Словарь, где значением ид, для перебора при "восстановлении"
 
+        # Сохранение армий
+        self.armies = {}  # Тут экземпляр класса
+        self.armies_list = []  # Тут просто список названий
+        self.armies_dict = {}  # Словарь, где значением ид, для перебора при "восстановлении"
+
         # Логи
         # Общий лог событий. Сюда будут записываться все выполненные действия всех "игроков"
         self.all_logs = []
@@ -90,6 +95,11 @@ class FirstWorld:
             # "settlements": self.settlements,  # объект с экземплярами класса, в сохранении не нуждается
             "settlements_list": self.settlements_list,
             "settlements_dict": self.settlements_dict,
+
+            # Армии
+            # "armies": self.armies,  # объект с экземплярами класса, в сохранении не нуждается
+            "armies_list": self.armies_list,
+            "armies_dict": self.armies_dict,
 
             # Логи
             "all_logs": self.all_logs,
@@ -159,6 +169,11 @@ class FirstWorld:
         self.settlements_list = data["settlements_list"]
         self.settlements_dict = data["settlements_dict"]
 
+        # Армии
+        # self.armies = data["armies"]
+        self.armies_list = data["armies_list"]
+        self.armies_dict = data["armies_dict"]
+
         # Логи
         self.all_logs = data["all_logs"]
         self.all_logs_party = data["all_logs_party"]
@@ -207,12 +222,15 @@ class FirstWorld:
 
     # Создаем армию
     # Стартовую в провинции или в любую можно создать данным методом?
-    def create_army(self, game_id, row_id, name_rus, name_eng):
+    def create_army(self, game_id, row_id, home_location, ruler, name_rus, name_eng):
         """Создание армии в провинции.
         Класс .... дописать описание"""
+        # def __init__(self, game, row_id, game_id, player_id=0, home_location=0, name_eng="army", name_rus="армия"):
+        self.armies[name_eng] = Army(self, row_id=row_id, game_id=game_id, player_id=ruler,
+                                     home_location=home_location, name_eng=name_eng, name_rus=name_rus)
         ...
 
-        return self.provinces[name_eng]  # Вернем ссылку для создания поселений
+        # return self.provinces[name_eng]  # Вернем ссылку для создания поселений
 
     # TODO Создать поселение игрока
     # TODO доделать
@@ -391,7 +409,7 @@ def calculate_turn(game_id):
     Обсчет хода. \n
     1. Восстановим игру создав экземпляр класса игры и загрузив данные(из файла).
     2. Восстановим династии(класс игрока).
-    3. Восстановим провинции.
+    3. Восстановим провинции и поселения(по спискам в записи провинции).
     4. Обнулим торговлю в провинциях.
     5. Очистим логи для записи новых.
     6. Обсчет действий игроков.
