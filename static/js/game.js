@@ -572,14 +572,33 @@ function actualVarPlayer(res) {
                 <td id='th-dom'>${item["build_points"]}</th>
 
                 <td id='th-buildings'>${buildings}</th>
-                <td id='th-action'><button id="btn-act-${item["row_id"]}">Выбрать</button></th>
+
+                <td id='th-action'>
+                    <div class="dropdown">
+                        <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
+                        <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
+                            <a id="btn-act-war${item["row_id"]}">Атаковать</a>
+                            <a id="btn-act-build${item["row_id"]}">Строительство</a>
+                        </div>
+                    </div> 
+                </th>
+
             </tr>`
         );
+
+        // <td id='th-action'><button id="btn-act-${item["row_id"]}">Выбрать</button></th>
+        // <button id="btn-act-${item["row_id"]}">Выбрать</button>
         document.getElementById(`btn-act-${item["row_id"]}`).addEventListener(('click'), () => {
-            console.log(`Нажата кнопка выбора действия у провинции с ид: ${item["row_id"]}`);
-            menuNewBuilding(item);
+            console.log(`Нажата кнопка выбора действия в провинции с ид: ${item["row_id"]}`);
+            dropdownProvince(item["row_id"])
         });
-        
+        document.getElementById(`btn-act-war${item["row_id"]}`).addEventListener(('click'), () => {
+            console.log(`Нажата кнопка нападения на провинцию с ид: ${item["row_id"]}`);
+        });
+        document.getElementById(`btn-act-build${item["row_id"]}`).addEventListener(('click'), () => {
+            console.log(`Нажата кнопка строительства в провинции с ид: ${item["row_id"]}`);
+            menuNewBuilding(item);
+        });        
     });
 
     // Старый вариант для одного поселения
@@ -646,6 +665,28 @@ function actualVarPlayer(res) {
     logResultStart();
     logAllResultStart();
 }
+
+// Открыващее меню для действий с поселениями/провинциями.
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function dropdownProvince(id_prov) {
+    document.getElementById(`dropdownProv${id_prov}`).classList.toggle("show");
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+} 
 
 
 // Отмена приказов

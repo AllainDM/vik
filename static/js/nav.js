@@ -9,6 +9,7 @@ function hiddenAllWindows() {
     document.getElementById("dynasty-window").setAttribute('style', 'display: none');
     document.getElementById("army-window").setAttribute('style', 'display: none');
     document.getElementById("players-window").setAttribute('style', 'display: none');
+    
 
     document.getElementById("party-button").setAttribute('style', 'color: black; cursor: pointer; ');
     document.getElementById("settlement-button").setAttribute('style', 'color: black; cursor: pointer; ');

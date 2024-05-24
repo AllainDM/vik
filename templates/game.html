@@ -116,6 +116,22 @@
                 <div class="dashboard-resources stats-army">            
                     <div style="margin-top: 2px; text-align: center;">Армия</div>
                 </div>
+                <div id="units-window">
+                    <table class="table" id="table-units">  
+                        
+                    </table>
+                    <div style="background-color: gray; margin-bottom: 30px;">
+                        <span>Выберите действие с юнитом: </span>
+                        <select name="unit-select-action" id="unit-select-action" size="1" style="font-size: 17px; background-color: rgb(175, 170, 170);">
+                            
+                            <!-- <option value="none" selected="selected">   </option> -->
+                            <!-- <option value="dismiss">Распустить</option> -->
+                            <option value="create-army">Сформировать армию</option>
+                            <option value="train">Тренировать</option>
+                        </select>
+                        <button id="apply-changes-units">Подтвердить</button>
+                    </div>                
+                </div>
             </div> 
             
             <!-- Окошко с остальными игроками -->      
@@ -203,22 +219,6 @@
             </div> -->
 
             <!-- <div id="tab-province"> -->
-            <div>
-                <table class="table" id="table-units">  
-                    
-                </table>
-                <div style="background-color: gray; margin-bottom: 30px;">
-                    <span>Выберите действие с юнитом: </span>
-                    <select name="unit-select-action" id="unit-select-action" size="1" style="font-size: 17px; background-color: rgb(175, 170, 170);">
-                        
-                        <!-- <option value="none" selected="selected">   </option> -->
-                        <!-- <option value="dismiss">Распустить</option> -->
-                        <option value="create-army">Сформировать армию</option>
-                        <option value="train">Тренировать</option>
-                    </select>
-                    <button id="apply-changes-units">Подтвердить</button>
-                </div>                
-            </div>
 
             <table class="table" id="table-province">  
                 
