@@ -60,7 +60,11 @@ let statusGameDictInfo = {
 let statusGameDictPlayer = {
 
 }
-// Инфа об юних игрока
+// Инфа о юнитах игрока
+let statusGameDictPlayerUnits = {
+
+}
+// Инфа об армиях игрока
 let statusGameDictPlayerArmy = {
 
 }
@@ -414,7 +418,8 @@ const unitsNameHtml = document.querySelector(".stats-units");
 function actualVarPlayer(res) {
     // Новое, копирование всего сразу в один словарь
     statusGameDictPlayer = res[0]
-    statusGameDictPlayerArmy = res[2]
+    statusGameDictPlayerUnits = res[2]
+    statusGameDictPlayerArmy = res[3]
 
     console.log('!!!!!!!! statusGameDictPlayer');
     console.log(statusGameDictPlayer)
@@ -422,6 +427,9 @@ function actualVarPlayer(res) {
     statusGameDictSettlements = res[1]
     console.log('!!!!!!!! statusGameDictSettlements');
     console.log(statusGameDictSettlements)
+
+    console.log('!!!!!!!! statusGameDictPlayerUnits');
+    console.log(statusGameDictPlayerUnits)
 
     console.log('!!!!!!!! statusGameDictPlayerArmy');
     console.log(statusGameDictPlayerArmy)
@@ -829,28 +837,28 @@ function showUnits(unitsTab) {
             </tr>
         </thead>`)
     console.log("Собираем юниты");
-    console.log(statusGameDictPlayerArmy)
-    for (i=0;i<statusGameDictPlayerArmy.length;i++) {
+    console.log(statusGameDictPlayerUnits)
+    for (i=0;i<statusGameDictPlayerUnits.length;i++) {
         // console.log(statusGameDictPlayerArmy[i])
         unitsTab.insertAdjacentHTML("beforeend", 
             `<tr class="table units">
-                <td>${statusGameDictPlayerArmy[i][0]["location_name"]}</th>
-                <td>${statusGameDictPlayerArmy[i][1].length}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["hp_cur"]}/${statusGameDictPlayerArmy[i][0]["hp_max"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["endurance_cur"]}/${statusGameDictPlayerArmy[i][0]["endurance_max"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["strength"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["agility"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["armor"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["shield"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["melee_skill"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["melee_weapon"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["ranged_skill"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["ranged_weapon"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["experience"]}</th>
-                <td>${statusGameDictPlayerArmy[i][0]["name"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["location_name"]}</th>
+                <td>${statusGameDictPlayerUnits[i][1].length}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["hp_cur"]}/${statusGameDictPlayerUnits[i][0]["hp_max"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["endurance_cur"]}/${statusGameDictPlayerUnits[i][0]["endurance_max"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["strength"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["agility"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["armor"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["shield"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["melee_skill"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["melee_weapon"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["ranged_skill"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["ranged_weapon"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["experience"]}</th>
+                <td>${statusGameDictPlayerUnits[i][0]["name"]}</th>
                 
-                <td><label for="cheсked-unit-${statusGameDictPlayerArmy[i][0]["row_id"]}">Выбрать
-                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayerArmy[i][0]["row_id"]}" type="checkbox">
+                <td><label for="cheсked-unit-${statusGameDictPlayerUnits[i][0]["row_id"]}">Выбрать
+                    <input class="cheсked-unit" id="cheсked-unit-${statusGameDictPlayerUnits[i][0]["row_id"]}" type="checkbox">
                 </label></th>
                                 
             </tr>`

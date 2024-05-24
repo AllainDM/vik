@@ -738,14 +738,12 @@ def req_status_game_player():
         # Необходимо новое подключение, ибо в 20% случаев выдает ошибку, что курсор закрыт.
         db = maindb.get_db()
         dbase2 = FDataBase(db)
-        units = dbase2.get_all_our_units(data_dynasty["our_settlements"])
+        # Получим юнитов
+        # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
+        units = dbase2.get_all_our_units(game_id, data_dynasty["our_settlements"])
 
-        # # TODO Внимание костыль
-        # for i in range(15):
-        #     print(f"Попытка номер: {i+1}")
-        #     units = dbase2.get_all_our_units(data_dynasty["our_settlements"])
-        #     if units:
-        #         break
+        dbase3 = FDataBase(db)
+        army = dbase3.get_army(game_id, player, "player")  # Третий аргумент тип запроса.
 
         # Юниты берем из БД. Для начала возьмем в записи игрока его поселения.
         list_our_settlements = data_dynasty["our_settlements"]
@@ -753,7 +751,7 @@ def req_status_game_player():
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
         # else:  # Если у игрока нет поселения
         #     data_settlement = []
-        all_data = [data_dynasty, data_settlements, units]
+        all_data = [data_dynasty, data_settlements, units, army]
         # print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:
@@ -761,7 +759,8 @@ def req_status_game_player():
         return ""
 
 
-@app.route("/req_status_game", methods=["GET"])  # Запрос общих параметров партии
+# Запрос общих параметров партии
+@app.route("/req_status_game", methods=["GET"])
 @login_required
 def req_status_game():
     player = int(current_user.get_id())

@@ -143,10 +143,12 @@ class FDataBase:
         # return True
 
     # Получить пачку юнитов
-    def get_units_group(self, home_location_id):
+    def get_units_group(self, game_id, home_location_id):
         print("Запрос к БД в получении пачки юнитов (get_units_group) (FDataBase.py).")
         try:
-            self.__cur.execute(f"SELECT * FROM group_units WHERE home_location_id = {home_location_id}")
+            # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
+            self.__cur.execute(f"SELECT * FROM group_units "
+                               f"WHERE game_id = {game_id} AND home_location_id = {home_location_id}")
 
             res_group_units = self.__cur.fetchall()
 
@@ -159,14 +161,35 @@ class FDataBase:
         except Exception as _ex:
             print("Ошибка поиска юнитов в БД 2", _ex)
 
+    # Получить пачку юнитов
+    def get_army(self, game_id, ruler, type_req):
+        print("Запрос к БД в получении армий (get_army) (FDataBase.py).")
+        try:
+            # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
+            if type_req == "player":
+                self.__cur.execute(f"SELECT * FROM army WHERE game_id = {game_id} AND ruler = {ruler}")
+
+            res_army = self.__cur.fetchall()
+
+            if not res_army:
+                print("Group_units not found")
+                return False
+            else:
+                print(f"Выведем все полученные армии (FDataBase.py): {res_army}")
+                return res_army
+        except Exception as _ex:
+            print("Ошибка поиска армий в БД 1", _ex)
+
     # Получить всех юнитов игрока
-    def get_all_our_units(self, list_location_id):
+    def get_all_our_units(self, game_id, list_location_id):
         print("Запрос к БД в получении пачки юнитов (get_all_our_units) (FDataBase.py).")
         all_units = []  # Необходимый нам список.
         try:
             with self.__cur as cursor:
                 # Тут ищем пачки юнитов, которые хранят общую инфу
-                cursor.execute(f"SELECT * FROM group_units WHERE home_location_id in {tuple(list_location_id)}")
+                # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
+                cursor.execute(f"SELECT * FROM group_units "
+                               f"WHERE home_location_id in {tuple(list_location_id)} AND game_id = {game_id}")
 
                 # Соберем описание колонок
                 columns_groups_units = []
