@@ -261,6 +261,11 @@ class Dynasty:
                 print(f"""Выполнено действие {self.acts[0]}""")
                 self.acts.pop(0)
 
+            elif self.acts[0][1] == 404:  # Атака
+                self.act_attack(self.acts[0][2], self.acts[0][3])
+                print(f"""Выполнено действие {self.acts[0]}""")
+                self.acts.pop(0)
+
             else:
                 print('Записей в акте нет')
 
@@ -391,6 +396,23 @@ class Dynasty:
                 self.result_logs_text.append(f"Вы НЕ распустили юниты. Хз по какой причине.")
         else:
             self.result_logs_text.append(f"Вы НЕ распустили юниты. Не получены аргументы.")
+
+    def act_attack(self, target_id, army):     # 404 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
+        self.gold = int(self.gold)
+        if target_id > 0:  # TODO Пока просто проверка на 0 поселение.
+
+            # Логи
+            self.result_logs_text.append(f"Вы атаковали поселение с ид: {target_id}. "
+                                         f"Итог неизвестен.")
+            self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы атаковали поселение с ид: {target_id}. "
+                                                   f"Итог неизвестен.")
+            self.game.all_logs.append(f"{self.name_rus} атаковали поселение с ид: {target_id}. "
+                                      f"Итог неизвестен.")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                            f"{self.name_rus} атаковали поселение с ид: {target_id}. "
+                                            f"Итог неизвестен.")
+        else:
+            self.result_logs_text.append(f"Вы НЕ смогли атаковать поселение, хз как так...")
 
     def calc_win_points(self):
         # Возьмем по 1 очку за 3000

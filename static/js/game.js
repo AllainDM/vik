@@ -594,9 +594,15 @@ function actualVarPlayer(res) {
         });
         document.getElementById(`btn-act-war${item["row_id"]}`).addEventListener(('click'), () => {
             console.log(`Нажата кнопка нападения на провинцию с ид: ${item["row_id"]}`);
+            // Аргументы: ид целевого поселения, инфа об нашей армии
+            console.log(`item["row_id"]: ${item["row_id"]}`)
+            console.log(`res[3]: ${res[3]}`)
+            attack(item["row_id"], res[3]);
         });
         document.getElementById(`btn-act-build${item["row_id"]}`).addEventListener(('click'), () => {
             console.log(`Нажата кнопка строительства в провинции с ид: ${item["row_id"]}`);
+            console.log(`Что хранится в item: ${item}`);
+
             menuNewBuilding(item);
         });        
     });
@@ -1080,6 +1086,20 @@ function createArmy(arg) {
     logStart();
 
 };
+
+// Война
+
+function attack(settl_id, army) {  // 404
+    console.log("Запуск функции нападения.");
+    console.log("Модалку временно не рисуем.");
+    console.log(settl_id);
+    console.log(army);
+    statusGame.acts.push([`Атакуем: ${settl_id} (Вывести имена поселений)`, 
+    404, settl_id, army]) 
+    postAct(statusGame.game_id);
+    logStart();
+    // closeModal();
+}
 
 
 // Строительство 

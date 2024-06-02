@@ -101,20 +101,6 @@ class Settlement:
         units = dbase.get_units_group(self.game_id, self.row_id)
         print(f"Получаем юнитов с БД(settlement.py): {units}")
         print(f"Поселение (settlement.py): {self.name_rus}")
-        # if units:  # Проверка на наличие юнитов в принципе.
-        #     # print("Тестим подсчет средних параметров юнитов.")
-        #     for u in units:  # Разбиваем на пачки юнитов(по постройкам или как там будет).
-        #         print(f"u: {u}")
-        #         for unit in u:  # Разбиваем уже на отдельных юнитов чьи параметры будем складывать.
-        #             for k, v in unit.items():
-        #                 print(f"Тут ключ для сверки: {k}")
-        #                 if k in par_list:
-        #                     print("Складываем.")
-        #                     units[0][k] += v
-        #         for k, v in units[0].items():  # Еще один перебор для высчитывания среднего параметра.
-        #             if k in par_list:
-        #                 print("Делим.")
-        #                 units[0][k] = units[0][k]/(len(units)-1)
 
     # Определить доступные для строительства постройки
     def available_buildings(self):
