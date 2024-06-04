@@ -9,6 +9,7 @@ from goods import Goods
 from buildings import Buildings
 import decision  # Импортируем решения, будет обращаться напрямую
 
+import war
 import maindb
 from FDataBase import FDataBase
 
@@ -398,19 +399,22 @@ class Dynasty:
             self.result_logs_text.append(f"Вы НЕ распустили юниты. Не получены аргументы.")
 
     def act_attack(self, target_id, army):     # 404 id.  TODO Возможно надо будет добавить аргумент с ид поселения.
-        self.gold = int(self.gold)
+        # self.gold = int(self.gold)
         if target_id > 0:  # TODO Пока просто проверка на 0 поселение.
+            # Запустим функцию из модуля рассчета боя
+            # Возращается тексторвый итог боя.
+            battle = war.battle(self.game_id, army, target_id)
 
-            # Логи
+            # Логи. TODO внимание, целевая сторона не получает лог.
             self.result_logs_text.append(f"Вы атаковали поселение с ид: {target_id}. "
-                                         f"Итог неизвестен.")
+                                         f"Итог: {battle}")
             self.result_logs_text_all_turns.append(f"Ход {self.game.turn}. Вы атаковали поселение с ид: {target_id}. "
-                                                   f"Итог неизвестен.")
+                                                   f"Итог: {battle}")
             self.game.all_logs.append(f"{self.name_rus} атаковали поселение с ид: {target_id}. "
-                                      f"Итог неизвестен.")
-            self.game.all_logs_party.append(f"Ход {self.game.turn}. "
+                                      f"Итог: {battle}")
+            self.game.all_logs_party.append(f"Ход {self.game.turn}"
                                             f"{self.name_rus} атаковали поселение с ид: {target_id}. "
-                                            f"Итог неизвестен.")
+                                            f"Итог: {battle}")
         else:
             self.result_logs_text.append(f"Вы НЕ смогли атаковать поселение, хз как так...")
 

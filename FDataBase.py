@@ -162,12 +162,17 @@ class FDataBase:
             print("Ошибка поиска юнитов в БД 2", _ex)
 
     # Получить пачку юнитов
-    def get_army(self, game_id, ruler, type_req):
+    def get_army(self, game_id, req_id, type_req):
+        """
+        Получить инфу об армии.
+        req_id = может быть любой ид, главное передать тип запроса в type_req
+        Например если type_req == player, то в req_id передаем ruler
+        """
         print("Запрос к БД в получении армий (get_army) (FDataBase.py).")
         try:
             # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
             if type_req == "player":
-                self.__cur.execute(f"SELECT * FROM army WHERE game_id = {game_id} AND ruler = {ruler}")
+                self.__cur.execute(f"SELECT * FROM army WHERE game_id = {game_id} AND ruler = {req_id}")
 
             res_army = self.__cur.fetchall()
 
@@ -181,15 +186,28 @@ class FDataBase:
             print("Ошибка поиска армий в БД 1", _ex)
 
     # Получить всех юнитов игрока
-    def get_all_our_units(self, game_id, list_location_id):
+    def get_all_our_units(self, game_id, req_id, type_req):
+        """
+        Получить инфу об армии.
+        req_id = может быть любой ид, главное передать тип запроса в type_req
+        Например если type_req == home_location, то в req_id передаем home_location
+        """
         print("Запрос к БД в получении пачки юнитов (get_all_our_units) (FDataBase.py).")
+        print(f"req_id {req_id}")
+        print(f"type_req {type_req}")
         all_units = []  # Необходимый нам список.
         try:
             with self.__cur as cursor:
                 # Тут ищем пачки юнитов, которые хранят общую инфу
                 # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
-                cursor.execute(f"SELECT * FROM group_units "
-                               f"WHERE home_location_id in {tuple(list_location_id)} AND game_id = {game_id}")
+                if type_req == "home_location":
+                    cursor.execute(f"SELECT * FROM group_units "
+                                   f"WHERE home_location_id in {tuple(req_id)} AND game_id = {game_id}")
+                elif type_req == "army":
+                    # cursor.execute(f"SELECT * FROM group_units "
+                    #                f"WHERE army in {tuple(req_id)} AND game_id = {game_id}")
+                    cursor.execute(f"SELECT * FROM group_units "
+                                   f"WHERE army = {req_id} AND game_id = {game_id}")
 
                 # Соберем описание колонок
                 columns_groups_units = []

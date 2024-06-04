@@ -740,7 +740,9 @@ def req_status_game_player():
         dbase2 = FDataBase(db)
         # Получим юнитов
         # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
-        units = dbase2.get_all_our_units(game_id, data_dynasty["our_settlements"])
+        # Третий агрумент "тип запроса", то есть в какой именно ид(второй аргумент) нам нужно искать
+        # В данном случае это домашняя провинция
+        units = dbase2.get_all_our_units(game_id, data_dynasty["our_settlements"], "home_location")
 
         dbase3 = FDataBase(db)
         army = dbase3.get_army(game_id, player, "player")  # Третий аргумент тип запроса.
