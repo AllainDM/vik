@@ -200,14 +200,18 @@ class FDataBase:
             with self.__cur as cursor:
                 # Тут ищем пачки юнитов, которые хранят общую инфу
                 # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
+                # TODO не проще сразу подставлять тип запроса в фигурных скобках?
                 if type_req == "home_location":
+                    print("home_location")
                     cursor.execute(f"SELECT * FROM group_units "
                                    f"WHERE home_location_id in {tuple(req_id)} AND game_id = {game_id}")
                 elif type_req == "army":
+                    print("army")
                     # cursor.execute(f"SELECT * FROM group_units "
                     #                f"WHERE army in {tuple(req_id)} AND game_id = {game_id}")
                     cursor.execute(f"SELECT * FROM group_units "
-                                   f"WHERE army = {req_id} AND game_id = {game_id}")
+                                   # f"WHERE army = {req_id} AND game_id = {game_id}")
+                                   f"WHERE home_location_id = {req_id}")
 
                 # Соберем описание колонок
                 columns_groups_units = []

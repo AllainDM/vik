@@ -23,8 +23,15 @@ def battle(game_id, inv_army, target_id):
     dbase404 = FDataBase(db)
     # req_army_a = [1, 2, 3]
     # units_group_a = dbase404.get_all_our_units(game_id, req_army_a, "army")
-    units_group_a = dbase404.get_all_our_units(game_id, req_army_a[0], "army")
-    print(f"units_group_a {units_group_a}")
+    # units_group_a = dbase404.get_all_our_units(game_id, req_army_a[0], "army")
+    group_a = dbase404.get_all_our_units(game_id, 1, "army")
+    print(f"units_group_a {group_a}")
+    print("Выведем войска по циклу:")
+    units_group_a = []
+    for u_group in group_a:
+        for unit in u_group[1]:
+            print(unit)
+            units_group_a.append(unit)  # Обьединим всех юнитов всех групп в один список.
 
     return "Неизвестен."
 
