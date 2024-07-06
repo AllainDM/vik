@@ -54,8 +54,8 @@ def battle(game_id, inv_army, target_id):
     dead_in_group_a = f"Потери атакующей армии: {len(dead_id_units_in_group_a)}"
     dead_in_group_b = f"Потери атакующей армии: Неизвестно"
 
-    return f"{dead_in_group_a}. {dead_in_group_b}"
-
+    return f"{dead_in_group_a}. {dead_in_group_b}"  
+  
 
 def damage():
     return random.randint(0, 3)
