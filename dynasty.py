@@ -39,11 +39,12 @@ class Dynasty:
         self.main_province = province_id
         # self.our_settlements = [str(main_settlement)]  # Список ид поселений под управлением игрока
         # TODO выдаем несколько поселений для тестов.
+        # self.our_settlements = [main_settlement,
         self.our_settlements = [str(main_settlement),
                                 str(main_settlement+1),
-                                str(main_settlement+2),
-                                str(main_settlement+3),
-                                str(main_settlement+4),
+                                # str(main_settlement+2),
+                                # str(main_settlement+3),
+                                # str(main_settlement+4),
                                 # str(main_settlement+5),
                                 # str(main_settlement+6),
                                 # str(main_settlement+7),

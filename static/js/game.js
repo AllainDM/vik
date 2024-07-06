@@ -597,6 +597,7 @@ function actualVarPlayer(res) {
             // Аргументы: ид целевого поселения, инфа об нашей армии
             console.log(`item["row_id"]: ${item["row_id"]}`)
             console.log(`res[3]: ${res[3]}`)
+            // res[3] передаем всю армию, ид бек сам выберет. 
             attack(item["row_id"], res[3]);
         });
         document.getElementById(`btn-act-build${item["row_id"]}`).addEventListener(('click'), () => {

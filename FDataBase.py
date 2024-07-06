@@ -45,7 +45,7 @@ class FDataBase:
             self.__cur.execute("INSERT INTO feedback (message, user_id, user_name, date) VALUES(%s, %s, %s, %s)",
                                (mess, user_id, user_name, date))
             self.__db.commit()
-            print(f"Добавилось? id:{user_id} name: {user_name} text: {mess} date: {date}")
+            # print(f"Добавилось? id:{user_id} name: {user_name} text: {mess} date: {date}")
         except Exception as _ex:
             print("Ошибка добавления данных в БД 1", _ex)
             return False
@@ -85,7 +85,7 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
+            # print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
             return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД 3", _ex)
@@ -105,7 +105,7 @@ class FDataBase:
 
             self.__db.commit()
 
-            print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
+            # print(f"Добавилось? game_id:{game_id} name_eng:{name_eng} name_rus: {name_rus} ruler: {ruler}")
             return row_id
 
         except Exception as _ex:
@@ -133,8 +133,8 @@ class FDataBase:
             # Вернем ид записи
             row_id = self.__cur.fetchone()[0]
             self.__db.commit()
-            print(f"Пачка юнитов добавлена. game_id:{game_id}, row_id:{row_id}, "
-                  f"home_location_id:{home_location_id}.")
+            # print(f"Пачка юнитов добавлена. game_id:{game_id}, row_id:{row_id}, "
+            #       f"home_location_id:{home_location_id}.")
             return row_id
         except Exception as _ex:
             print("Ошибка добавления данных в БД 5 add_group_units", _ex)
@@ -194,6 +194,8 @@ class FDataBase:
         """
         print("Запрос к БД в получении пачки юнитов (get_all_our_units) (FDataBase.py).")
         print(f"req_id {req_id}")
+        print(f"type(req_id) {type(req_id)}")
+
         print(f"type_req {type_req}")
         all_units = []  # Необходимый нам список.
         try:
@@ -201,10 +203,18 @@ class FDataBase:
                 # Тут ищем пачки юнитов, которые хранят общую инфу
                 # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
                 # TODO не проще сразу подставлять тип запроса в фигурных скобках?
+                # TODO в разных случаях поиск идет = или IN
+                # req_id_str = ['\''+str(id)+'\'' for id in req_id]
                 if type_req == "home_location":
                     print("home_location")
+                    print(f"req_id {req_id}")
+                    print(f"tuple([req_id]) {tuple([req_id])}")
+                    print(f"tuple(req_id) {tuple(req_id) }")
                     cursor.execute(f"SELECT * FROM group_units "
-                                   f"WHERE home_location_id in {tuple(req_id)} AND game_id = {game_id}")
+                                   # Кортеж тут потому, что ищем совпадение IN.
+                                   # f"WHERE home_location_id in {req_id} AND game_id = {game_id}")
+                                   f"WHERE home_location_id in {'('+', '.join(req_id)+')'} AND game_id = {game_id}")
+                                   # f"WHERE home_location_id in {req_id} AND game_id = {game_id}")
                 elif type_req == "army":
                     print("army")
                     # cursor.execute(f"SELECT * FROM group_units "
