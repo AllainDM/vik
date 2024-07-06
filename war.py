@@ -1,4 +1,6 @@
 # Модуль рассчета боя
+import random
+
 import maindb
 from FDataBase import FDataBase
 
@@ -28,8 +30,8 @@ def battle(game_id, inv_army, target_id):
     # TODO у нас еще не сформированы армии и как заглушка передаем home_id
     group_a = dbase404.get_all_our_units(game_id, req_army_a[0], "army")
     print(f"units_group_a {group_a}")
-    print("Выведем войска по циклу, атакующая армия:")
-    units_group_a = []
+    print("Выведем войска по циклу:")
+    units_group_a = []  # Список со словарями каждого юнита
     for u_group in group_a:
         for unit in u_group[1]:
             print(unit)
@@ -48,3 +50,6 @@ def battle(game_id, inv_army, target_id):
             units_group_d.append(unit)  # Обьединим всех юнитов всех групп в один список.
     return "Неизвестен."
 
+
+def damage():
+    return random.randint(0, 3)
