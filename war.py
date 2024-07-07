@@ -36,18 +36,16 @@ def battle(game_id, inv_army, target_id):
     # TODO у нас еще не сформированы армии и как заглушка передаем home_id
     # TODO бля
     group_a = dbase404.get_all_our_units(game_id, '1', "army")
+    print(f"group_a {group_a}")
     # Первый элемент словарь с общими параметрами.
     # !!! Второй элемент это список с юнитами.
     # Необходимо запросить все группы юнитов выбраной армии.
     if not group_a:
         return f"Произошла ошибка при обсчете боя, атакующая армия не найдена."
-    units_group_a = []  # Список со словарями каждого юнита
-
     # TODO сделать парамерт живой или мертвый для отметки в бд, чтобы не удалять
     dead_id_units_in_group_a = set()  # Список с ид убитых юнитов(для удаления с бд)
+    units_group_a = []  # Список со словарями только юнитов всех армий одной из сторон.
 
-    print(f"group_a {group_a}")
-    # print("Выведем войска по циклу, атакующая армия:")
     for one_list_group in group_a:
         units_group_a += one_list_group[1]  # Второй элемент это список с юнитами.
     print(f"units_group_a {units_group_a}")
@@ -58,28 +56,20 @@ def battle(game_id, inv_army, target_id):
     dbase404 = FDataBase(db)
     # TODO на текущий момент у обороняющей стороны берутся юниты с местной локацией
     group_b = dbase404.get_all_our_units(game_id, str(target_id), "home_location")
+    print(f"group_b {group_b}")
+    # Проверка отключена для отладки(ловим ошибки).
     # if not group_b:
     #     return f"Тут не совсем ошибка, просто защищающаяся армия не найдена."
-    units_group_b = []
-
     # TODO сделать парамерт живой или мертвый для отметки в бд, чтобы не удалять
     dead_id_units_in_group_b = set()  # Список с ид убитых юнитов(для удаления с бд)
+    units_group_b = []  # Список со словарями только юнитов всех армий одной из сторон.
 
-    print(f"units_group_b {group_b}")
-    # print("Выведем войска по циклу, защищающаяся армия:")
     for one_list_group in group_b:
         units_group_b += one_list_group[1]  # Второй элемент это список с юнитами.
     print(f"units_group_b {units_group_b}")
 
     # Пункт 4. Расчет ширины фронта и количество юнитов поддержки.
-    # Высчитаем ширину фронта и количество юнитов поддержки.
-    front_width = (len(units_group_a) + len(units_group_b) - abs(len(units_group_a) - len(units_group_b))) / 2
-
-    support = lambda a, b: a - b if a > b else 0
-    support_a = support(len(units_group_a), len(units_group_b))
-    support_b = support(len(units_group_b), len(units_group_a))
-    print(f"Поддержка а: {support_a}")
-    print(f"Поддержка b: {support_b}")
+    # Считается уже в бою, каждый раз для нового раунда.
 
     # Пункт 5. Бой.
     # Бой !!!
@@ -89,10 +79,20 @@ def battle(game_id, inv_army, target_id):
         # TODO по хорошему перетасовывать юнитов вначале раунда.
         print("######################")
         print(f"Раунд: {round}")
+
+        # Высчитаем ширину фронта и количество юнитов поддержки.
+        front_width = (len(units_group_a) + len(units_group_b) - abs(len(units_group_a) - len(units_group_b))) / 2
+        support = lambda a, b: a - b if a > b else 0
+        support_a = support(len(units_group_a), len(units_group_b))
+        support_b = support(len(units_group_b), len(units_group_a))
+        print(f"Поддержка а: {support_a}")
+        print(f"Поддержка b: {support_b}")
+
         for u in range(int(front_width)):  # Преобразовали float
             # Рассчет бонусов
             bonus_a = 0
-            bonus_b = 0
+            # TODO тестово выдадим бонус для второй армии.
+            bonus_b = 1
             if units_group_a[u]["agility"] > units_group_b[u]["agility"]:
                 bonus_a += 1
             elif units_group_a[u]["agility"] < units_group_b[u]["agility"]:
@@ -121,30 +121,28 @@ def battle(game_id, inv_army, target_id):
                 def_ = units_group_a[u]["armor"] + damage()
                 units_group_a[u]["hp_cur"] = (def_ - dam) / 2
                 units_group_a[u]["endurance_cur"] = (def_ - dam) / 2
-            if units_group_a[u]["hp_cur"] <= 0:
-                dead_id_units_in_group_a.add(units_group_a[u]["row_id"])
-            if units_group_b[u]["hp_cur"] <= 0:
-                dead_id_units_in_group_b.add(units_group_b[u]["row_id"])
-
-            # Рассчет урона.
 
             print(f"Скилл attack_a: {attack_a}")
             print(f"Скилл attack_b: {attack_b}")
 
+            if units_group_a[u]["hp_cur"] <= 0:
+                dead_id_units_in_group_a.add(units_group_a[u]["row_id"])
+            if units_group_b[u]["hp_cur"] <= 0:  # Новое условие, в дальнейшем оба могут погибнуть.
+                dead_id_units_in_group_b.add(units_group_b[u]["row_id"])
 
-    #     for unit in units_group_a:
-    #         unit["hp_cur"] -= damage()
-    #
-    #         print(unit)
-    #     units_group_a = [u for u in units_group_a if u["hp_cur"] > 0]
-    #     print("Юниты после раунда:")
-    #     print(units_group_a)
+        # Соберем список выживших для нового раунда битвы.
+        units_group_a = [i for i in units_group_a if i["hp_cur"] > 0]
+        print(f"Количество выживших в атакующей армии после {round} раунда: {len(units_group_a)}")
+        print(f"Количество погибших в атакующей армии после {round} раунда: {len(dead_id_units_in_group_a)}")
+        units_group_b = [i for i in units_group_b if i["hp_cur"] > 0]
+        print(f"Количество выживших в защищающейся армии после {round} раунда: {len(units_group_b)}")
+        print(f"Количество погибших в защищающейся армии после {round} раунда: {len(dead_id_units_in_group_b)}")
 
     # Пункт 6. Сбор текстовой информации для игроков.
     print("Потери:")
     print(dead_id_units_in_group_a)
     dead_in_group_a = f"Потери атакующей армии: {len(dead_id_units_in_group_a)}"
-    dead_in_group_b = f"Потери атакующей армии: {len(dead_id_units_in_group_b)}"
+    dead_in_group_b = f"Потери защищающейся  армии: {len(dead_id_units_in_group_b)}"
 
     return f"{dead_in_group_a}. {dead_in_group_b}"
     # return "Неизвестен."
