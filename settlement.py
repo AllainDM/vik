@@ -4,6 +4,7 @@ import json
 import random
 
 import buildings
+import village
 import mod
 # import province
 from goods import Goods
@@ -43,6 +44,13 @@ class Settlement:
         # Сохраним описание построек. Может временно. Может быть будет изменяться для игроков.
         self.buildings_description = self.buildings.buildings_description
         self.buildings_icon_name = self.buildings.buildings_icon_name  # Список иконок для сохранения
+
+        # Деревни(постройки-поселения) в провинции.
+        self.village = village.Village()  # Класс для взаимодействия
+        self.village_list = self.village.village_list  # Список для сохранения
+        # Сохраним описание деревнь. Может временно. Может быть будет изменяться для игроков.
+        self.village_description = self.village.village_description
+        self.village_icon_name = self.village.village_icon_name  # Список иконок для сохранения
 
         # Примерные параметры
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
@@ -401,6 +409,12 @@ class Settlement:
             "buildings_icon_name": self.buildings_icon_name,
             "buildings_description": self.buildings_description,
 
+            # Деревни
+            # "available_village": self.available_village,
+            # "village_cost": self.village_cost,
+            "village_icon_name": self.village_icon_name,
+            "village_description": self.village_description,
+
             # Логи
             "result_events_text": self.result_events_text,
             "result_events_text_all_turns": self.result_events_text_all_turns,
@@ -462,6 +476,12 @@ class Settlement:
         self.buildings_cost = data["buildings_cost"]
         self.buildings_icon_name = data["buildings_icon_name"]
         self.buildings_description = data["buildings_description"]
+
+        # Деревни
+        # self.available_village = data["available_village"]  # Еще не создано
+        # self.village_cost = data["village_cost"]      # Еще не создано
+        self.village_icon_name = data["village_icon_name"]
+        self.village_description = data["village_description"]
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]

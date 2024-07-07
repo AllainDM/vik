@@ -459,6 +459,9 @@ def create_game(setting):  # Получаем только список игро
         os.makedirs(f"games/{last_game_row_id}")
     if not os.path.exists(f"games/{last_game_row_id}/acts"):
         os.makedirs(f"games/{last_game_row_id}/acts")
+    # Создадим папки игры для логов
+    if not os.path.exists(f"battle_logs"):
+        os.makedirs(f"battle_logs")
 
     # 4. Создание экземпляра игры.
     # Создадим экземпляр игры, а так же поселения и династии для первого игрока.

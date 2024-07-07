@@ -235,15 +235,7 @@ function updateVar() {
     }
 
     // Поселение
-    const settName = document.querySelectorAll(".settlement-name")
-    settName.forEach((i, id) => {
-        i.innerText = statusSettlement.settlementName;
-    })
-    document.getElementById("build-points").innerText = `Очки строительства: ${statusSettlement.buildPoints}`
-    // document.getElementById("population").innerText = statusSettlement.population;  // wealthStatus
-    // document.getElementById("wealth-status").innerText = statusSettlement.wealthStatus + " (" + statusSettlement.populationGold + ")";
-    // document.getElementById("food").innerText = statusSettlement.food;
-    // document.getElementById("balance-food").innerText = statusSettlement.balanceFood;
+    // Пусто
 
     // Вкладка торговли
     // Тут отображена доступность покупки и продажы товаров.
@@ -523,16 +515,7 @@ function actualVarPlayer(res) {
     tab.innerHTML = `            
         <thead>    
             <tr class="table">
-                <th class="th" id='th-loc' style="min-width: 100px">Локация</th>
-                <th class="th" id='th-relation' style="min-width: 60px">Отнош.</th>
-                <th class="th" id='th-pop' style="min-width: 40px">Нас.</th>
-                <th class="th" id='th-wealth_status style="min-width: 80px"'>Благ.</th>
-                <th class="th" id='th-food' style="min-width: 40px">Еда произв.</th>
-                <th class="th" id='th-food-balace' style="min-width: 40px">Еда баланс</th>
-                <th class="th" id='th-dom' style="min-width: 50px">Строй</th>
 
-                <th class="th" id='th-buildings' style="min-width: 400px; ">Постройки</th>
-                <th class="th" id='th-action' style="min-width: 70px; ">Действие</th>
             </tr>
         </thead>`
     
@@ -562,29 +545,56 @@ function actualVarPlayer(res) {
             relation = 'Нейтрал.'
         }
         tab.insertAdjacentHTML("beforeend", 
-            `<tr class="table table-location">
-                <td id='th-loc'>${item["name_rus"]}</th>
-                <td id='th-relation'>${relation}</th>
-                <td id='th-pop'>${item["population"]}</th>
-                <td id='th-wealth_status'>${item["wealth_status"]}</th>
-                <td id='th-food'>${item["food"]}</th>
-                <td id='th-food-balace'>${item["balance_food"]}</th>
-                <td id='th-dom'>${item["build_points"]}</th>
+            `<div style="border: 4px solid ">
+                <tr>  
+                    <td>${item["name_rus"]}</th>
+                    <td id='th-relation'>${relation}</th>
+                    <td>Тут будут ресурсы</th>
+                    <td rowspan=3 id='th-action'>
+                        <div class="dropdown">
+                            <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
+                            <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
+                                <a id="btn-act-war${item["row_id"]}">Атаковать</a>
+                                <a id="btn-act-build${item["row_id"]}">Строительство</a>
+                            </div>
+                        </div> 
+                    </th>
+                <tr>  
+                    <td id='th-pop'>Нас: ${item["population"]}</th>
+                    <td id='th-wealth_status'>Благ: ${item["wealth_status"]}</th>
+                    <td id='th-buildings'>${buildings}</th>
+                <tr>
+                    <td id='th-dom'>Строй: ${item["build_points"]}</th>
+                    <td id='th-food-balace'>Еда: ${item["food"]}/${item["balance_food"]}</th>
+                    <td id='th-buildings'>Тут будут постройки в провинции</th>
+            </div>
+            `
 
-                <td id='th-buildings'>${buildings}</th>
-
-                <td id='th-action'>
-                    <div class="dropdown">
-                        <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
-                        <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
-                            <a id="btn-act-war${item["row_id"]}">Атаковать</a>
-                            <a id="btn-act-build${item["row_id"]}">Строительство</a>
-                        </div>
-                    </div> 
-                </th>
-
-            </tr>`
         );
+        // tab.insertAdjacentHTML("beforeend", 
+        //     `<tr class="table table-location">
+        //         <td id='th-loc'>${item["name_rus"]}</th>
+        //         <td id='th-relation'>${relation}</th>
+        //         <td id='th-pop'>${item["population"]}</th>
+        //         <td id='th-wealth_status'>${item["wealth_status"]}</th>
+        //         <td id='th-food'>${item["food"]}</th>
+        //         <td id='th-food-balace'>${item["balance_food"]}</th>
+        //         <td id='th-dom'>${item["build_points"]}</th>
+
+        //         <td id='th-buildings'>${buildings}</th>
+
+        //         <td id='th-action'>
+        //             <div class="dropdown">
+        //                 <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
+        //                 <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
+        //                     <a id="btn-act-war${item["row_id"]}">Атаковать</a>
+        //                     <a id="btn-act-build${item["row_id"]}">Строительство</a>
+        //                 </div>
+        //             </div> 
+        //         </th>
+
+        //     </tr>`
+        // );
 
         // <td id='th-action'><button id="btn-act-${item["row_id"]}">Выбрать</button></th>
         // <button id="btn-act-${item["row_id"]}">Выбрать</button>
@@ -608,17 +618,6 @@ function actualVarPlayer(res) {
         });        
     });
 
-    // Старый вариант для одного поселения
-    // Вывод построек в поселении
-    buildingsNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Постройки</div>`;
-    for (let key in statusSettlement.buildingsList) {
-        if (statusSettlement.buildingsList[key] > 0) {
-            buildingsNameHtml.innerHTML +=   
-            `<div>
-                ${key}: ${statusSettlement.buildingsList[key]}
-            </div>`;
-        }
-    }
     // Вывод доступных для покупки товаров
     availableGoodsBuyNameHtml.innerHTML = `<div style="margin-top: 2px; text-align: center;">Доступно к покупке</div>`;
     for (let key in statusSettlement.availableGoodsBuy) {
