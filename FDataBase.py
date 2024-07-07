@@ -204,7 +204,7 @@ class FDataBase:
                 # game_id не обязателен ввиду уникальности значений поселений для всех игр, но это для исключения ошибок
                 # TODO не проще сразу подставлять тип запроса в фигурных скобках?
                 # TODO в разных случаях поиск идет = или IN
-                # req_id_str = ['\''+str(id)+'\'' for id in req_id]
+                req_id_str = ['\''+str(id1)+'\'' for id1 in req_id]
                 if type_req == "home_location":
                     print("home_location")
                     print(f"req_id {req_id}")
@@ -212,9 +212,9 @@ class FDataBase:
                     print(f"tuple(req_id) {tuple(req_id) }")
                     cursor.execute(f"SELECT * FROM group_units "
                                    # Кортеж тут потому, что ищем совпадение IN.
-                                   # f"WHERE home_location_id in {req_id} AND game_id = {game_id}")
-                                   f"WHERE home_location_id in {'('+', '.join(req_id)+')'} AND game_id = {game_id}")
-                                   # f"WHERE home_location_id in {req_id} AND game_id = {game_id}")
+                                   # f"WHERE home_location_id in {tuple(req_id_str)} AND game_id = {game_id}")
+                                   # f"WHERE home_location_id in {'('+', '.join(req_id)+')'} AND game_id = {game_id}")
+                                   f"WHERE home_location_id = {req_id} AND game_id = {game_id}")
                 elif type_req == "army":
                     print("army")
                     # cursor.execute(f"SELECT * FROM group_units "

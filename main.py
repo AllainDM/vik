@@ -743,7 +743,14 @@ def req_status_game_player():
         # Третий агрумент "тип запроса", то есть в какой именно ид(второй аргумент) нам нужно искать
         # В данном случае это домашняя провинция
         print("Запросим юнитов по всем нашим провинциям.")
-        units = dbase2.get_all_our_units(game_id, data_dynasty["our_settlements"], "home_location")
+        # Циклом, я так и не победил преобразование в кортеж без запятой
+        # TODO обращение к БД и так должно возвращать список
+        all_units = []
+        for s in data_dynasty["our_settlements"]:
+            all_units += dbase2.get_all_our_units(game_id, s, "home_location")
+            # units = dbase2.get_all_our_units(game_id, s, "home_location")
+            # all_units = all_units + units[1:]
+            # Для обьединения всех юнитов нам необходимо пропустить 0 элемент с общей информацией.
 
         dbase3 = FDataBase(db)
         army = dbase3.get_army(game_id, player, "player")  # Третий аргумент тип запроса.
@@ -754,7 +761,7 @@ def req_status_game_player():
         # TODO Возможно просто возвращая специальное пустое поселение с ид 0
         # else:  # Если у игрока нет поселения
         #     data_settlement = []
-        all_data = [data_dynasty, data_settlements, units, army]
+        all_data = [data_dynasty, data_settlements, all_units, army]
         # print(f"3Информация об игроке и поселении {all_data}")
         return jsonify(all_data)
     except FileNotFoundError:

@@ -41,7 +41,7 @@ class Dynasty:
         # TODO выдаем несколько поселений для тестов.
         # self.our_settlements = [main_settlement,
         self.our_settlements = [str(main_settlement),
-                                str(main_settlement+1),
+                                # str(main_settlement+1),
                                 # str(main_settlement+2),
                                 # str(main_settlement+3),
                                 # str(main_settlement+4),
