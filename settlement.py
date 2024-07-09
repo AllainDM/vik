@@ -4,7 +4,7 @@ import json
 import random
 
 import buildings
-import village
+import villages
 import mod
 # import province
 from goods import Goods
@@ -35,7 +35,11 @@ class Settlement:
 
         # Создаем экземпляр общего класса ресурсов и построек
         # TODO зачем?
+
+        # Товары
         self.goods = Goods()
+
+        # Постройки
         self.buildings = buildings.Buildings()  # Класс для взаимодействия
         self.available_buildings = self.available_buildings()
         self.buildings_list = self.buildings.buildings_list  # Список для сохранения
@@ -46,11 +50,14 @@ class Settlement:
         self.buildings_icon_name = self.buildings.buildings_icon_name  # Список иконок для сохранения
 
         # Деревни(постройки-поселения) в провинции.
-        self.village = village.Village()  # Класс для взаимодействия
-        self.village_list = self.village.village_list  # Список для сохранения
+        self.villages = villages.Villages()  # Класс для взаимодействия
+        # .... Строчка для доступных построек
+        self.villages_list = self.villages.villages_list  # Список для сохранения
+        # Поселения, для вывода на фронт при основании/улучшении.
+        self.villages_cost = self.villages.villages_cost  # Список стоимости для сохранения
         # Сохраним описание деревнь. Может временно. Может быть будет изменяться для игроков.
-        self.village_description = self.village.village_description
-        self.village_icon_name = self.village.village_icon_name  # Список иконок для сохранения
+        self.villages_description = self.villages.villages_description
+        self.villages_icon_name = self.villages.villages_icon_name  # Список иконок для сохранения
 
         # Примерные параметры
         # TODO Население лучше создать как отдельный класс со своими параметрами и методами
@@ -376,7 +383,6 @@ class Settlement:
 
             # Экземпляры класса не сохраняем
             # "goods": self.goods,
-            "buildings_list": self.buildings_list,
 
             "population": self.population,
             "gold": self.gold,
@@ -404,16 +410,18 @@ class Settlement:
             "manpower": self.manpower,
 
             # Строительство, сохранение построек для строительства
+            "buildings_list": self.buildings_list,
             "available_buildings": self.available_buildings,
             "buildings_cost": self.buildings_cost,
             "buildings_icon_name": self.buildings_icon_name,
             "buildings_description": self.buildings_description,
 
             # Деревни
-            # "available_village": self.available_village,
-            # "village_cost": self.village_cost,
-            "village_icon_name": self.village_icon_name,
-            "village_description": self.village_description,
+            "villages_list": self.villages_list,
+            # "available_villages": self.available_villages,
+            "villages_cost": self.villages_cost,
+            "villages_icon_name": self.villages_icon_name,
+            "villages_description": self.villages_description,
 
             # Логи
             "result_events_text": self.result_events_text,
@@ -446,8 +454,6 @@ class Settlement:
         self.name_rus = data["name_rus"]
         self.name_eng = data["name_eng"]
 
-        self.buildings_list = data["buildings_list"]
-
         self.population = data["population"]
         self.gold = data["gold"]
         self.wealth_status = data["wealth_status"]
@@ -472,16 +478,18 @@ class Settlement:
         self.manpower = data["manpower"]
 
         # Строительство, сохранение построек
+        self.buildings_list = data["buildings_list"]  # Список построек в столице провинции
         self.available_buildings = data["available_buildings"]
         self.buildings_cost = data["buildings_cost"]
         self.buildings_icon_name = data["buildings_icon_name"]
         self.buildings_description = data["buildings_description"]
 
         # Деревни
-        # self.available_village = data["available_village"]  # Еще не создано
-        # self.village_cost = data["village_cost"]      # Еще не создано
-        self.village_icon_name = data["village_icon_name"]
-        self.village_description = data["village_description"]
+        self.villages_list = data["villages_list"]  # Список построек в столице провинции
+        # self.available_villages = data["available_villages"]  # Еще не создано
+        self.villages_cost = data["villages_cost"]
+        self.villages_icon_name = data["villages_icon_name"]
+        self.villages_description = data["villages_description"]
 
         self.result_events_text = data["result_events_text"]
         self.result_events_text_all_turns = data["result_events_text_all_turns"]

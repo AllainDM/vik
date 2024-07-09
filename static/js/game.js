@@ -159,27 +159,6 @@ document.getElementById('players-button').addEventListener('click', () => {
 });
 
 
-// Первичная загрузка шапки таблицы с провинциями
-// function tableStart() {
-//     document.getElementById(`tab-province`).innerHTML = `
-//     <table class="table" id="table-province">        
-//         <thead>    
-//             <tr class="table">
-//                 <th class="th" id='th-loc' style="width: 200px">Локация</th>
-//                 <th class="th" id='th-pop' style="width: 70px">Нас.</th>
-//                 <th class="th" id='th-wealth style="width: 70px"'>Благ.</th>
-//                 <th class="th" id='th-food' style="width: 70px">Еда произв.</th>
-//                 <th class="th" id='th-food-balace' style="width: 70px">Еда баланс</th>
-//                 <th class="th" id='th-dom' style="width: 70px">Строй</th>
-
-//                 <th class="th" id='th-buildings' style="width: 300px">Постройки</th>
-//             </tr>
-//         </thead>
-//     </table>`;
-// }
-// // Отображаем таблички под разные статусы
-// tableStart();
-
 // Модальное окно
 // Получить модальное окно
 const modal = document.getElementById("my-modal");
@@ -446,50 +425,16 @@ function actualVarPlayer(res) {
     statusGame.endTurnKnow = res[0].end_turn_know;
 
     // Логи игрока
-    // statusGame.logsText = [...res[0].result_logs_text, ...res[1].result_events_text]
-    // statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, ...res[1].result_events_text_all_turns]
-    
-    // statusGame.logsText = [...res[0].result_logs_text, ...res[1]["result_events_text"]]
     statusGame.logsText = [...res[0].result_logs_text, "Внимание, логи приходят не все."]
     statusGame.logsTextAllTurns = [...res[0].result_logs_text_all_turns, "Внимание, логи приходят не все."]
     
     console.log(statusGame.logsText)
 
     // Логи поселения. Или события, то, что напрямую не зависит от игрока.
-    // statusGame.logsText = res[1].result_events_text
-    // statusGame.logsTextAllTurns += res[1].result_events_text_all_turns
-    // console.log(typeof(statusGame.logsText))
-    // console.log(typeof(statusGame.logsTextAllTurns))
 
-
-    // console.log("statusGame new")
-    // console.log(statusGame)
-
-    // Поселение
-    // !!!!!!!!!!! Отключаем, делаем под несколько поселений
-    // statusSettlement.buildingsList = res[1].buildings_list;
-    // statusSettlement.settlementName = res[1].name_rus;
-    // statusSettlement.population = res[1].population;
-    // statusSettlement.populationGold = res[1].gold;
-    // statusSettlement.wealthStatus = res[1].wealth_status;
-    // statusSettlement.food = res[1].food;
-    // statusSettlement.balanceFood = res[1].balance_food;
-    // statusSettlement.buildPoints = res[1].build_points;
 
     // Доступность торговли
     statusSettlement.availableGoodsBuy = res[1].available_goods_buy;
-
-    // !!!!!!!!!!! Отключаем, делаем под несколько поселений
-    // statusBuildings[0] = res[1].available_buildings;
-    // statusBuildings[1] = res[1].buildings_cost;
-    // statusBuildings[2] = res[1].buildings_icon_name;
-    // statusBuildings[3] = res[1].buildings_description;
-    // console.log("Инфа о строительстве")     
-    // console.log(statusBuildings)   
-    // console.log(statusBuildings[0])   
-    // console.log(statusBuildings[1])
-    // console.log(statusBuildings[2])
-    // console.log(statusBuildings[3])
 
     // Новый вывод инфы сразу о всех наших локациях
     // С бека мы получаем массив, нужен цикл для переноса инфы
@@ -523,13 +468,23 @@ function actualVarPlayer(res) {
     res[1].forEach((item, num) => {
         // Преобразуем некоторые значения при необходимости
         let buildings = []
-
         for (let key in item["buildings_list"]) {
             if (item["buildings_list"][key]>0) {
                 // console.log("Выводим иконки построек.");
                 // console.log(`key ${key}`);
                 for (i = 1; i <= item["buildings_list"][key]; i++) {
                     buildings.push(`<img style="width: 30px" src="../static/image/buildings/${item["buildings_icon_name"][key]}" alt="Картинки нет, сорян" >`)
+                }// console.log(`key ${key}`);
+            }
+        }
+        // Поселения
+        let villages = []
+        for (let key in item["villages_list"]) {
+            if (item["villages_list"][key]>0) {
+                // console.log("Выводим иконки построек.");
+                // console.log(`key ${key}`);
+                for (i = 1; i <= item["villages_list"][key]; i++) {
+                    villages.push(`<img style="width: 30px" src="../static/image/villages/${item["villages_icon_name"][key]}" alt="Картинки нет, сорян" >`)
                 }// console.log(`key ${key}`);
             }
         }
@@ -545,59 +500,42 @@ function actualVarPlayer(res) {
             relation = 'Нейтрал.'
         }
         tab.insertAdjacentHTML("beforeend", 
-            `<div style="border: 4px solid ">
+            `
                 <tr>  
-                    <td>${item["name_rus"]}</th>
-                    <td id='th-relation'>${relation}</th>
-                    <td>Тут будут ресурсы</th>
-                    <td rowspan=3 id='th-action'>
+                    <td rowspan=2>
+                    ${item["name_rus"]} <br> 
+                    Благ: ${item["wealth_status"]} <br>
+                    Отнош: ${relation} <br>
+                    </th>
+
+                    <td rowspan=2>
+                    Нас: ${item["population"]} <br> 
+                    Еда: ${item["food"]}/${item["balance_food"]} <br> 
+                    Строй: ${item["build_points"]} <br> 
+                    </th>
+
+                    <td id='th-buildings'>${buildings}</th>
+                    
+                    <td rowspan=2 id='th-action'>
                         <div class="dropdown">
                             <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
                             <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
                                 <a id="btn-act-war${item["row_id"]}">Атаковать</a>
                                 <a id="btn-act-build${item["row_id"]}">Строительство</a>
+                                <a id="btn-act-decision${item["row_id"]}">Решения</a>
                             </div>
                         </div> 
                     </th>
-                <tr>  
-                    <td id='th-pop'>Нас: ${item["population"]}</th>
-                    <td id='th-wealth_status'>Благ: ${item["wealth_status"]}</th>
-                    <td id='th-buildings'>${buildings}</th>
+                                        
                 <tr>
-                    <td id='th-dom'>Строй: ${item["build_points"]}</th>
-                    <td id='th-food-balace'>Еда: ${item["food"]}/${item["balance_food"]}</th>
-                    <td id='th-buildings'>Тут будут постройки в провинции</th>
-            </div>
+                    <td id='th-villages'>${villages}</th>
+                
             `
-
         );
-        // tab.insertAdjacentHTML("beforeend", 
-        //     `<tr class="table table-location">
-        //         <td id='th-loc'>${item["name_rus"]}</th>
-        //         <td id='th-relation'>${relation}</th>
-        //         <td id='th-pop'>${item["population"]}</th>
-        //         <td id='th-wealth_status'>${item["wealth_status"]}</th>
-        //         <td id='th-food'>${item["food"]}</th>
-        //         <td id='th-food-balace'>${item["balance_food"]}</th>
-        //         <td id='th-dom'>${item["build_points"]}</th>
+        tab.insertAdjacentHTML("beforeend", 
+            `<hr>`
+        );
 
-        //         <td id='th-buildings'>${buildings}</th>
-
-        //         <td id='th-action'>
-        //             <div class="dropdown">
-        //                 <button id="btn-act-${item["row_id"]}" class="dropbtn">Выбрать</button>
-        //                 <div id="dropdownProv${item["row_id"]}" class="dropdown-content">
-        //                     <a id="btn-act-war${item["row_id"]}">Атаковать</a>
-        //                     <a id="btn-act-build${item["row_id"]}">Строительство</a>
-        //                 </div>
-        //             </div> 
-        //         </th>
-
-        //     </tr>`
-        // );
-
-        // <td id='th-action'><button id="btn-act-${item["row_id"]}">Выбрать</button></th>
-        // <button id="btn-act-${item["row_id"]}">Выбрать</button>
         document.getElementById(`btn-act-${item["row_id"]}`).addEventListener(('click'), () => {
             console.log(`Нажата кнопка выбора действия в провинции с ид: ${item["row_id"]}`);
             dropdownProvince(item["row_id"])
@@ -615,7 +553,13 @@ function actualVarPlayer(res) {
             console.log(`Что хранится в item: ${item}`);
 
             menuNewBuilding(item);
-        });        
+        }); 
+        document.getElementById(`btn-act-decision${item["row_id"]}`).addEventListener(('click'), () => {
+            console.log(`Нажата кнопка решений в провинции с ид: ${item["row_id"]}`);
+            console.log(`Что хранится в item: ${item}`);
+
+            startModalDonation(item);
+        });               
     });
 
     // Вывод доступных для покупки товаров
@@ -1104,9 +1048,9 @@ function attack(settl_id, army) {  // 404
 
 // Строительство 
 // Модалка для строительства
-document.getElementById('menu-new-building').addEventListener('click', () => {
-    menuNewBuilding();
-});
+// document.getElementById('menu-new-building').addEventListener('click', () => {
+//     menuNewBuilding();
+// });
 
 
 // Новая фукнция для строительства при управлении несолькими локациями.
@@ -1168,25 +1112,25 @@ function build111(build, settl_id){
     closeModal();
 };
 
-document.getElementById('make-donation').addEventListener('click', () => {
+// document.getElementById('make-donation').addEventListener('click', () => {
 
-});
+// });
 
 // Торговля
-document.getElementById('menu-trade').addEventListener('click', () => {
-    hiddenAllMenu();
-    console.log("Запуск торговли")
-    document.getElementById("main-menu-buttons").setAttribute('style','display:none');
-    document.getElementById("menu-buttons-trade").setAttribute('style','visibility:visible');
-    tradeChooseCity();  // Вызов функции выбора города для торговли из Антички
+// document.getElementById('menu-trade').addEventListener('click', () => {
+//     hiddenAllMenu();
+//     console.log("Запуск торговли")
+//     document.getElementById("main-menu-buttons").setAttribute('style','display:none');
+//     document.getElementById("menu-buttons-trade").setAttribute('style','visibility:visible');
+//     tradeChooseCity();  // Вызов функции выбора города для торговли из Антички
 
-    // Нарисуем кнопку отмены(выхода)
-    chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-show-trade-exit">Выход</button>`;
-    document.getElementById('menu-show-trade-exit').addEventListener('click', () => { 
-        chooseList.innerHTML = ''; 
-        exitToMainMenuButtons(); 
-    });
-});
+//     // Нарисуем кнопку отмены(выхода)
+//     chooseList.innerHTML += `<button class="menu-choose-exit custom-btn btn-15" id="menu-show-trade-exit">Выход</button>`;
+//     document.getElementById('menu-show-trade-exit').addEventListener('click', () => { 
+//         chooseList.innerHTML = ''; 
+//         exitToMainMenuButtons(); 
+//     });
+// });
 
 // !!!!!!!!!!!!! Старое
 // Выбрать город для торговли
@@ -1306,13 +1250,14 @@ function tradeChooseNumGoodsTrade(goods, city) {
 }
 
 // Решения 
-document.getElementById('menu-decision').addEventListener('click', () => {
-    hiddenAllMenu();
-    console.log("Запуск решений")
-    document.getElementById("main-menu-buttons").setAttribute('style','display:none');
-    document.getElementById("menu-buttons-decision").setAttribute('style','visibility:visible');
+// Запускается из таблицы с провинциями
+// document.getElementById('menu-decision').addEventListener('click', () => {
+//     hiddenAllMenu();
+//     console.log("Запуск решений")
+//     document.getElementById("main-menu-buttons").setAttribute('style','display:none');
+//     document.getElementById("menu-buttons-decision").setAttribute('style','visibility:visible');
 
-});
+// });
 
 // document.getElementById('buy-title').addEventListener('click', () => {
 
@@ -1331,17 +1276,17 @@ document.getElementById('menu-decision').addEventListener('click', () => {
 
 // });
 
-function buyTitle() {
-    console.log("Раздать деньги");
-    statusGame.acts.push([`Раздаем деньги`, 301]); 
-    postAct(statusGame.game_id);
-    logStart();
-    chooseList.innerHTML = ''; 
-    closeModal();
-    exitToMainMenuButtons(); 
-}
+// function buyTitle() {
+//     console.log("Раздать деньги");
+//     statusGame.acts.push([`Раздаем деньги`, 301]); 
+//     postAct(statusGame.game_id);
+//     logStart();
+//     chooseList.innerHTML = ''; 
+//     closeModal();
+//     exitToMainMenuButtons(); 
+// }
 
-document.getElementById('make-donation').addEventListener('click', () => {
+function startModalDonation(prov) {
 
     modal.style.display = "block";
     let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
@@ -1359,27 +1304,47 @@ document.getElementById('make-donation').addEventListener('click', () => {
     `;
     
     console.log("Модалка открыта");
-});
+}
+
+// document.getElementById('make-donation').addEventListener('click', () => {
+
+//     modal.style.display = "block";
+//     let content = document.getElementById("show-content");  // <div>Сделать пожертвование.</div>
+//     content.innerHTML = `
+//         <div style="font-size: 20px">
+//             <div>Раздать часть казны жителям поселения.</div>
+//             <button onclick = makeDonation(10) style="font-size: 25px; margin-top: 10px">10</button>
+//             <button onclick = makeDonation(20) style="font-size: 25px; margin-top: 10px">20</button>
+//             <button onclick = makeDonation(30) style="font-size: 25px; margin-top: 10px">30</button>
+//             <button onclick = makeDonation(40) style="font-size: 25px; margin-top: 10px">40</button>
+//             <button onclick = makeDonation(50) style="font-size: 25px; margin-top: 10px">50</button>
+
+//             <button onclick = closeModal() style="font-size: 25px">Отмена</button>
+//         </div>
+//     `;
+    
+//     console.log("Модалка открыта");
+// });
 
 function makeDonation(sum) {
     console.log("Раздать деньги");
     statusGame.acts.push([`Раздаем деньги: ${sum} с.`, 301, sum]); 
     postAct(statusGame.game_id);
     logStart();
-    chooseList.innerHTML = ''; 
+    // chooseList.innerHTML = '';   // Видимо очищало в старом меню выбора действий
     closeModal();
-    exitToMainMenuButtons();     
+    // exitToMainMenuButtons();     // Заврквало старое меню действий
 }
 
 
 //
 // Просмотр "Дипломатии"
-document.getElementById('menu-diplomaty').addEventListener('click', () => {
-    hiddenAllMenu();
-    document.getElementById("main-menu-buttons").setAttribute('style','display:none');
-    document.getElementById("menu-buttons-diplomaty").setAttribute('style','visibility:visible');
-    req_status_all_player();
-});
+// document.getElementById('menu-diplomaty').addEventListener('click', () => {
+//     hiddenAllMenu();
+//     document.getElementById("main-menu-buttons").setAttribute('style','display:none');
+//     document.getElementById("menu-buttons-diplomaty").setAttribute('style','visibility:visible');
+//     req_status_all_player();
+// });
 
 // Отображение всех игроков с основными параметрами(золото, имя, готовность хода)
 function req_status_all_player() {
@@ -1531,7 +1496,7 @@ span.onclick = function() {
 // Общая функция закрытия модального окна
 function closeModal() {
     modal.style.display = "none";   
-    exitToMainMenuButtons(); // На всякий случай выйдем в главное меню кнопок
+    // exitToMainMenuButtons(); // На всякий случай выйдем в главное меню кнопок
 }
 
 // Информационное модальное окошко

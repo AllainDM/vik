@@ -294,16 +294,19 @@ def load_all_my_game():  # Делаю подпись html, чтоб раздел
     player = int(current_user.get_id())
     games_list = []  # Это список игр для отправки игроку для выбора
     print(f"Список моих игр: {game_arr}")
-    for my_g in game_arr:
-        if player in my_g[5]:
-            pl_in_game = []
-            for pl in my_g[5]:
-                pl_in_game.append(dbase.get_user(pl)[3])
-            # print(f"Игрок есть в игре номер: {my_g[0]}")
-            # Аналог двух append
-            one_game = [my_g[0], pl_in_game]
-            # games_list.append(f"{my_g[0]} Игроки: {pl_in_game}")
-            games_list.append(one_game)
+    try:
+        for my_g in game_arr:
+            if player in my_g[5]:
+                pl_in_game = []
+                for pl in my_g[5]:
+                    pl_in_game.append(dbase.get_user(pl)[3])
+                # print(f"Игрок есть в игре номер: {my_g[0]}")
+                # Аналог двух append
+                one_game = [my_g[0], pl_in_game]
+                # games_list.append(f"{my_g[0]} Игроки: {pl_in_game}")
+                games_list.append(one_game)
+    except TypeError:
+        assert False, 'Тут плавающий баг? Тестирую отладку через assert'
     return jsonify(games_list)
 
 
